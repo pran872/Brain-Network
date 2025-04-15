@@ -1,0 +1,24 @@
+2025-04-15 18:56:04,612 | INFO | Job Started
+2025-04-15 18:56:04,613 | INFO | Logging run: /rds/general/user/psp20/home/Brain-Network/runs/simple_cnn_20250415-185604
+2025-04-15 18:56:04,613 | INFO | Config:
+{
+  "run_name": "simple_cnn",
+  "writer": true,
+  "seed": 42,
+  "train_split": 0.9,
+  "batch_size": 256,
+  "num_workers": 2,
+  "model_type": "fast_cnn",
+  "optimizer": "adam",
+  "criterion": "CE",
+  "lr": 0.001,
+  "epochs": 3
+}
+2025-04-15 18:56:04,637 | INFO | Using device: cpu
+2025-04-15 18:56:04,637 | INFO | Training for 3 epochs
+2025-04-15 18:56:27,552 | INFO | Epoch 1: Train Loss=1.6998, Train Acc=39.46% | Val Loss=1.4754, Val Acc=47.60% | Time: 20.66s
+2025-04-15 18:56:47,849 | INFO | Epoch 2: Train Loss=1.3497, Train Acc=52.12% | Val Loss=1.3126, Val Acc=52.86% | Time: 20.30s
+2025-04-15 18:57:08,003 | INFO | Epoch 3: Train Loss=1.2276, Train Acc=56.43% | Val Loss=1.2082, Val Acc=56.76% | Time: 20.15s
+2025-04-15 18:57:10,680 | INFO | Test Accuracy: 57.99% | Test Loss: 1.19
+2025-04-15 18:57:10,767 | INFO | 
+Job Completed
