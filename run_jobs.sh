@@ -2,8 +2,8 @@
 #PBS -N brainnet_exp1
 #PBS -l select=1:ncpus=4:mem=8gb:ngpus=0
 #PBS -l walltime=00:15:00 
-#PBS -o logs/train_$PBS_JOBID.out
-#PBS -e logs/train_$PBS_JOBID.err
+#PBS -o job_logs/train_$PBS_JOBID.out
+#PBS -e job_logs/train_$PBS_JOBID.err
 #PBS -j oe
 
 
@@ -15,8 +15,7 @@ conda activate brain-network-env
 
 export OUTPUT_DIR=/rds/general/user/psp20/home/Brain-Network/runs
 
-python source/simple_cnn.py -c config_template.json -v
-
 echo "Starting training on $(hostname) at $(date)"
+python source/simple_cnn.py -c config_template.json -v
 python level4_run.py
 echo "Finished at $(date)"
