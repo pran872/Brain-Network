@@ -1,11 +1,11 @@
-Starting training on cx3-20-1.cx3.hpc.ic.ac.uk at Tue 15 Apr 19:09:19 BST 2025
-Finished at Tue 15 Apr 19:12:07 BST 2025
+Starting training on cx3-20-0.cx3.hpc.ic.ac.uk at Tue 15 Apr 19:33:18 BST 2025
+Finished at Tue 15 Apr 19:37:10 BST 2025
 
 ====================================
-CPU Time used: 00:00:44
-CPU Percent: 46%
-Memory usage: 1262888kb
-Approx Power usage: 0.0
-Walltime usage: 00:03:02
+CPU Time used: 00:06:00
+CPU Percent: 212%
+Memory usage: 1268044kb
+Approx Power usage: 0.0012000000000000001
+Walltime usage: 00:04:03
 
 ====================================
