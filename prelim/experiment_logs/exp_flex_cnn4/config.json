@@ -1,0 +1,19 @@
+{
+    "use_flex": true,
+    "cnn_channels": 16,
+    "embed_dim": 64,
+    "depth": 2,
+    "heads": 4,
+    "dropout": 0.1,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "epochs": 2,
+    "cnn_depth": 4,
+    "flex_positions": [
+        2
+    ],
+    "use_batch_norm": false,
+    "log_activations": true,
+    "log_gradients": false,
+    "save_dir": "experiment_logs/exp_flex_cnn4"
+}
