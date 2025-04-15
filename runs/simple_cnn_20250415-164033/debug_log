@@ -1,0 +1,25 @@
+2025-04-15 16:40:33,883 | INFO | Job Started
+2025-04-15 16:40:33,883 | INFO | Config:
+{
+  "run_name": "simple_cnn",
+  "writer": true,
+  "seed": 42,
+  "train_split": 0.9,
+  "batch_size": 256,
+  "num_workers": 0,
+  "model_type": "fast_cnn",
+  "optimizer": "adam",
+  "criterion": "CE",
+  "lr": 0.001,
+  "epochs": 3
+}
+2025-04-15 16:40:33,883 | INFO | Using device: cpu
+2025-04-15 16:40:33,883 | INFO | Training for 3 epochs
+2025-04-15 16:40:33,883 | INFO | Logging run: runs/simple_cnn_20250415-164033
+2025-04-15 16:40:33,883 | INFO | Tensorboard running on port: 6006
+2025-04-15 16:40:55,045 | INFO | Epoch 1: Train Loss=1.7005, Train Acc=39.40% | Val Loss=1.4810, Val Acc=47.32% | Time: 18.80s
+2025-04-15 16:41:12,987 | INFO | Epoch 2: Train Loss=1.3522, Train Acc=52.07% | Val Loss=1.3174, Val Acc=53.02% | Time: 17.94s
+2025-04-15 16:41:30,748 | INFO | Epoch 3: Train Loss=1.2302, Train Acc=56.32% | Val Loss=1.2126, Val Acc=57.14% | Time: 17.76s
+2025-04-15 16:41:32,906 | INFO | Test Accuracy: 57.70% | Test Loss: 1.19
+2025-04-15 16:41:33,009 | INFO | 
+Job Completed
