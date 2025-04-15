@@ -18,6 +18,7 @@ from datetime import datetime
 import os
 import logging
 import sys
+import socket
 
 
 def set_seed(seed=42):
@@ -26,6 +27,23 @@ def set_seed(seed=42):
     torch.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
+
+def get_log_dir(run_name: str, time_stamp, base_env_var="OUTPUT_DIR") -> str:
+    full_run_name = f"{run_name}_{time_stamp}"
+
+    output_root = os.environ.get(base_env_var)
+
+    if not output_root:
+        hostname = socket.gethostname()
+        if "login" in hostname or "node" in hostname or "rds" in os.getcwd():
+            output_root = "/rds/general/user/psp20/home/Brain-Network/runs"
+        else:
+            output_root = "runs"
+
+    log_dir = os.path.join(output_root, full_run_name)
+    os.makedirs(log_dir, exist_ok=True)
+
+    return log_dir
 
 def get_logger(log_dir):
     logger = logging.getLogger("debug_log")
@@ -191,8 +209,7 @@ def main():
         assert criterion in ["CE"], "Invalid criterion"
 
         time_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
-        log_dir = f"runs/{run_name}_{time_stamp}"
-        os.makedirs(log_dir, exist_ok=True)
+        log_dir = get_log_dir(run_name, time_stamp)
 
         if writer:
             writer = SummaryWriter(log_dir=log_dir)
@@ -201,15 +218,13 @@ def main():
         set_seed(seed)
         logger = get_logger(log_dir)
         logger.info("Job Started")
+        logger.info(f"Logging run: {log_dir}")
         logger.info("Config:\n" + json.dumps(config, indent=2))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         if verbose:
             logger.info(f"Using device: {device}")
             logger.info(f"Training for {epochs} epochs")
-            logger.info(f"Logging run: {log_dir}")
-            if writer:
-                logger.info(f"Tensorboard running on port: {6006}")
 
         transform = transforms.Compose([
             transforms.ToTensor(),
@@ -243,7 +258,7 @@ def main():
             logger,
             verbose
         )
-        torch.save(model.state_dict(), f"{log_dir}/{run_name}_{time_stamp}_{epochs}_model.pt")
+        torch.save(model.state_dict(), f"{log_dir}/{run_name}_{time_stamp}_e{epochs}_model.pt")
         test_acc, test_loss = test_model(model, test_loader, device, criterion, writer, logger, verbose)
 
         with open(f"{log_dir}/metrics_{run_name}_{time_stamp}.csv", "w+") as f:

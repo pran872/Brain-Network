@@ -1,0 +1,24 @@
+2025-04-15 18:30:08,032 | INFO | Job Started
+2025-04-15 18:30:08,032 | INFO | Logging run: runs/simple_cnn_cpu_20250415-183008
+2025-04-15 18:30:08,032 | INFO | Config:
+{
+  "run_name": "simple_cnn_cpu",
+  "writer": true,
+  "seed": 42,
+  "train_split": 0.9,
+  "batch_size": 256,
+  "num_workers": 0,
+  "model_type": "fast_cnn",
+  "optimizer": "adam",
+  "criterion": "CE",
+  "lr": 0.001,
+  "epochs": 3
+}
+2025-04-15 18:30:08,032 | INFO | Using device: cpu
+2025-04-15 18:30:08,032 | INFO | Training for 3 epochs
+2025-04-15 18:30:28,690 | INFO | Epoch 1: Train Loss=1.7005, Train Acc=39.40% | Val Loss=1.4810, Val Acc=47.32% | Time: 18.28s
+2025-04-15 18:30:47,508 | INFO | Epoch 2: Train Loss=1.3522, Train Acc=52.07% | Val Loss=1.3174, Val Acc=53.02% | Time: 18.82s
+2025-04-15 18:31:06,641 | INFO | Epoch 3: Train Loss=1.2302, Train Acc=56.32% | Val Loss=1.2126, Val Acc=57.14% | Time: 19.13s
+2025-04-15 18:31:08,919 | INFO | Test Accuracy: 57.70% | Test Loss: 1.19
+2025-04-15 18:31:09,027 | INFO | 
+Job Completed

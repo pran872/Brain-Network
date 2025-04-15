@@ -7,7 +7,7 @@
     "train_split": 0.9,
 
     "batch_size": 256,
-    "num_workers": 0,
+    "num_workers": 2,
 
     "model_type": "fast_cnn",
     "optimizer": "adam",
