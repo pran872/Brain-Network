@@ -1,11 +1,15 @@
-Starting training on cx3-20-4.cx3.hpc.ic.ac.uk at Thu 17 Apr 11:52:55 BST 2025
-Finished at Thu 17 Apr 11:54:23 BST 2025
+Starting training on cx3-20-1.cx3.hpc.ic.ac.uk at Thu 17 Apr 15:42:30 BST 2025
+/rds/general/user/psp20/home/Brain-Network/source/flex.py:91: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  assert tensor_1.shape == tensor_2.shape, "tensor_1 and tensor_2 must have the same shape"
+/rds/general/user/psp20/home/Brain-Network/source/flex.py:98: TracerWarning: Converting a tensor to a Python number might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  conv_ratio = (indices == 1).sum().item() / tensor_1.numel()
+Finished at Thu 17 Apr 15:44:49 BST 2025
 
 ====================================
-CPU Time used: 00:00:02
-CPU Percent: 8%
-Memory usage: 370784kb
+CPU Time used: 00:00:03
+CPU Percent: 7%
+Memory usage: 434612kb
 Approx Power usage: 0.0
-Walltime usage: 00:01:38
+Walltime usage: 00:02:30
 
 ====================================
