@@ -254,7 +254,7 @@ def main():
         patience = config.get("patience", 5)
         min_diff = config.get("min_diff", 0.001)
 
-        assert model_type in ["fast_cnn"], "Invalid model type"
+        assert model_type in ["fast_cnn", "fast_cnn2"], "Invalid model type"
         assert optimizer in ["adam"], "Invalid optimizer"
         assert criterion in ["CE"], "Invalid criterion"
 
@@ -286,13 +286,15 @@ def main():
 
         if model_type == "fast_cnn":
             model = FastCNN().to(device)
-            summary_str = summary(model, input_size=(1, 3, 32, 32), device=device, verbose=0)
-            with open(f"{log_dir}/model_summary.txt", "w") as f:
-                f.write(str(summary_str))
-        
+        elif model_type == "fast_cnn2":
+            model = FastCNN2().to(device)
+        summary_str = summary(model, input_size=(1, 3, 32, 32), device=device, verbose=0)
+        with open(f"{log_dir}/model_summary.txt", "w") as f:
+            f.write(str(summary_str))
+    
         if optimizer == "adam":
             optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4)
-            scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5)
+            scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3)
         
         if criterion == "CE":
             criterion = nn.CrossEntropyLoss()
@@ -322,7 +324,7 @@ def main():
         with open(f"{log_dir}/metrics_{run_name}_{time_stamp}.csv", "w+") as f:
             f.write("epoch,train_loss,val_loss,train_acc,val_acc\n")
             f.write(f"Test acc and loss:,{test_acc},{test_loss},,\n")
-            for i in range(epochs):
+            for i in range(len(train_losses)):
                 f.write(f"{i},{train_losses[i]},{val_losses[i]},{train_acc[i]},{val_acc[i]}\n")
 
         if writer:

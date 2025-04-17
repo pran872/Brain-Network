@@ -1,5 +1,5 @@
 {
-    "run_name": "simple_cnn_early_stop",
+    "run_name": "fast_cnn_2",
     "writer": true,
 
     "seed": 42,
@@ -9,13 +9,13 @@
     "batch_size": 256,
     "num_workers": 2,
 
-    "model_type": "fast_cnn",
+    "model_type": "fast_cnn2",
     "optimizer": "adam",
     "criterion": "CE",
     "lr": 0.001,
     "epochs": 50,
     
     "early_stopping": true,
-    "patience": 5,
+    "patience": 3,
     "min_diff": 0.001
 }
