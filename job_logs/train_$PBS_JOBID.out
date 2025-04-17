@@ -1,18 +1,11 @@
-Starting training on cx3-20-1.cx3.hpc.ic.ac.uk at Thu 17 Apr 10:55:41 BST 2025
-Traceback (most recent call last):
-  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 340, in <module>
-    main()
-  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 326, in main
-    f.write(f"{i},{train_losses[i]},{val_losses[i]},{train_acc[i]},{val_acc[i]}\n")
-                   ~~~~~~~~~~~~^^^
-IndexError: list index out of range
-Finished at Thu 17 Apr 10:57:56 BST 2025
+Starting training on cx3-20-4.cx3.hpc.ic.ac.uk at Thu 17 Apr 11:52:55 BST 2025
+Finished at Thu 17 Apr 11:54:23 BST 2025
 
 ====================================
-CPU Time used: 00:02:21
-CPU Percent: 114%
-Memory usage: 1276212kb
-Approx Power usage: 0.0004
-Walltime usage: 00:02:25
+CPU Time used: 00:00:02
+CPU Percent: 8%
+Memory usage: 370784kb
+Approx Power usage: 0.0
+Walltime usage: 00:01:38
 
 ====================================
