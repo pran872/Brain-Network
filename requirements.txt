@@ -4,3 +4,4 @@ torch==2.6.0
 torchinfo==1.8.0
 torchvision==0.21.0
 tqdm==4.67.1
+tensorboard==2.19.0

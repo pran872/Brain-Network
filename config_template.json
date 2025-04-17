@@ -13,5 +13,9 @@
     "optimizer": "adam",
     "criterion": "CE",
     "lr": 0.001,
-    "epochs": 50
+    "epochs": 50,
+    
+    "early_stopping": true,
+    "patience": 5,
+    "min_diff": 0.001
 }

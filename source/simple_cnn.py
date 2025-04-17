@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, random_split
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torchinfo import summary
 from tqdm import tqdm
 import time
@@ -19,6 +20,23 @@ import os
 import logging
 import sys
 import socket
+
+class EarlyStopping:
+    def __init__(self, patience=5, min_diff=0.0):
+        self.patience = patience
+        self.min_diff = min_diff
+        self.best_loss = float('inf')
+        self.counter = 0
+        self.should_stop = False
+
+    def step(self, val_loss):
+        if val_loss < self.best_loss - self.min_diff:
+            self.best_loss = val_loss
+            self.counter = 0
+        else:
+            self.counter += 1
+            if self.counter >= self.patience:
+                self.should_stop = True
 
 
 def set_seed(seed=42):
@@ -77,10 +95,26 @@ def log_grad(writer, model, epoch):
         if param.grad is not None:
             writer.add_histogram(f"gradients/{name}", param.grad, epoch)
 
-def train_model(model, epochs, train_loader, val_loader, device, optimizer, criterion, writer, logger, verbose=True):
+def train_model(
+    model,
+    epochs,
+    train_loader,
+    val_loader,
+    device,
+    optimizer,
+    criterion,
+    scheduler,
+    early_stopping,
+    writer,
+    logger,
+    verbose=True
+):
 
     train_losses, val_losses = [], []
     train_accuracies, val_accuracies = [], []
+    best_model = {"val_loss": float("inf"),
+                  "model_state": None,
+                  "epoch": 0}
 
     for epoch in range(epochs):
         start = time.time()
@@ -125,6 +159,8 @@ def train_model(model, epochs, train_loader, val_loader, device, optimizer, crit
         val_losses.append(avg_val_loss)
         val_accuracies.append(val_acc)
 
+        scheduler.step(avg_val_loss)
+
         end = time.time()
 
         if writer:
@@ -136,8 +172,19 @@ def train_model(model, epochs, train_loader, val_loader, device, optimizer, crit
         if verbose:
             logger.info(f"Epoch {epoch+1}: Train Loss={avg_train_loss:.4f}, Train Acc={train_acc:.2f}% | "
               f"Val Loss={avg_val_loss:.4f}, Val Acc={val_acc:.2f}% | Time: {end - start:.2f}s")
+        
+        if avg_val_loss < best_model["val_loss"]:
+            best_model["val_loss"] = avg_val_loss
+            best_model["model_state"] = model.state_dict()
+            logger.info(f"New best model saved (val loss = {best_model['val_loss']:.4f})")
 
-    return model, train_losses, val_losses, train_accuracies, val_accuracies
+        if early_stopping:
+            early_stopping.step(avg_val_loss)
+            if early_stopping.should_stop:
+                logger.info(f"Early stopping triggered at epoch {epoch+1}")
+                break
+
+    return best_model, train_losses, val_losses, train_accuracies, val_accuracies
 
 def test_model(model, test_loader, device, criterion, writer, logger, verbose=True):
     model.eval()
@@ -203,6 +250,9 @@ def main():
         epochs = config.get("epochs", 1)
         writer = config.get("writer", True)
         run_name = config.get('run_name', 'run')
+        early_stopping = config.get("early_stopping", True)
+        patience = config.get("patience", 5)
+        min_diff = config.get("min_diff", 0.001)
 
         assert model_type in ["fast_cnn"], "Invalid model type"
         assert optimizer in ["adam"], "Invalid optimizer"
@@ -241,12 +291,16 @@ def main():
                 f.write(str(summary_str))
         
         if optimizer == "adam":
-            optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+            optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4)
+            scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5)
         
         if criterion == "CE":
             criterion = nn.CrossEntropyLoss()
 
-        model, train_losses, val_losses, train_acc, val_acc = train_model(
+        if early_stopping:
+            early_stopping = EarlyStopping(patience, min_diff)
+
+        best_model, train_losses, val_losses, train_acc, val_acc = train_model(
             model, 
             epochs, 
             train_loader, 
@@ -254,11 +308,15 @@ def main():
             device,
             optimizer,
             criterion,
+            scheduler,
+            early_stopping,
             writer,
             logger,
             verbose
         )
-        torch.save(model.state_dict(), f"{log_dir}/{run_name}_{time_stamp}_e{epochs}_model.pt")
+        torch.save(best_model["model_state"], f"{log_dir}/{run_name}_{time_stamp}_e{best_model['epoch']}_best_model.pt")
+        logger.info(f"Best model with lowest val loss {best_model['val_loss']} saved.")
+
         test_acc, test_loss = test_model(model, test_loader, device, criterion, writer, logger, verbose)
 
         with open(f"{log_dir}/metrics_{run_name}_{time_stamp}.csv", "w+") as f:
