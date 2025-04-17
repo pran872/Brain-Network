@@ -1,5 +1,5 @@
 {
-    "run_name": "simple_cnn",
+    "run_name": "simple_cnn_early_stop",
     "writer": true,
 
     "seed": 42,
