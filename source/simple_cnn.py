@@ -115,6 +115,7 @@ def train_model(
     best_model = {"val_loss": float("inf"),
                   "model_state": None,
                   "epoch": 0}
+    conv_ratio = None
 
     for epoch in range(epochs):
         start = time.time()
@@ -125,6 +126,11 @@ def train_model(
             images, labels = images.to(device), labels.to(device)
             optimizer.zero_grad()
             outputs = model(images)
+
+            if isinstance(outputs, tuple): 
+                # For flex network
+                outputs, conv_ratio = outputs
+    
             loss = criterion(outputs, labels)
             loss.backward()
             if writer and batch_idx == 0: 
@@ -148,6 +154,11 @@ def train_model(
             for images, labels in val_loader:
                 images, labels = images.to(device), labels.to(device)
                 outputs = model(images)
+
+                if isinstance(outputs, tuple): 
+                    # For flex network
+                    outputs, conv_ratio = outputs
+                
                 loss = criterion(outputs, labels)
                 val_loss += loss.item()
                 _, predicted = outputs.max(1)
@@ -169,6 +180,12 @@ def train_model(
             writer.add_scalar("Accuracy/train", train_acc, epoch)
             writer.add_scalar("Accuracy/val", val_acc, epoch)
 
+            current_lr = optimizer.param_groups[0]['lr']
+            writer.add_scalar("LR", current_lr, epoch)
+
+            if conv_ratio:
+                writer.add_scalar("Conv_ratio", conv_ratio, epoch)
+
         if verbose:
             logger.info(f"Epoch {epoch+1}: Train Loss={avg_train_loss:.4f}, Train Acc={train_acc:.2f}% | "
               f"Val Loss={avg_val_loss:.4f}, Val Acc={val_acc:.2f}% | Time: {end - start:.2f}s")
@@ -176,6 +193,7 @@ def train_model(
         if avg_val_loss < best_model["val_loss"]:
             best_model["val_loss"] = avg_val_loss
             best_model["model_state"] = model.state_dict()
+            best_model["epoch"] = epoch
             logger.info(f"New best model saved (val loss = {best_model['val_loss']:.4f})")
 
         if early_stopping:
@@ -193,6 +211,11 @@ def test_model(model, test_loader, device, criterion, writer, logger, verbose=Tr
         for images, labels in tqdm(test_loader, desc="Testing", disable=not sys.stdout.isatty()):
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
+
+            if isinstance(outputs, tuple): 
+                # For flex network
+                outputs, conv_ratio = outputs
+
             _, predicted = outputs.max(1)
             total_loss += criterion(outputs, labels)
             total += labels.size(0)
@@ -254,7 +277,7 @@ def main():
         patience = config.get("patience", 5)
         min_diff = config.get("min_diff", 0.001)
 
-        assert model_type in ["fast_cnn", "fast_cnn2"], "Invalid model type"
+        assert model_type in ["fast_cnn", "fast_cnn2", "flex_net"], "Invalid model type"
         assert optimizer in ["adam"], "Invalid optimizer"
         assert criterion in ["CE"], "Invalid criterion"
 
@@ -288,6 +311,9 @@ def main():
             model = FastCNN().to(device)
         elif model_type == "fast_cnn2":
             model = FastCNN2().to(device)
+        elif model_type == "flex_net":
+            model = FlexNet(device).to(device)
+
         summary_str = summary(model, input_size=(1, 3, 32, 32), device=device, verbose=0)
         with open(f"{log_dir}/model_summary.txt", "w") as f:
             f.write(str(summary_str))
