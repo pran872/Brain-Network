@@ -277,6 +277,7 @@ def main():
         early_stopping = config.get("early_stopping", True)
         patience = config.get("patience", 5)
         min_diff = config.get("min_diff", 0.001)
+        use_flex = config.get("use_flex", False)
 
         time_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
         log_dir = get_log_dir(run_name, time_stamp)
@@ -313,7 +314,7 @@ def main():
             input_size = (224, 224)
             transform_list.append(transforms.Resize(input_size))
         elif model_type == "custom_vit":
-            model = ConvViTHybrid(device=device).to(device)
+            model = ConvViTHybrid(device=device, use_flex=use_flex).to(device)
 
         transform_list.append(transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))
         transform = transforms.Compose(transform_list)

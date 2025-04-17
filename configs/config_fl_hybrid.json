@@ -1,5 +1,5 @@
 {
-    "run_name": "custom_vit",
+    "run_name": "custom_vit_flex",
     "writer": true,
 
     "seed": 42,
@@ -10,6 +10,7 @@
     "num_workers": 2,
 
     "model_type": "custom_vit",
+    "use_flex": true,
     "optimizer": "adam",
     "criterion": "CE",
     "lr": 0.001,

@@ -135,7 +135,7 @@ class ConvViTHybrid(nn.Module):
         x = self.pool1(x)
 
         if self.use_flex:
-            x = self.flex(x)
+            x, conv_ratio = self.flex(x)
         else:
             x = F.relu(self.conv2(x))
         x = self.pool2(x)
@@ -152,4 +152,7 @@ class ConvViTHybrid(nn.Module):
         x = self.dropout(x)
 
         x = x[:, 0]
-        return self.mlp_head(x)
+        if self.use_flex:
+            return self.mlp_head(x), conv_ratio
+        else:
+            return self.mlp_head(x)

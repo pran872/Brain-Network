@@ -17,5 +17,7 @@ conda activate brain-network-env
 export OUTPUT_DIR=/rds/general/user/psp20/home/Brain-Network/runs
 
 echo "Starting training on $(hostname) at $(date)"
-python source/simple_cnn.py -c config_template.json -v
+CONFIG=${CONFIG:-configs/config_template.json}
+echo "Using config: $CONFIG"
+python source/simple_cnn.py -v -c $CONFIG
 echo "Finished at $(date)"
