@@ -89,4 +89,67 @@ class FlexNet(nn.Module):
         x = self.dropout(F.relu(self.fc1(x)))
         x = self.fc2(x)
         return x, self.conv_ratio
- 
+
+class ConvViTHybrid(nn.Module):
+    def __init__(self, device, patch_size=4, in_channels=3,
+                 cnn_channels=32, embed_dim=64, depth=2, heads=4,
+                 num_classes=10, use_flex=False):
+        super().__init__()
+
+        self.use_flex = use_flex
+        self.device = device
+        self.patch_size = patch_size
+
+        self.conv1 = nn.Conv2d(in_channels, 16, kernel_size=3, padding=1)
+        self.pool1 = nn.MaxPool2d(2, 2)
+
+        if self.use_flex:
+            self.flex = Flex2D(16, cnn_channels, kernel_size=3, stride=1, padding=1, device=self.device)
+        else:
+            self.conv2 = nn.Conv2d(16, cnn_channels, kernel_size=3, padding=1)
+        self.pool2 = nn.MaxPool2d(2)
+
+        self.patch_embed = nn.Conv2d(cnn_channels, embed_dim, kernel_size=patch_size, stride=patch_size)
+        num_patches = (8 // patch_size) ** 2
+
+        self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
+
+        self.dropout = nn.Dropout(0.1)
+
+        self.pos_embed = nn.Parameter(torch.zeros(1, num_patches + 1, embed_dim))
+        nn.init.trunc_normal_(self.pos_embed, std=0.02)
+
+        encoder_layer = nn.TransformerEncoderLayer(d_model=embed_dim, nhead=heads, batch_first=True)
+        self.norm = nn.LayerNorm(embed_dim)
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=depth)
+
+        self.mlp_head = nn.Sequential(
+            nn.LayerNorm(embed_dim),
+            nn.Dropout(0.1),
+            nn.Linear(embed_dim, num_classes)
+        )
+
+    def forward(self, x):
+        B = x.size(0)
+        x = F.relu(self.conv1(x))
+        x = self.pool1(x)
+
+        if self.use_flex:
+            x = self.flex(x)
+        else:
+            x = F.relu(self.conv2(x))
+        x = self.pool2(x)
+
+        x = self.patch_embed(x) # [B, embed_dim, H', W']
+        x = x.flatten(2).transpose(1, 2) # [B, num_patches, embed_dim]
+
+        cls_tokens = self.cls_token.expand(B, -1, -1)
+        x = torch.cat((cls_tokens, x), dim=1)
+        x = x + self.pos_embed
+
+        x = self.norm(x)
+        x = self.transformer(x)
+        x = self.dropout(x)
+
+        x = x[:, 0]
+        return self.mlp_head(x)

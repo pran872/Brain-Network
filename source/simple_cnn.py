@@ -7,6 +7,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, random_split
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torchinfo import summary
+import timm
 from tqdm import tqdm
 import time
 import random
@@ -277,44 +278,49 @@ def main():
         patience = config.get("patience", 5)
         min_diff = config.get("min_diff", 0.001)
 
-        assert model_type in ["fast_cnn", "fast_cnn2", "flex_net"], "Invalid model type"
-        assert optimizer in ["adam"], "Invalid optimizer"
-        assert criterion in ["CE"], "Invalid criterion"
-
         time_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
         log_dir = get_log_dir(run_name, time_stamp)
+        logger = get_logger(log_dir)
+        logger.info("Job Started")
+        logger.info(f"Logging run: {log_dir}")
+        logger.info("Config:\n" + json.dumps(config, indent=2))
+
+        assert model_type in ["fast_cnn", "fast_cnn2", "flex_net", "deit", "custom_vit"], "Invalid model type"
+        assert optimizer in ["adam"], "Invalid optimizer"
+        assert criterion in ["CE"], "Invalid criterion"
 
         if writer:
             writer = SummaryWriter(log_dir=log_dir)
             writer.add_text("config", json.dumps(config, indent=2))
 
         set_seed(seed)
-        logger = get_logger(log_dir)
-        logger.info("Job Started")
-        logger.info(f"Logging run: {log_dir}")
-        logger.info("Config:\n" + json.dumps(config, indent=2))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         if verbose:
             logger.info(f"Using device: {device}")
             logger.info(f"Training for {epochs} epochs")
 
-        transform = transforms.Compose([
-            transforms.ToTensor(),
-            # transforms.Normalize((0.5,), (0.5,))
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-        ])
-
-        train_loader, val_loader, test_loader = load_data(transform, train_split, batch_size, num_workers)
-
+        input_size = (32, 32)
+        transform_list = [transforms.ToTensor()]
         if model_type == "fast_cnn":
             model = FastCNN().to(device)
         elif model_type == "fast_cnn2":
             model = FastCNN2().to(device)
         elif model_type == "flex_net":
-            model = FlexNet(device).to(device)
+            model = FlexNet(device=device).to(device)
+        elif model_type == "deit":
+            model = timm.create_model('deit_tiny_patch16_224', pretrained=False, num_classes=10)
+            input_size = (224, 224)
+            transform_list.append(transforms.Resize(input_size))
+        elif model_type == "custom_vit":
+            model = ConvViTHybrid(device=device).to(device)
 
-        summary_str = summary(model, input_size=(1, 3, 32, 32), device=device, verbose=0)
+        transform_list.append(transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))
+        transform = transforms.Compose(transform_list)
+
+        train_loader, val_loader, test_loader = load_data(transform, train_split, batch_size, num_workers)
+
+        summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
         with open(f"{log_dir}/model_summary.txt", "w") as f:
             f.write(str(summary_str))
     
@@ -354,14 +360,14 @@ def main():
                 f.write(f"{i},{train_losses[i]},{val_losses[i]},{train_acc[i]},{val_acc[i]}\n")
 
         if writer:
-            dummy_input = torch.randn(1, 3, 32, 32).to(device)
-            writer.add_graph(model, dummy_input)
+            # dummy_input = torch.randn(1, 3, 32, 32).to(device)
+            # writer.add_graph(model, dummy_input)
             writer.close()
         logger.info("\nJob Completed")
 
     except Exception as e:
         logger.exception("Error occured")
-        raise  # Optional: re-raise to trigger error code exit
+        raise
     
 
 if __name__ == "__main__":
