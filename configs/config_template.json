@@ -13,7 +13,7 @@
     "optimizer": "adam",
     "criterion": "CE",
     "lr": 0.001,
-    "epochs": 1,
+    "epochs": 50,
 
     "use_flex": false,
     
