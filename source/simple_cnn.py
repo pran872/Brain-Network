@@ -400,7 +400,7 @@ def main():
         torch.save(best_model["model_state"], f"{log_dir}/{run_name}_{time_stamp}_e{best_model['epoch']}_best_model.pt")
         logger.info(f"Best model with lowest val loss {best_model['val_loss']} saved.")
 
-        test_acc, test_loss = test_model(model, test_loader, device, criterion, writer, logger, verbose)
+        test_acc, test_loss = test_model(best_model, test_loader, device, criterion, writer, logger, verbose)
 
         with open(f"{log_dir}/metrics_{run_name}_{time_stamp}.csv", "w+") as f:
             f.write("epoch,train_loss,val_loss,train_acc,val_acc\n")
