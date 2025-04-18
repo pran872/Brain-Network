@@ -169,38 +169,85 @@ class ConvViTHybrid(nn.Module):
             return self.mlp_head(x)
 
 class ZoomVisionTransformer(nn.Module):
-    def __init__(self, device, num_classes, num_layers=2, embed_dim=256, num_heads=4, num_patches=64):
+    def __init__(
+        self,
+        device,
+        num_classes,
+        use_pos_embed=False,
+        add_dropout=False,
+        mlp_end=False,
+        add_cls_token=False,
+        num_layers=2,
+        embed_dim=256,
+        num_heads=4,
+        num_patches=64
+    ):
         super().__init__()
+        self.use_pos_embed = use_pos_embed
+        self.add_dropout = add_dropout
+        self.mlp_end = mlp_end
+        self.add_cls_token = add_cls_token
+
+        if self.add_dropout or self.add_cls_token:
+            # Dropout and cls token used with pos embeds
+            self.use_pos_embed = True
+        
         self.register_buffer("dist_matrix", self.compute_token_distance_matrix(device=device))
         self.backbone = ResNetBackbone()
         self.token_proj = nn.Linear(self.backbone.out_dim, embed_dim)
         self.zoom_controller = ZoomController(self.backbone.out_dim, out_dim=1)
         
-        self.pos_embed = nn.Parameter(torch.zeros(1, num_patches, embed_dim))
-        nn.init.trunc_normal_(self.pos_embed, std=0.02) # std by convention
+        if self.add_cls_token:
+            self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
+            nn.init.trunc_normal_(self.cls_token, std=0.02)
 
+        if self.use_pos_embed:
+            pos_embed_patches = num_patches + 1 if self.add_cls_token else num_patches
+            self.pos_embed = nn.Parameter(torch.zeros(1, pos_embed_patches, embed_dim))
+            nn.init.trunc_normal_(self.pos_embed, std=0.02) # std by convention
+            if self.add_dropout:
+                self.dropout = nn.Dropout(0.1)
+            
         self.transformer_blocks = nn.ModuleList([
             ZoomTransformerBlock(embed_dim, num_heads, self.dist_matrix)
             for _ in range(num_layers)
         ])
 
-        self.cls_head = nn.Sequential(
-            nn.LayerNorm(embed_dim),
-            nn.Linear(embed_dim, num_classes)
-        )
+        if self.mlp_end:
+            self.mlp_head = nn.Sequential(
+                nn.LayerNorm(embed_dim),
+                nn.Linear(embed_dim, 128),
+                nn.GELU(),
+                nn.Linear(128, num_classes)
+            )
+        else:
+            self.cls_head = nn.Sequential(
+                nn.LayerNorm(embed_dim),
+                nn.Linear(embed_dim, num_classes)
+            )
 
     def forward(self, x):
-        feat_map, pooled = self.backbone(x)        # [B, C, 8, 8], [B, C]
-        gamma = self.zoom_controller(pooled)       # [B, 1]
-        tokens = feat_map.flatten(2).transpose(1, 2)  # [B, N, C]
-        tokens = self.token_proj(tokens)             # [B, N, D]
-        tokens = tokens + self.pos_embed
+        feat_map, pooled = self.backbone(x) # [B, C, 8, 8], [B, C]
+        gamma = self.zoom_controller(pooled) # [B, 1]
+        tokens = feat_map.flatten(2).transpose(1, 2) # [B, N, C]
+        tokens = self.token_proj(tokens) # [B, N, D]
+
+        if self.add_cls_token:
+            cls_token = self.cls_token.expand(tokens.shape[0], 1, -1)
+            tokens = torch.cat((cls_token, tokens), dim=1)
+
+        if self.use_pos_embed:
+            tokens = tokens + self.pos_embed
+            if self.add_dropout:
+                tokens = self.dropout(tokens)
 
         for block in self.transformer_blocks:
             tokens = block(tokens, gamma)
 
-        out = tokens.mean(dim=1)  # Mean pooling
-        return self.cls_head(out), gamma
+        out = tokens[:, 0] if self.add_cls_token else tokens.mean(dim=1)
+        out = self.mlp_head(out) if self.mlp_end else self.cls_head(out)
+
+        return out, gamma
 
     def compute_token_distance_matrix(self, h=8, w=8, device="cpu"):
         coords = torch.stack(torch.meshgrid(
@@ -208,5 +255,13 @@ class ZoomVisionTransformer(nn.Module):
         ), dim=-1)  # [H, W, 2]
         coords = coords.view(-1, 2).float()  # [N, 2]
         dist = torch.cdist(coords, coords, p=2)  # [N, N]
+
+        if self.add_cls_token:
+            # Expanding to 65 tokens (64+cls_token)
+            cls_row = torch.zeros(1, dist.size(1), device=device)
+            cls_col = torch.zeros(dist.size(0) + 1, 1, device=device)
+            dist = torch.cat([cls_row, dist], dim=0)
+            dist = torch.cat([cls_col, dist], dim=1) 
+
         return dist.to(device)
 

@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, random_split
-from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingLR
 from torchinfo import summary
 import timm
 from tqdm import tqdm
@@ -80,7 +80,7 @@ def load_data(transform_train, transform_test, train_split, batch_size, num_work
     test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
    
     if debug:
-        subset_indices = list(range(0, 500))
+        subset_indices = list(range(0, 200))
         train_subset = torch.utils.data.Subset(full_train_set, subset_indices)
         val_subset = torch.utils.data.Subset(full_train_set, subset_indices)
         test_subset = torch.utils.data.Subset(test_set, subset_indices)
@@ -189,8 +189,11 @@ def train_model(
         val_losses.append(avg_val_loss)
         val_accuracies.append(val_acc)
 
-        scheduler.step(avg_val_loss)
-
+        if isinstance(scheduler, ReduceLROnPlateau):
+            scheduler.step(avg_val_loss)
+        elif isinstance(scheduler, CosineAnnealingLR):
+            scheduler.step()
+    
         end = time.time()
 
         if writer:
@@ -298,6 +301,7 @@ def main():
         num_workers = config.get("num_workers", 1)
         model_type = config.get("model_type", "fast_cnn")
         optimizer = config.get("optimizer", "adam")
+        scheduler = config.get("scheduler", "ReduceLROnPlateau")
         criterion = config.get("criterion", "CE")
         lr = config.get("lr", 0.001)
         epochs = config.get("epochs", 1)
@@ -307,6 +311,12 @@ def main():
         patience = config.get("patience", 5)
         min_diff = config.get("min_diff", 0.001)
         use_flex = config.get("use_flex", False)
+
+        use_pos_embed = config.get("use_pos_embed", False)
+        add_dropout = config.get("add_dropout", False)
+        mlp_end = config.get("mlp_end", False)
+        add_cls_token = config.get("add_cls_token", False)
+        num_layers = config.get("num_layers", 2)
 
         time_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
         log_dir = get_log_dir(run_name, time_stamp)
@@ -326,6 +336,7 @@ def main():
         assert model_type in valid_models, "Invalid model type"
         assert optimizer in ["adam"], "Invalid optimizer"
         assert criterion in ["CE"], "Invalid criterion"
+        assert scheduler in ["CosineAnnealingLR", "ReduceLROnPlateau"], "Invalid scheduler"
 
         if writer:
             writer = SummaryWriter(log_dir=log_dir)
@@ -359,7 +370,15 @@ def main():
             model = build_resnet18_for_cifar10().to(device)
             transform_train_list = custom_transform
         elif model_type == "zoom":
-            model = ZoomVisionTransformer(device=device, num_classes=10).to(device)
+            model = ZoomVisionTransformer(
+                device=device, 
+                num_classes=10, 
+                use_pos_embed=use_pos_embed,
+                add_dropout=add_dropout,
+                mlp_end=mlp_end,
+                add_cls_token=add_cls_token,
+                num_layers=num_layers,
+            ).to(device)
             transform_train_list = custom_transform
 
         transform_train = transforms.Compose(transform_train_list)
@@ -380,7 +399,11 @@ def main():
     
         if optimizer == "adam":
             optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4)
+        
+        if scheduler == "ReduceLROnPlateau":
             scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3)
+        elif scheduler == "CosineAnnealingLR":
+            scheduler = CosineAnnealingLR(optimizer, T_max=30)
         
         if criterion == "CE":
             criterion = nn.CrossEntropyLoss()

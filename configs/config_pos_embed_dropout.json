@@ -22,8 +22,8 @@
 
     "use_flex": false,
 
-    "use_pos_embed": false,
-    "add_dropout": false,
+    "use_pos_embed": true,
+    "add_dropout": true,
     "mlp_end": false,
     "add_cls_token": false,
     "num_layers": 2
