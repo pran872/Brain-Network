@@ -1,0 +1,41 @@
+2025-04-18 20:15:23,682 | INFO | Job Started
+2025-04-18 20:15:23,682 | INFO | Logging run: /rds/general/user/psp20/home/Brain-Network/runs/zoom_20250418-201523
+2025-04-18 20:15:23,682 | INFO | Config:
+{
+  "run_name": "zoom",
+  "writer": true,
+  "seed": 42,
+  "train_split": 0.9,
+  "batch_size": 256,
+  "num_workers": 2,
+  "model_type": "zoom",
+  "optimizer": "adam",
+  "scheduler": "ReduceLROnPlateau",
+  "criterion": "CE",
+  "lr": 0.001,
+  "epochs": 50,
+  "early_stopping": true,
+  "patience": 10,
+  "min_diff": 0.001,
+  "use_flex": false,
+  "use_pos_embed": false,
+  "add_dropout": false,
+  "mlp_end": false,
+  "add_cls_token": true,
+  "num_layers": 2
+}
+2025-04-18 20:15:23,826 | INFO | Using device: cuda
+2025-04-18 20:15:23,827 | INFO | Training for 50 epochs
+2025-04-18 20:15:23,827 | INFO | Debug mode: False
+2025-04-18 20:15:24,307 | ERROR | Error occured
+Traceback (most recent call last):
+  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 373, in main
+    model = ZoomVisionTransformer(
+            ^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/models.py", line 195, in __init__
+    self.register_buffer("dist_matrix", self.compute_token_distance_matrix(device=device))
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/models.py", line 263, in compute_token_distance_matrix
+    dist = torch.cat([cls_row, dist], dim=0)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument tensors in method wrapper_CUDA_cat)

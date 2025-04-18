@@ -1,13 +1,14 @@
+mv: cannot stat 'job_logs/train.out': No such file or directory
 mv: cannot stat 'job_logs/train.err': No such file or directory
-Starting training on cx3-20-2.cx3.hpc.ic.ac.uk at Fri 18 Apr 18:16:14 BST 2025
-Using config: configs/config_template.json
-Finished at Fri 18 Apr 18:22:19 BST 2025
+Starting training on cx3-20-1.cx3.hpc.ic.ac.uk at Fri 18 Apr 20:24:20 BST 2025
+Using config: configs/config_pos_embed_dropout.json
+Finished at Fri 18 Apr 20:28:48 BST 2025
 
 ====================================
-CPU Time used: 00:09:14
-CPU Percent: 230%
-Memory usage: 1424676kb
-Approx Power usage: 0.0017999999999999997
-Walltime usage: 00:06:18
+CPU Time used: 00:08:27
+CPU Percent: 228%
+Memory usage: 1215780kb
+Approx Power usage: 0.0016
+Walltime usage: 00:04:41
 
 ====================================
