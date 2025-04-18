@@ -4,7 +4,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
-from torchvision.models import resnet18
 from torch.utils.data import DataLoader, random_split
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torchinfo import summary
@@ -39,14 +38,6 @@ class EarlyStopping:
             self.counter += 1
             if self.counter >= self.patience:
                 self.should_stop = True
-
-def build_resnet18_for_cifar10():
-    model = resnet18(weights=None)
-    
-    model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
-    model.maxpool = nn.Identity() 
-    model.fc = nn.Linear(512, 10)
-    return model
 
 def set_seed(seed=42):
     random.seed(seed)
@@ -135,7 +126,6 @@ def train_model(
     best_model = {"val_loss": float("inf"),
                   "model_state": None,
                   "epoch": 0}
-    conv_ratio = None
 
     for epoch in range(epochs):
         start = time.time()
@@ -148,8 +138,11 @@ def train_model(
             outputs = model(images)
 
             if isinstance(outputs, tuple): 
-                # For flex network
-                outputs, conv_ratio = outputs
+                if isinstance(model, ZoomVisionTransformer):
+                    outputs, gamma = outputs
+                else:
+                    # For flex network
+                    outputs, conv_ratio = outputs
     
             loss = criterion(outputs, labels)
             loss.backward()
@@ -176,8 +169,11 @@ def train_model(
                 outputs = model(images)
 
                 if isinstance(outputs, tuple): 
-                    # For flex network
-                    outputs, conv_ratio = outputs
+                    if isinstance(model, ZoomVisionTransformer):
+                        outputs, gamma = outputs
+                    else:
+                        # For flex network
+                        outputs, conv_ratio = outputs
                 
                 loss = criterion(outputs, labels)
                 val_loss += loss.item()
@@ -203,8 +199,11 @@ def train_model(
             current_lr = optimizer.param_groups[0]['lr']
             writer.add_scalar("LR", current_lr, epoch)
 
-            if conv_ratio:
+            if isinstance(model, FlexNet):
                 writer.add_scalar("Conv_ratio", conv_ratio, epoch)
+            elif isinstance(model, ZoomVisionTransformer):
+                writer.add_scalar("Gamma/mean", gamma.mean().item(), epoch)
+                writer.add_scalar("Gamma/std", gamma.std().item(), epoch)
 
         if verbose:
             logger.info(f"Epoch {epoch+1}: Train Loss={avg_train_loss:.4f}, Train Acc={train_acc:.2f}% | "
@@ -311,7 +310,15 @@ def main():
         logger.info(f"Logging run: {log_dir}")
         logger.info("Config:\n" + json.dumps(config, indent=2))
 
-        assert model_type in ["fast_cnn", "fast_cnn2", "flex_net", "custom_vit", "resnet18"], "Invalid model type"
+        valid_models = [
+            "fast_cnn",
+            "fast_cnn2",
+            "flex_net",
+            "custom_vit",
+            "resnet18",
+            "zoom",
+        ]
+        assert model_type in valid_models, "Invalid model type"
         assert optimizer in ["adam"], "Invalid optimizer"
         assert criterion in ["CE"], "Invalid criterion"
 
@@ -330,7 +337,7 @@ def main():
         input_size = (32, 32)
         transform_train_list = [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
         transform_test_list = [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
-        transform_custom = [transforms.RandomCrop(32, padding=4), 
+        custom_transform = [transforms.RandomCrop(32, padding=4), 
                             transforms.RandomHorizontalFlip(),
                             transforms.ToTensor(),
                             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
@@ -338,14 +345,17 @@ def main():
             model = FastCNN().to(device)
         elif model_type == "fast_cnn2":
             model = FastCNN2().to(device)
-            transform_train_list = transform_custom
+            transform_train_list = custom_transform
         elif model_type == "flex_net":
             model = FlexNet(device=device).to(device)
         elif model_type == "custom_vit":
             model = ConvViTHybrid(device=device, use_flex=use_flex).to(device)
         elif model_type == "resnet18":
             model = build_resnet18_for_cifar10().to(device)
-            transform_train_list = transform_custom
+            transform_train_list = custom_transform
+        elif model_type == "zoom":
+            model = ZoomVisionTransformer(device=device, num_classes=10).to(device)
+            transform_train_list = custom_transform
 
         transform_train = transforms.Compose(transform_train_list)
         transform_test = transforms.Compose(transform_test_list)

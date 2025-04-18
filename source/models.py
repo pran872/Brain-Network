@@ -1,6 +1,17 @@
 import torch.nn as nn
 import torch.nn.functional as F
 from flex import *
+from torchvision.models import resnet18
+from zoom_att import *
+
+
+def build_resnet18_for_cifar10():
+    model = resnet18(weights=None)
+    
+    model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+    model.maxpool = nn.Identity() 
+    model.fc = nn.Linear(512, 10)
+    return model
 
 class FastCNN(nn.Module):
     def __init__(self):
@@ -157,4 +168,41 @@ class ConvViTHybrid(nn.Module):
         else:
             return self.mlp_head(x)
 
-# class ZoomAt(nn.Module):
+class ZoomVisionTransformer(nn.Module):
+    def __init__(self, device, num_classes, num_layers=2, embed_dim=256, num_heads=4):
+        super().__init__()
+        self.register_buffer("dist_matrix", self.compute_token_distance_matrix(device=device))
+        self.backbone = ResNetBackbone()
+        self.token_proj = nn.Linear(self.backbone.out_dim, embed_dim)
+        self.zoom_controller = ZoomController(self.backbone.out_dim, out_dim=1)
+
+        self.transformer_blocks = nn.ModuleList([
+            ZoomTransformerBlock(embed_dim, num_heads, self.dist_matrix)
+            for _ in range(num_layers)
+        ])
+
+        self.cls_head = nn.Sequential(
+            nn.LayerNorm(embed_dim),
+            nn.Linear(embed_dim, num_classes)
+        )
+
+    def forward(self, x):
+        feat_map, pooled = self.backbone(x)        # [B, C, 8, 8], [B, C]
+        gamma = self.zoom_controller(pooled)       # [B, 1]
+        tokens = feat_map.flatten(2).transpose(1, 2)  # [B, N, C]
+        tokens = self.token_proj(tokens)             # [B, N, D]
+
+        for block in self.transformer_blocks:
+            tokens = block(tokens, gamma)
+
+        out = tokens.mean(dim=1)  # Mean pooling
+        return self.cls_head(out), gamma
+
+    def compute_token_distance_matrix(self, h=8, w=8, device="cpu"):
+        coords = torch.stack(torch.meshgrid(
+            torch.arange(h), torch.arange(w), indexing='ij'
+        ), dim=-1)  # [H, W, 2]
+        coords = coords.view(-1, 2).float()  # [N, 2]
+        dist = torch.cdist(coords, coords, p=2)  # [N, N]
+        return dist.to(device)
+
