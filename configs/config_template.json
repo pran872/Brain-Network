@@ -18,6 +18,6 @@
     "use_flex": false,
     
     "early_stopping": true,
-    "patience": 5,
+    "patience": 10,
     "min_diff": 0.001
 }
