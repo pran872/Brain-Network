@@ -156,3 +156,5 @@ class ConvViTHybrid(nn.Module):
             return self.mlp_head(x), conv_ratio
         else:
             return self.mlp_head(x)
+
+# class ZoomAt(nn.Module):

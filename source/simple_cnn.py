@@ -330,22 +330,22 @@ def main():
         input_size = (32, 32)
         transform_train_list = [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
         transform_test_list = [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+        transform_custom = [transforms.RandomCrop(32, padding=4), 
+                            transforms.RandomHorizontalFlip(),
+                            transforms.ToTensor(),
+                            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
         if model_type == "fast_cnn":
             model = FastCNN().to(device)
         elif model_type == "fast_cnn2":
             model = FastCNN2().to(device)
+            transform_train_list = transform_custom
         elif model_type == "flex_net":
             model = FlexNet(device=device).to(device)
         elif model_type == "custom_vit":
             model = ConvViTHybrid(device=device, use_flex=use_flex).to(device)
         elif model_type == "resnet18":
             model = build_resnet18_for_cifar10().to(device)
-            resnet_custom_transform = config.get('resnet_custom_transform', False)
-            if resnet_custom_transform:
-                transform_train_list = [transforms.RandomCrop(32, padding=4), 
-                                        transforms.RandomHorizontalFlip(),
-                                        transforms.ToTensor(),
-                                        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+            transform_train_list = transform_custom
 
         transform_train = transforms.Compose(transform_train_list)
         transform_test = transforms.Compose(transform_test_list)
