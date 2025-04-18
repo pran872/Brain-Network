@@ -169,12 +169,15 @@ class ConvViTHybrid(nn.Module):
             return self.mlp_head(x)
 
 class ZoomVisionTransformer(nn.Module):
-    def __init__(self, device, num_classes, num_layers=2, embed_dim=256, num_heads=4):
+    def __init__(self, device, num_classes, num_layers=2, embed_dim=256, num_heads=4, num_patches=64):
         super().__init__()
         self.register_buffer("dist_matrix", self.compute_token_distance_matrix(device=device))
         self.backbone = ResNetBackbone()
         self.token_proj = nn.Linear(self.backbone.out_dim, embed_dim)
         self.zoom_controller = ZoomController(self.backbone.out_dim, out_dim=1)
+        
+        self.pos_embed = nn.Parameter(torch.zeros(1, num_patches, embed_dim))
+        nn.init.trunc_normal_(self.pos_embed, std=0.02) # std by convention
 
         self.transformer_blocks = nn.ModuleList([
             ZoomTransformerBlock(embed_dim, num_heads, self.dist_matrix)
@@ -191,6 +194,7 @@ class ZoomVisionTransformer(nn.Module):
         gamma = self.zoom_controller(pooled)       # [B, 1]
         tokens = feat_map.flatten(2).transpose(1, 2)  # [B, N, C]
         tokens = self.token_proj(tokens)             # [B, N, D]
+        tokens = tokens + self.pos_embed
 
         for block in self.transformer_blocks:
             tokens = block(tokens, gamma)

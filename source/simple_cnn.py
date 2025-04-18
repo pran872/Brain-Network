@@ -126,6 +126,7 @@ def train_model(
     best_model = {"val_loss": float("inf"),
                   "model_state": None,
                   "epoch": 0}
+    gamma_by_class = {i: [] for i in range(10)}
 
     for epoch in range(epochs):
         start = time.time()
@@ -171,6 +172,8 @@ def train_model(
                 if isinstance(outputs, tuple): 
                     if isinstance(model, ZoomVisionTransformer):
                         outputs, gamma = outputs
+                        for g, label in zip(gamma, labels):
+                            gamma_by_class[label.item()].append(g.item())
                     else:
                         # For flex network
                         outputs, conv_ratio = outputs
@@ -204,6 +207,8 @@ def train_model(
             elif isinstance(model, ZoomVisionTransformer):
                 writer.add_scalar("Gamma/mean", gamma.mean().item(), epoch)
                 writer.add_scalar("Gamma/std", gamma.std().item(), epoch)
+                for c in range(10):
+                    writer.add_scalar(f"Gamma/Class_{c}", np.mean(gamma_by_class[c]), epoch)
 
         if verbose:
             logger.info(f"Epoch {epoch+1}: Train Loss={avg_train_loss:.4f}, Train Acc={train_acc:.2f}% | "
@@ -398,9 +403,10 @@ def main():
             verbose
         )
         torch.save(best_model["model_state"], f"{log_dir}/{run_name}_{time_stamp}_e{best_model['epoch']}_best_model.pt")
-        logger.info(f"Best model with lowest val loss {best_model['val_loss']} saved.")
+        logger.info(f"Best model with lowest val loss {best_model['val_loss']} at {best_model['epoch']} epoch is saved.")
 
-        test_acc, test_loss = test_model(best_model, test_loader, device, criterion, writer, logger, verbose)
+        model.load_state_dict(best_model["model_state"])
+        test_acc, test_loss = test_model(model, test_loader, device, criterion, writer, logger, verbose)
 
         with open(f"{log_dir}/metrics_{run_name}_{time_stamp}.csv", "w+") as f:
             f.write("epoch,train_loss,val_loss,train_acc,val_acc\n")
