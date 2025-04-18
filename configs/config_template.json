@@ -13,11 +13,11 @@
     "optimizer": "adam",
     "criterion": "CE",
     "lr": 0.001,
-    "epochs": 30,
+    "epochs": 50,
 
     "use_flex": false,
     
-    "early_stopping": false,
+    "early_stopping": true,
     "patience": 5,
     "min_diff": 0.001
 }
