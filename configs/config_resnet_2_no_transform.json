@@ -1,5 +1,5 @@
 {
-    "run_name": "resnet18_1",
+    "run_name": "resnet18_2_no_transform",
     "writer": true,
 
     "seed": 42,
@@ -16,7 +16,7 @@
     "epochs": 50,
 
     "use_flex": false,
-    "resnet_custom_transform": true,
+    "resnet_custom_transform": false,
     
     "early_stopping": true,
     "patience": 5,

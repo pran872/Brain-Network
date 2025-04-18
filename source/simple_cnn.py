@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
+from torchvision.models import resnet18
 from torch.utils.data import DataLoader, random_split
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torchinfo import summary
@@ -39,6 +40,13 @@ class EarlyStopping:
             if self.counter >= self.patience:
                 self.should_stop = True
 
+def build_resnet18_for_cifar10():
+    model = resnet18(weights=None)
+    
+    model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+    model.maxpool = nn.Identity() 
+    model.fc = nn.Linear(512, 10)
+    return model
 
 def set_seed(seed=42):
     random.seed(seed)
@@ -76,13 +84,24 @@ def get_logger(log_dir):
         logger.addHandler(fh)
     return logger
 
-def load_data(transform, train_split, batch_size, num_workers):
-    full_train_set = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+def load_data(transform_train, transform_test, train_split, batch_size, num_workers, debug=False):
+    full_train_set = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
+    test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
+   
+    if debug:
+        subset_indices = list(range(0, 500))
+        train_subset = torch.utils.data.Subset(full_train_set, subset_indices)
+        val_subset = torch.utils.data.Subset(full_train_set, subset_indices)
+        test_subset = torch.utils.data.Subset(test_set, subset_indices)
+        
+        train_loader = DataLoader(train_subset, batch_size=64, shuffle=True, num_workers=1)
+        val_loader = DataLoader(val_subset, batch_size=64, shuffle=False, num_workers=1)
+        test_loader = DataLoader(test_subset, batch_size=64, shuffle=False, num_workers=1)
+        return train_loader, val_loader, test_loader
 
     train_size = int(train_split * len(full_train_set))
     val_size = len(full_train_set) - train_size
     train_set, val_set = random_split(full_train_set, [train_size, val_size])
-    test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 
     # Loaders
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
@@ -245,7 +264,13 @@ def parse_args():
         "-v", "--verbose", 
         action="store_true",
         required=False,
-        help="Increase output verbosity"
+        help="Print statements"
+    )
+    parser.add_argument(
+        "-d", "--debug", 
+        action="store_true",
+        required=False,
+        help="Run on debug mode"
     )
 
     args = parser.parse_args()
@@ -258,11 +283,11 @@ def parse_args():
             print("Config not provided. Using defualts")
         config = {}
     
-    return config, args.verbose
+    return config, args.verbose, args.debug
 
 def main():
     try:
-        config, verbose = parse_args()
+        config, verbose, debug = parse_args()
         seed = config.get("seed", 42)
         train_split = config.get('train_split', 0.9)
         batch_size = config.get("batch_size", 256)
@@ -286,7 +311,7 @@ def main():
         logger.info(f"Logging run: {log_dir}")
         logger.info("Config:\n" + json.dumps(config, indent=2))
 
-        assert model_type in ["fast_cnn", "fast_cnn2", "flex_net", "deit", "custom_vit"], "Invalid model type"
+        assert model_type in ["fast_cnn", "fast_cnn2", "flex_net", "custom_vit", "resnet18"], "Invalid model type"
         assert optimizer in ["adam"], "Invalid optimizer"
         assert criterion in ["CE"], "Invalid criterion"
 
@@ -300,26 +325,39 @@ def main():
         if verbose:
             logger.info(f"Using device: {device}")
             logger.info(f"Training for {epochs} epochs")
+            logger.info(f"Debug mode: {debug}")
 
         input_size = (32, 32)
-        transform_list = [transforms.ToTensor()]
+        transform_train_list = [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+        transform_test_list = [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
         if model_type == "fast_cnn":
             model = FastCNN().to(device)
         elif model_type == "fast_cnn2":
             model = FastCNN2().to(device)
         elif model_type == "flex_net":
             model = FlexNet(device=device).to(device)
-        elif model_type == "deit":
-            model = timm.create_model('deit_tiny_patch16_224', pretrained=False, num_classes=10)
-            input_size = (224, 224)
-            transform_list.append(transforms.Resize(input_size))
         elif model_type == "custom_vit":
             model = ConvViTHybrid(device=device, use_flex=use_flex).to(device)
+        elif model_type == "resnet18":
+            model = build_resnet18_for_cifar10().to(device)
+            resnet_custom_transform = config.get('resnet_custom_transform', False)
+            if resnet_custom_transform:
+                transform_train_list = [transforms.RandomCrop(32, padding=4), 
+                                        transforms.RandomHorizontalFlip(),
+                                        transforms.ToTensor(),
+                                        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
 
-        transform_list.append(transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))
-        transform = transforms.Compose(transform_list)
+        transform_train = transforms.Compose(transform_train_list)
+        transform_test = transforms.Compose(transform_test_list)
 
-        train_loader, val_loader, test_loader = load_data(transform, train_split, batch_size, num_workers)
+        train_loader, val_loader, test_loader = load_data(
+            transform_train,
+            transform_test,
+            train_split,
+            batch_size,
+            num_workers,
+            debug=debug
+        )
 
         summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
         with open(f"{log_dir}/model_summary.txt", "w") as f:

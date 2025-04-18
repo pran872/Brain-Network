@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -N brainnet_exp1
 #PBS -l select=1:ncpus=4:mem=8gb:ngpus=1
-#PBS -l walltime=45:00:00 
+#PBS -l walltime=2:00:00 
 #PBS -o job_logs/train.out
 #PBS -e job_logs/train.err
 #PBS -j oe
