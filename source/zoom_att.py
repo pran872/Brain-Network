@@ -33,26 +33,29 @@ class ZoomController(nn.Module):
         return self.mlp(x) # [B, out_dim]
 
 class ZoomAttention(nn.Module):
-    def __init__(self, dim, num_heads, dist_matrix, dropout=0.0):
+    def __init__(self, dim, num_heads, dist_matrix, dropout=0.0, standard_scale=False):
         super().__init__()
         self.num_heads = num_heads
-        self.scale = dim ** -0.5
+        if standard_scale:
+            self.scale = (dim // num_heads) ** -0.5
+        else:
+            self.scale = dim ** -0.5
         self.qkv = nn.Linear(dim, dim * 3)
         self.proj = nn.Linear(dim, dim)
         self.attn_drop = nn.Dropout(dropout)
         self.proj_drop = nn.Dropout(dropout)
 
-        self.register_buffer('dist_matrix', dist_matrix)  # [N, N]
+        self.register_buffer('dist_matrix', dist_matrix) # [N, N]
 
-    def forward(self, x, gamma):  # gamma: [B, 1]
+    def forward(self, x, gamma): # gamma: [B, 1]
         B, N, D = x.shape
         H = self.num_heads
         qkv = self.qkv(x).reshape(B, N, 3, H, D // H).permute(2, 0, 3, 1, 4)
         q, k, v = qkv[0], qkv[1], qkv[2]  # [B, H, N, D_head]
 
         attn_scores = (q @ k.transpose(-2, -1)) * self.scale  # [B, H, N, N]
-        gamma = gamma.view(B, 1, 1, 1)                       # [B, 1, 1, 1]
-        dist = self.dist_matrix.unsqueeze(0).unsqueeze(0)   # [1, 1, N, N]
+        gamma = gamma.view(B, 1, 1, 1) # [B, 1, 1, 1]
+        dist = self.dist_matrix.unsqueeze(0).unsqueeze(0) # [1, 1, N, N]
         attn_scores = attn_scores - gamma * dist
 
         attn_weights = self.attn_drop(attn_scores.softmax(dim=-1))
@@ -61,10 +64,10 @@ class ZoomAttention(nn.Module):
         return self.proj_drop(self.proj(out))
 
 class ZoomTransformerBlock(nn.Module):
-    def __init__(self, dim, num_heads, dist_matrix, mlp_ratio=4.0):
+    def __init__(self, dim, num_heads, dist_matrix, mlp_ratio=4.0, dropout_ratio=0.0, standard_scale=False):
         super().__init__()
         self.norm1 = nn.LayerNorm(dim)
-        self.attn = ZoomAttention(dim, num_heads, dist_matrix)
+        self.attn = ZoomAttention(dim, num_heads, dist_matrix, dropout_ratio, standard_scale)
         self.norm2 = nn.LayerNorm(dim)
         self.mlp = nn.Sequential(
             nn.Linear(dim, int(dim * mlp_ratio)),

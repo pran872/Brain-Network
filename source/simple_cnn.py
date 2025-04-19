@@ -131,7 +131,7 @@ def load_data(
     if downsample_fraction > 0:
         full_train_set = class_balanced_subset(full_train_set, downsample_fraction)
     elif few_shot:
-        full_train_set = few_shot(full_train_set, few_shot)
+        full_train_set = few_shot_subset(full_train_set, few_shot)
 
     train_size = int(train_split * len(full_train_set))
     val_size = len(full_train_set) - train_size
@@ -181,11 +181,8 @@ def train_model(
             outputs = model(images)
 
             if isinstance(outputs, tuple): 
-                if isinstance(model, ZoomVisionTransformer):
-                    outputs, gamma = outputs
-                else:
-                    # For flex network
-                    outputs, conv_ratio = outputs
+                # For flex network
+                outputs, conv_ratio = outputs
     
             loss = criterion(outputs, labels)
             loss.backward()
@@ -219,14 +216,16 @@ def train_model(
                     images, labels = images.to(device), labels.to(device)
                     outputs = model(images)
 
+                    if isinstance(model, ZoomVisionTransformer):
+                        outputs, gamma = model(images, return_gamma=True)
+                        for g, label in zip(gamma, labels):
+                            gamma_by_class[label.item()].append(g.item())
+                    else:
+                        outputs = model(images)
+
                     if isinstance(outputs, tuple): 
-                        if isinstance(model, ZoomVisionTransformer):
-                            outputs, gamma = outputs
-                            for g, label in zip(gamma, labels):
-                                gamma_by_class[label.item()].append(g.item())
-                        else:
-                            # For flex network
-                            outputs, conv_ratio = outputs
+                        # For flex network
+                        outputs, conv_ratio = outputs
                     
                     loss = criterion(outputs, labels)
                     val_loss += loss.item()
@@ -303,30 +302,32 @@ def test_model(model,
     model.eval()
     correct, total, total_loss = 0, 0, 0
     y_pred, y_true = [], []
-    with torch.no_grad():
-        for images, labels in tqdm(test_loader, desc="Testing", disable=not sys.stdout.isatty()):
-            images, labels = images.to(device), labels.to(device)
+    for images, labels in tqdm(test_loader, desc="Testing", disable=not sys.stdout.isatty()):
+        images, labels = images.to(device), labels.to(device)
 
-            if attacker:
-                adv_images = attacker(images, labels)
-                outputs = model(adv_images)
-            elif gaussian_std:
+        if attacker:
+            images.requires_grad = True
+            adv_images = attacker(images, labels)
+            outputs = model(adv_images)
+        elif gaussian_std:
+            with torch.no_grad():
                 noisy_images = add_gaussian_noise(images, std=gaussian_std)
                 outputs = model(noisy_images)
-            else:
+        else:
+            with torch.no_grad():
                 outputs = model(images)
 
-            if isinstance(outputs, tuple): 
-                # For flex network
-                outputs, conv_ratio = outputs
+        if isinstance(outputs, tuple): 
+            # For flex network
+            outputs, _ = outputs
 
-            _, predicted = outputs.max(1)
-            total_loss += criterion(outputs, labels)
-            total += labels.size(0)
-            correct += predicted.eq(labels).sum().item()
+        _, predicted = outputs.max(1)
+        total_loss += criterion(outputs, labels)
+        total += labels.size(0)
+        correct += predicted.eq(labels).sum().item()
 
-            y_pred.append(predicted.cpu().numpy())
-            y_true.append(labels.cpu().numpy())
+        y_pred.append(predicted.cpu().numpy())
+        y_true.append(labels.cpu().numpy())
     
     y_pred = np.concatenate(y_pred)
     y_true = np.concatenate(y_true)
@@ -400,6 +401,8 @@ def set_config_defaults(config):
         "mlp_end": config.get("mlp_end", False),
         "add_cls_token": config.get("add_cls_token", False),
         "num_layers": config.get("num_layers", 2),
+        "trans_dropout_ratio": config.get("trans_dropout_ratio", 0.0),
+        "standard_scale": config.get("standard_scale", False),
 
         # Data
         "transform_type": config.get("transform_type", "custom"), # "custom", "custom_agg", "default"
@@ -437,7 +440,9 @@ def main():
         assert config["optimizer"] in ["adam"], "Invalid optimizer"
         assert config["criterion"] in ["CE"], "Invalid criterion"
         assert config["scheduler"] in ["CosineAnnealingLR", "ReduceLROnPlateau"], "Invalid scheduler"
-        assert config["attacker"] in [False, "FGSM", "PGD", "gaussian"], "Invalid attacker"
+        assert config["attacker"] in [False, "FGSM", "PGD"], "Invalid attacker"
+        assert (config["attacker"] and config["epsilon"]) or not config["attacker"], "Invalid"
+        assert (config["gaussian_std"] and isinstance(config["gaussian_std"], float)) or not config["gaussian_std"], "Invalid"
 
         if config["few_shot"] and config["downsample_fraction"] > 0:
             logger.info("Few shot and downsampling fraction provided! Only doing downsampling.")
@@ -453,7 +458,6 @@ def main():
         logger.info(f"Training for {config['epochs']} epochs")
         logger.info(f"Debug mode: {debug}")
         logger.info(f"Downsampling by: {config['downsample_fraction']}")
-        print(f"Downsampling by: {config['downsample_fraction']}")
 
         input_size = (32, 32)
         norm_means, norm_stds = [0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]
@@ -490,6 +494,8 @@ def main():
                 mlp_end=config["mlp_end"],
                 add_cls_token=config["add_cls_token"],
                 num_layers=config["num_layers"],
+                trans_dropout_ratio=config["trans_dropout_ratio"],
+                standard_scale=config["standard_scale"]
             ).to(device)
         
         if config["transform_type"] == "custom":
@@ -560,7 +566,7 @@ def main():
             test_loader, 
             device, 
             criterion, 
-            writer, 
+            writer if config["writer"] else False, 
             logger, 
             attacker if config["attacker"] else False, 
             config["gaussian_std"]
@@ -575,7 +581,7 @@ def main():
             test_loader,
             device,
             criterion,
-            writer,
+            writer if config["writer"] else False,
             logger,
             attacker if config["attacker"] else False,
             config["gaussian_std"]

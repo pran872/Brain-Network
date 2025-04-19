@@ -14,7 +14,7 @@
     "scheduler": "ReduceLROnPlateau",
     "criterion": "CE",
     "lr": 0.001,
-    "epochs": 2,
+    "epochs": 1,
     
     "early_stopping": true,
     "patience": 10,
@@ -30,6 +30,8 @@
     "transform_type": "custom",
     "label_smoothing": 0,
     "ema": false,
+    "trans_dropout_ratio": 0.0,
+    "standard_scale": false,
 
     "downsample_fraction": 0,
     "few_shot": false,

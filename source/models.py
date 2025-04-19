@@ -178,6 +178,8 @@ class ZoomVisionTransformer(nn.Module):
         mlp_end=False,
         add_cls_token=False,
         num_layers=2,
+        trans_dropout_ratio=0.0,
+        standard_scale=False,
         embed_dim=256,
         num_heads=4,
         num_patches=64
@@ -209,7 +211,13 @@ class ZoomVisionTransformer(nn.Module):
                 self.dropout = nn.Dropout(0.1)
             
         self.transformer_blocks = nn.ModuleList([
-            ZoomTransformerBlock(embed_dim, num_heads, self.dist_matrix)
+            ZoomTransformerBlock(
+                embed_dim, 
+                num_heads, 
+                self.dist_matrix, 
+                dropout_ratio=trans_dropout_ratio, 
+                standard_scale=standard_scale
+            )
             for _ in range(num_layers)
         ])
 
@@ -226,7 +234,7 @@ class ZoomVisionTransformer(nn.Module):
                 nn.Linear(embed_dim, num_classes)
             )
 
-    def forward(self, x):
+    def forward(self, x, return_gamma=False):
         feat_map, pooled = self.backbone(x) # [B, C, 8, 8], [B, C]
         gamma = self.zoom_controller(pooled) # [B, 1]
         tokens = feat_map.flatten(2).transpose(1, 2) # [B, N, C]
@@ -247,7 +255,10 @@ class ZoomVisionTransformer(nn.Module):
         out = tokens[:, 0] if self.add_cls_token else tokens.mean(dim=1)
         out = self.mlp_head(out) if self.mlp_end else self.cls_head(out)
 
-        return out, gamma
+        if return_gamma:
+            return out, gamma
+        else:
+            return out
 
     def compute_token_distance_matrix(self, h=8, w=8, device="cpu"):
         coords = torch.stack(torch.meshgrid(
