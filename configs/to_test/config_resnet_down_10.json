@@ -1,5 +1,5 @@
 {
-    "run_name": "zoom",
+    "run_name": "resnet18_norm",
     "writer": true,
 
     "seed": 42,
@@ -9,12 +9,12 @@
     "batch_size": 256,
     "num_workers": 2,
 
-    "model_type": "zoom",
+    "model_type": "resnet18",
     "optimizer": "adam",
     "scheduler": "ReduceLROnPlateau",
     "criterion": "CE",
     "lr": 0.001,
-    "epochs": 2,
+    "epochs": 50,
     
     "early_stopping": true,
     "patience": 10,
@@ -31,5 +31,5 @@
     "label_smoothing": 0,
     "ema": false,
 
-    "downsample_fraction": 0
+    "downsample_fraction": 0.1
 }
