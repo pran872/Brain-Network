@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader, random_split, Subset
 from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingLR
 from torchvision.transforms.autoaugment import AutoAugmentPolicy
 from torch_ema import ExponentialMovingAverage
@@ -77,15 +77,30 @@ def get_logger(log_dir):
         logger.addHandler(fh)
     return logger
 
+def class_balanced_subset(dataset, fraction):
+    targets = np.array(dataset.targets)
+    classes = np.unique(targets)
+    indices = []
+
+    for cls in classes:
+        cls_idx = np.where(targets == cls)[0]
+        selected = np.random.choice(cls_idx, size=int(len(cls_idx) * fraction), replace=False)
+        indices.extend(selected)
+
+    np.random.shuffle(indices) 
+    return Subset(dataset, indices)
+
 def load_data(transform_train, transform_test, train_split, batch_size, num_workers, debug=False):
     full_train_set = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
     test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
+
+    # class_balanced_subset(full_train_set, 0.1)
    
     if debug:
         subset_indices = list(range(0, 200))
-        train_subset = torch.utils.data.Subset(full_train_set, subset_indices)
-        val_subset = torch.utils.data.Subset(full_train_set, subset_indices)
-        test_subset = torch.utils.data.Subset(test_set, subset_indices)
+        train_subset = Subset(full_train_set, subset_indices)
+        val_subset = Subset(full_train_set, subset_indices)
+        test_subset = Subset(test_set, subset_indices)
         
         train_loader = DataLoader(train_subset, batch_size=64, shuffle=True, num_workers=1)
         val_loader = DataLoader(val_subset, batch_size=64, shuffle=False, num_workers=1)
@@ -120,8 +135,7 @@ def train_model(
     early_stopping,
     ema,
     writer,
-    logger,
-    verbose=True
+    logger
 ):
 
     train_losses, val_losses = [], []
@@ -224,9 +238,8 @@ def train_model(
                 for c in range(10):
                     writer.add_scalar(f"Gamma/Class_{c}", np.mean(gamma_by_class[c]), epoch)
 
-        if verbose:
-            logger.info(f"Epoch {epoch+1}: Train Loss={avg_train_loss:.4f}, Train Acc={train_acc:.2f}% | "
-              f"Val Loss={avg_val_loss:.4f}, Val Acc={val_acc:.2f}% | Time: {end - start:.2f}s")
+        logger.info(f"Epoch {epoch+1}: Train Loss={avg_train_loss:.4f}, Train Acc={train_acc:.2f}% | "
+            f"Val Loss={avg_val_loss:.4f}, Val Acc={val_acc:.2f}% | Time: {end - start:.2f}s")
         
         if avg_val_loss < best_model["val_loss"]:
             best_model["val_loss"] = avg_val_loss
@@ -248,7 +261,7 @@ def train_model(
 
     return best_model, last_model, train_losses, val_losses, train_accuracies, val_accuracies
 
-def test_model(model, test_loader, device, criterion, writer, logger, verbose=True):
+def test_model(model, test_loader, device, criterion, writer, logger):
     model.eval()
     correct, total, total_loss = 0, 0, 0
     with torch.no_grad():
@@ -271,8 +284,7 @@ def test_model(model, test_loader, device, criterion, writer, logger, verbose=Tr
         writer.add_text("Test/Accuracy", f"{test_acc:.2f}%")
         writer.add_text("Test/Loss", f"{test_loss:.4f}")
 
-    if verbose:
-        logger.info(f"Test Accuracy: {test_acc:.2f}% | Test Loss: {test_loss:.2f}")
+    logger.info(f"Test Accuracy: {test_acc:.2f}% | Test Loss: {test_loss:.2f}")
     return test_acc, test_loss
 
 def parse_args():
@@ -283,12 +295,6 @@ def parse_args():
         required=False, 
         default=None,
         help="Config file. If not provided, defaults will be used."
-    )
-    parser.add_argument(
-        "-v", "--verbose", 
-        action="store_true",
-        required=False,
-        help="Print statements"
     )
     parser.add_argument(
         "-d", "--debug", 
@@ -304,39 +310,54 @@ def parse_args():
     except (json.JSONDecodeError, TypeError) as e:
         config = {}
     
-    return config, args.verbose, args.debug
+    return config, args.debug
+
+def set_config_defaults(config):
+    config = {
+        "seed": config.get("seed", 42),
+        "run_name": config.get("run_name", "run"),
+
+        # Model and training details
+        "model_type": config.get("model_type", "fast_cnn"), # "fast_cnn", "fast_cnn2", "flex_net", "custom_vit", "resnet18", "zoom",
+        "optimizer": config.get("optimizer", "adam"),
+        "scheduler": config.get("scheduler", "ReduceLROnPlateau"), # or CosineAnnealingLR
+        "criterion": config.get("criterion", "CE"),
+        "label_smoothing": config.get("label_smoothing", 0), # smoothing for criterion
+        "train_split": config.get("train_split", 0.9),
+        "batch_size": config.get("batch_size", 256),
+        "num_workers": config.get("num_workers", 1),
+        "lr": config.get("lr", 0.001),
+        "epochs": config.get("epochs", 1),
+        "ema": config.get("ema", False), # Exponential Moving Average
+    
+        # Early stopping
+        "early_stopping": config.get("early_stopping", True),
+        "min_diff": config.get("min_diff", 0.001),
+        "writer": config.get("writer", True),
+        "patience": config.get("patience", 5),
+
+        # CustomVit specific config
+        "use_flex": config.get("use_flex", False),
+
+        # ZoomViT-specific configs
+        "use_pos_embed": config.get("use_pos_embed", False),
+        "add_dropout": config.get("add_dropout", False),
+        "mlp_end": config.get("mlp_end", False),
+        "add_cls_token": config.get("add_cls_token", False),
+        "num_layers": config.get("num_layers", 2),
+
+        # Data
+        "transform_type": config.get("transform_type", "custom"), # "custom", "custom_agg", "default"
+    }
+    return config
 
 def main():
     try:
-        config, verbose, debug = parse_args()
-        seed = config.get("seed", 42)
-        train_split = config.get('train_split', 0.9)
-        batch_size = config.get("batch_size", 256)
-        num_workers = config.get("num_workers", 1)
-        model_type = config.get("model_type", "fast_cnn")
-        optimizer = config.get("optimizer", "adam")
-        scheduler = config.get("scheduler", "ReduceLROnPlateau")
-        criterion = config.get("criterion", "CE")
-        lr = config.get("lr", 0.001)
-        epochs = config.get("epochs", 1)
-        writer = config.get("writer", True)
-        run_name = config.get('run_name', 'run')
-        early_stopping = config.get("early_stopping", True)
-        patience = config.get("patience", 5)
-        min_diff = config.get("min_diff", 0.001)
-        use_flex = config.get("use_flex", False)
-
-        use_pos_embed = config.get("use_pos_embed", False)
-        add_dropout = config.get("add_dropout", False)
-        mlp_end = config.get("mlp_end", False)
-        add_cls_token = config.get("add_cls_token", False)
-        num_layers = config.get("num_layers", 2)
-        transform_type = config.get("transform_type", "custom")
-        label_smoothing = config.get("label_smoothing", 0)
-        ema = config.get("ema", False)
+        config, debug = parse_args()
+        config = set_config_defaults(config)
 
         time_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
-        log_dir = get_log_dir(run_name, time_stamp)
+        log_dir = get_log_dir(config["run_name"], time_stamp)
         logger = get_logger(log_dir)
         logger.info("Job Started")
         logger.info(f"Logging run: {log_dir}")
@@ -350,72 +371,72 @@ def main():
             "resnet18",
             "zoom",
         ]
-        assert model_type in valid_models, "Invalid model type"
-        assert optimizer in ["adam"], "Invalid optimizer"
-        assert criterion in ["CE"], "Invalid criterion"
-        assert scheduler in ["CosineAnnealingLR", "ReduceLROnPlateau"], "Invalid scheduler"
+        assert config["model_type"] in valid_models, "Invalid model type"
+        assert config["optimizer"] in ["adam"], "Invalid optimizer"
+        assert config["criterion"] in ["CE"], "Invalid criterion"
+        assert config["scheduler"] in ["CosineAnnealingLR", "ReduceLROnPlateau"], "Invalid scheduler"
 
-        if writer:
+        if config["writer"]:
             writer = SummaryWriter(log_dir=log_dir)
             writer.add_text("config", json.dumps(config, indent=2))
 
-        set_seed(seed)
+        set_seed(config["seed"])
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        if verbose:
-            logger.info(f"Using device: {device}")
-            logger.info(f"Training for {epochs} epochs")
-            logger.info(f"Debug mode: {debug}")
+        logger.info(f"Using device: {device}")
+        logger.info(f"Training for {config['epochs']} epochs")
+        logger.info(f"Debug mode: {debug}")
 
         input_size = (32, 32)
-        transform_train = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-        transform_test = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        norm_means, norm_stds = [0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]
+        transform_train = transforms.Compose([transforms.ToTensor(), transforms.Normalize(norm_means, norm_stds)])
+        transform_test = transforms.Compose([transforms.ToTensor(), transforms.Normalize(norm_means, norm_stds)])
         custom_transform = transforms.Compose([
             transforms.RandomCrop(32, padding=4), 
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+            transforms.Normalize(norm_means, norm_stds)
         ])
         custom_transform_agg = transforms.Compose([
             transforms.RandomCrop(32, padding=4),
             transforms.AutoAugment(policy=AutoAugmentPolicy.CIFAR10),
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+            transforms.Normalize(norm_means, norm_stds)
         ])
-        if model_type == "fast_cnn":
+        if config["model_type"] == "fast_cnn":
             model = FastCNN().to(device)
-        elif model_type == "fast_cnn2":
+        elif config["model_type"] == "fast_cnn2":
             model = FastCNN2().to(device)
-        elif model_type == "flex_net":
+        elif config["model_type"] == "flex_net":
             model = FlexNet(device=device).to(device)
-        elif model_type == "custom_vit":
-            model = ConvViTHybrid(device=device, use_flex=use_flex).to(device)
-        elif model_type == "resnet18":
+        elif config["model_type"] == "custom_vit":
+            model = ConvViTHybrid(device=device, use_flex=config["use_flex"]).to(device)
+        elif config["model_type"] == "resnet18":
             model = build_resnet18_for_cifar10().to(device)
-        elif model_type == "zoom":
+        elif config["model_type"] == "zoom":
             model = ZoomVisionTransformer(
                 device=device, 
                 num_classes=10, 
-                use_pos_embed=use_pos_embed,
-                add_dropout=add_dropout,
-                mlp_end=mlp_end,
-                add_cls_token=add_cls_token,
-                num_layers=num_layers,
+                use_pos_embed=config["use_pos_embed"],
+                add_dropout=config["add_dropout"],
+                mlp_end=config["mlp_end"],
+                add_cls_token=config["add_cls_token"],
+                num_layers=config["num_layers"],
             ).to(device)
         
-        if transform_type == "custom":
+        if config["transform_type"] == "custom":
             logger.info("Using custom transform")
             transform_train = custom_transform
-        elif transform_type == "custom_agg":
+        elif config["transform_type"] == "custom_agg":
             logger.info("Using custom agg transform")
             transform_train = custom_transform_agg
 
         train_loader, val_loader, test_loader = load_data(
             transform_train,
             transform_test,
-            train_split,
-            batch_size,
-            num_workers,
+            config["train_split"],
+            config["batch_size"],
+            config["num_workers"],
             debug=debug
         )
 
@@ -423,51 +444,50 @@ def main():
         with open(f"{log_dir}/model_summary.txt", "w") as f:
             f.write(str(summary_str))
     
-        if optimizer == "adam":
-            optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4)
+        if config["optimizer"] == "adam":
+            optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"], weight_decay=1e-4)
         
-        if scheduler == "ReduceLROnPlateau":
+        if config["scheduler"] == "ReduceLROnPlateau":
             scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3)
-        elif scheduler == "CosineAnnealingLR":
+        elif config["scheduler"] == "CosineAnnealingLR":
             scheduler = CosineAnnealingLR(optimizer, T_max=30)
         
-        if criterion == "CE":
-            logger.info(f"Label smoothing: {label_smoothing}")
-            criterion = nn.CrossEntropyLoss(label_smoothing=label_smoothing)
+        if config["criterion"] == "CE":
+            logger.info(f"Label smoothing: {config['label_smoothing']}")
+            criterion = nn.CrossEntropyLoss(label_smoothing=config["label_smoothing"])
 
-        if early_stopping:
-            early_stopping = EarlyStopping(patience, min_diff)
+        if config["early_stopping"]:
+            early_stopping = EarlyStopping(config["patience"], config["min_diff"])
         
-        if ema:
+        if config["ema"]:
             logger.info("Using EMA")
             ema = ExponentialMovingAverage(model.parameters(), decay=0.999)
 
         best_loss_model, last_model, train_losses, val_losses, train_acc, val_acc = train_model(
             model, 
-            epochs, 
+            config["epochs"], 
             train_loader, 
             val_loader,
             device,
             optimizer,
             criterion,
             scheduler,
-            early_stopping,
-            ema,
-            writer,
-            logger,
-            verbose
+            early_stopping if config["early_stopping"] else False,
+            ema if config["ema"] else False,
+            writer if config["writer"] else False,
+            logger
         )
-        torch.save(best_loss_model["model_state"], f"{log_dir}/{run_name}_{time_stamp}_e{best_loss_model['epoch']}_best_model.pt")
+        torch.save(best_loss_model["model_state"], f"{log_dir}/{config['run_name']}_{time_stamp}_e{best_loss_model['epoch']}_best_model.pt")
         logger.info(f"Best model with lowest val loss {best_loss_model['val_loss']} at {best_loss_model['epoch']} epoch is saved.")
         model.load_state_dict(best_loss_model["model_state"])
-        best_model_test_acc, best_model_test_loss = test_model(model, test_loader, device, criterion, writer, logger, verbose)
+        best_model_test_acc, best_model_test_loss = test_model(model, test_loader, device, criterion, writer, logger)
 
-        torch.save(last_model["model_state"], f"{log_dir}/{run_name}_{time_stamp}_e{last_model['epoch']}_last_model.pt")
+        torch.save(last_model["model_state"], f"{log_dir}/{config['run_name']}_{time_stamp}_e{last_model['epoch']}_last_model.pt")
         logger.info(f"Last model with val loss {last_model['val_loss']} at {last_model['epoch']} epoch is saved.")
         model.load_state_dict(last_model["model_state"])
-        last_model_test_acc, last_model_test_loss = test_model(model, test_loader, device, criterion, writer, logger, verbose)
+        last_model_test_acc, last_model_test_loss = test_model(model, test_loader, device, criterion, writer, logger)
 
-        with open(f"{log_dir}/metrics_{run_name}_{time_stamp}.csv", "w+") as f:
+        with open(f"{log_dir}/metrics_{config['run_name']}_{time_stamp}.csv", "w+") as f:
             f.write("epoch,train_loss,val_loss,train_acc,val_acc\n")
             f.write(f"Best model test acc and loss at epoch {best_loss_model['epoch']}:,{best_model_test_acc},{best_model_test_loss},,\n")
             f.write(f"Last model test acc and loss at epoch {last_model['epoch']}:,{last_model_test_acc},{last_model_test_loss},,\n")
