@@ -10,6 +10,7 @@ from torchvision.transforms.autoaugment import AutoAugmentPolicy
 from torch_ema import ExponentialMovingAverage
 from torchinfo import summary
 from contextlib import nullcontext
+from sklearn.metrics import classification_report
 from tqdm import tqdm
 import time
 import random
@@ -68,7 +69,7 @@ def get_log_dir(run_name: str, time_stamp, base_env_var="OUTPUT_DIR") -> str:
 def get_logger(log_dir):
     logger = logging.getLogger("debug_log")
     logger.setLevel(logging.INFO)
-    fh = logging.FileHandler(f"{log_dir}/debug_log")
+    fh = logging.FileHandler(f"{log_dir}/debug_log.log")
     fh.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
     fh.setFormatter(formatter)
@@ -90,11 +91,31 @@ def class_balanced_subset(dataset, fraction):
     np.random.shuffle(indices) 
     return Subset(dataset, indices)
 
-def load_data(transform_train, transform_test, train_split, batch_size, num_workers, debug=False):
+def few_shot_subset(dataset, n_per_class):
+    targets = np.array(dataset.targets)
+    classes = np.unique(targets)
+    indices = []
+
+    for cls in classes:
+        cls_idx = np.where(targets == cls)[0]
+        selected = np.random.choice(cls_idx, size=n_per_class, replace=False)
+        indices.extend(selected)
+
+    np.random.shuffle(indices)
+    return Subset(dataset, indices)
+
+def load_data(
+    transform_train,
+    transform_test,
+    train_split,
+    batch_size,
+    num_workers,
+    downsample_fraction=0,
+    few_shot=False,
+    debug=False
+):
     full_train_set = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
     test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
-
-    # class_balanced_subset(full_train_set, 0.1)
    
     if debug:
         subset_indices = list(range(0, 200))
@@ -107,11 +128,15 @@ def load_data(transform_train, transform_test, train_split, batch_size, num_work
         test_loader = DataLoader(test_subset, batch_size=64, shuffle=False, num_workers=1)
         return train_loader, val_loader, test_loader
 
+    if downsample_fraction > 0:
+        full_train_set = class_balanced_subset(full_train_set, downsample_fraction)
+    elif few_shot:
+        full_train_set = few_shot(full_train_set, few_shot)
+
     train_size = int(train_split * len(full_train_set))
     val_size = len(full_train_set) - train_size
     train_set, val_set = random_split(full_train_set, [train_size, val_size])
 
-    # Loaders
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=num_workers)
     test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=num_workers)
@@ -264,6 +289,7 @@ def train_model(
 def test_model(model, test_loader, device, criterion, writer, logger):
     model.eval()
     correct, total, total_loss = 0, 0, 0
+    y_pred, y_true = [], []
     with torch.no_grad():
         for images, labels in tqdm(test_loader, desc="Testing", disable=not sys.stdout.isatty()):
             images, labels = images.to(device), labels.to(device)
@@ -277,6 +303,12 @@ def test_model(model, test_loader, device, criterion, writer, logger):
             total_loss += criterion(outputs, labels)
             total += labels.size(0)
             correct += predicted.eq(labels).sum().item()
+
+            y_pred.append(predicted.cpu().numpy())
+            y_true.append(labels.cpu().numpy())
+    
+    y_pred = np.concatenate(y_pred)
+    y_true = np.concatenate(y_true)
     
     test_acc = 100 * correct / total
     test_loss = (total_loss/len(test_loader)).item()
@@ -285,7 +317,9 @@ def test_model(model, test_loader, device, criterion, writer, logger):
         writer.add_text("Test/Loss", f"{test_loss:.4f}")
 
     logger.info(f"Test Accuracy: {test_acc:.2f}% | Test Loss: {test_loss:.2f}")
-    return test_acc, test_loss
+    cls_report = classification_report(y_true, y_pred, output_dict=False)
+
+    return test_acc, test_loss, cls_report
 
 def parse_args():
     parser = argparse.ArgumentParser(description="A simple argparse example")
@@ -348,6 +382,8 @@ def set_config_defaults(config):
 
         # Data
         "transform_type": config.get("transform_type", "custom"), # "custom", "custom_agg", "default"
+        "downsample_fraction": config.get("downsample_fraction", 0),
+        "few_shot": config.get("few_shot", False)
     }
     return config
 
@@ -376,6 +412,9 @@ def main():
         assert config["criterion"] in ["CE"], "Invalid criterion"
         assert config["scheduler"] in ["CosineAnnealingLR", "ReduceLROnPlateau"], "Invalid scheduler"
 
+        if config["few_shot"] and config["downsample_fraction"] > 0:
+            logger.info("Few shot and downsampling fraction provided! Only doing downsampling.")
+
         if config["writer"]:
             writer = SummaryWriter(log_dir=log_dir)
             writer.add_text("config", json.dumps(config, indent=2))
@@ -386,6 +425,8 @@ def main():
         logger.info(f"Using device: {device}")
         logger.info(f"Training for {config['epochs']} epochs")
         logger.info(f"Debug mode: {debug}")
+        logger.info(f"Downsampling by: {config['downsample_fraction']}")
+        print(f"Downsampling by: {config['downsample_fraction']}")
 
         input_size = (32, 32)
         norm_means, norm_stds = [0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]
@@ -437,6 +478,8 @@ def main():
             config["train_split"],
             config["batch_size"],
             config["num_workers"],
+            downsample_fraction=config["downsample_fraction"],
+            few_shot=config["few_shot"],
             debug=debug
         )
 
@@ -480,19 +523,26 @@ def main():
         torch.save(best_loss_model["model_state"], f"{log_dir}/{config['run_name']}_{time_stamp}_e{best_loss_model['epoch']}_best_model.pt")
         logger.info(f"Best model with lowest val loss {best_loss_model['val_loss']} at {best_loss_model['epoch']} epoch is saved.")
         model.load_state_dict(best_loss_model["model_state"])
-        best_model_test_acc, best_model_test_loss = test_model(model, test_loader, device, criterion, writer, logger)
+        best_loss_res = test_model(model, test_loader, device, criterion, writer, logger)
+        best_loss_acc, best_loss_loss, best_loss_cls_report = best_loss_res
 
         torch.save(last_model["model_state"], f"{log_dir}/{config['run_name']}_{time_stamp}_e{last_model['epoch']}_last_model.pt")
         logger.info(f"Last model with val loss {last_model['val_loss']} at {last_model['epoch']} epoch is saved.")
         model.load_state_dict(last_model["model_state"])
-        last_model_test_acc, last_model_test_loss = test_model(model, test_loader, device, criterion, writer, logger)
+        last_res = test_model(model, test_loader, device, criterion, writer, logger)
+        last_acc, last_loss, last_cls_report = last_res
 
         with open(f"{log_dir}/metrics_{config['run_name']}_{time_stamp}.csv", "w+") as f:
             f.write("epoch,train_loss,val_loss,train_acc,val_acc\n")
-            f.write(f"Best model test acc and loss at epoch {best_loss_model['epoch']}:,{best_model_test_acc},{best_model_test_loss},,\n")
-            f.write(f"Last model test acc and loss at epoch {last_model['epoch']}:,{last_model_test_acc},{last_model_test_loss},,\n")
+            f.write(f"Best model test acc and loss at epoch {best_loss_model['epoch']}:,{best_loss_acc},{best_loss_loss},,\n")
+            f.write(f"Last model test acc and loss at epoch {last_model['epoch']}:,{last_acc},{last_loss},,\n")
             for i in range(len(train_losses)):
                 f.write(f"{i},{train_losses[i]},{val_losses[i]},{train_acc[i]},{val_acc[i]}\n")
+        
+        with open(f"{log_dir}/cls_report_best_loss_{config['run_name']}_{time_stamp}.txt", "w+") as f:
+            f.write(best_loss_cls_report)
+        with open(f"{log_dir}/cls_report_last_{config['run_name']}_{time_stamp}.txt", "w+") as f:
+            f.write(last_cls_report)
 
         if writer:
             # dummy_input = torch.randn(1, 3, 32, 32).to(device)
