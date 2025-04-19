@@ -31,5 +31,10 @@
     "label_smoothing": 0,
     "ema": false,
 
-    "downsample_fraction": 0
+    "downsample_fraction": 0,
+    "few_shot": false,
+
+    "attacker": false,
+    "epsilon": false,
+    "gaussian_std": false
 }

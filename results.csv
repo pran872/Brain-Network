@@ -1,1 +1,60 @@
-﻿
+﻿"Early stop, 256 batch size, ReduceLROnPlateau, no label smoothing unless mentioned otherwise",,,,,,,
+,,Best,,,,,
+,,,,,,,
+Model,ID,Variant,Accuracy,Epoch,Cifar Norm?,Lowest val model or last model?,Note
+CNN,1,FastCNN,75.44%,7,n,last model,no transforms
+,,,83.63%,45,n,last model,with transforms
+,2,FlexCNN,77.61%,19,n,last model,no transforms
+Hybrid CNN-ViT,3,Basic,72.40%,19,n,last model,no transforms
+,4,Flex,74.11%,26,n,last model,no transforms
+"ResNet18 (built-in) 0.01, 0.05, 0.1, 0.2",5,with transforms,92.28%,29,n,last model,
+,6,no transforms,85.29%,9,n,last model,
+,7,"128 bz, with transforms",92.27%,24,n,last model,
+,27,with transforms,,,y,,
+,21,10% of training data,,,y,,With model 27
+,22,25% of training data,,,y,,
+,23,50% of training data,,,y,,
+,,10 shot,,,y,,
+,,100 shot,,,y,,
+,,FGSM 0.01,,,y,,
+,,FGSM 0.05,,,y,,
+,,FGSM 0.1,,,y,,
+,,FGSM 0.2,,,y,,
+,,PGD 0.01,,,y,,
+,,PGD 0.05,,,y,,
+,,PGD 0.1,,,y,,
+,,PGD 0.2,,,y,,
+,,Gaussian 0.05,,,y,,
+,,Gaussian 0.1,,,y,,
+,,Gaussian 0.2,,,y,,
+,,,,,,,
+ZoomViT (all with custom transforms),8,"No early stop, no extras, 2 layers",91.57%,30,n,last model,"Lowest val was at epoch 23, but epoch 30 performed better on test"
+,28,"No early stop, no extras, 2 layers",,30,y,,
+,9,Pos embed added,89.61%,29,n,lowest val model,
+,10,4 layers,91.48%,22,n,lowest val model,
+,11,6 layers,91.26%,23,n,lowest val model,
+,12,mlp head,90.82%,24,n,lowest val model,
+,13,cosine scheduler,89.25%,32,n,lowest val model,BAD - slower convergence than default scheduler
+,14,pos embed + dropout,90.42%,18,n,lowest val model,this reached 90.42 fast!!
+,15,pos embed + cls token,,,y,,
+,16,custom agg transform,,,y,,
+,17,label smoothing = 0.1,,,y,,
+,18,label smoothing = 0.2,,,y,,
+,19,ema,,,y,,
+,20,pos embed + mlp head + dropout +4 layers,,,y,,
+,24,10% of training data,,,y,,With model 28
+,25,25% of training data,,,y,,
+,26,50% of training data,,,y,,
+,,10 shot,,,y,,
+,,100 shot,,,y,,
+,,FGSM 0.01,,,y,,
+,,FGSM 0.05,,,y,,
+,,FGSM 0.1,,,y,,
+,,FGSM 0.2,,,y,,
+,,PGD 0.01,,,y,,
+,,PGD 0.05,,,y,,
+,,PGD 0.1,,,y,,
+,,PGD 0.2,,,y,,
+,,Gaussian 0.05,,,y,,
+,,Gaussian 0.1,,,y,,
+,,Gaussian 0.2,,,y,,

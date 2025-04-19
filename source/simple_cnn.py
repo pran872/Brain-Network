@@ -1,9 +1,9 @@
 '''Simple CNN'''
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
+import torchattacks
 from torch.utils.data import DataLoader, random_split, Subset
 from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingLR
 from torchvision.transforms.autoaugment import AutoAugmentPolicy
@@ -286,14 +286,35 @@ def train_model(
 
     return best_model, last_model, train_losses, val_losses, train_accuracies, val_accuracies
 
-def test_model(model, test_loader, device, criterion, writer, logger):
+def add_gaussian_noise(images, std=0.1):
+    noise = torch.randn_like(images) * std
+    noisy_images = images + noise
+    return torch.clamp(noisy_images, 0.0, 1.0)
+
+def test_model(model,
+    test_loader,
+    device,
+    criterion,
+    writer,
+    logger,
+    attacker=False,
+    gaussian_std=False
+):
     model.eval()
     correct, total, total_loss = 0, 0, 0
     y_pred, y_true = [], []
     with torch.no_grad():
         for images, labels in tqdm(test_loader, desc="Testing", disable=not sys.stdout.isatty()):
             images, labels = images.to(device), labels.to(device)
-            outputs = model(images)
+
+            if attacker:
+                adv_images = attacker(images, labels)
+                outputs = model(adv_images)
+            elif gaussian_std:
+                noisy_images = add_gaussian_noise(images, std=gaussian_std)
+                outputs = model(noisy_images)
+            else:
+                outputs = model(images)
 
             if isinstance(outputs, tuple): 
                 # For flex network
@@ -383,7 +404,12 @@ def set_config_defaults(config):
         # Data
         "transform_type": config.get("transform_type", "custom"), # "custom", "custom_agg", "default"
         "downsample_fraction": config.get("downsample_fraction", 0),
-        "few_shot": config.get("few_shot", False)
+        "few_shot": config.get("few_shot", False),
+
+        "attacker": config.get("attacker", False), # FGSM, PGD, False
+        "epsilon": config.get("epsilon", False), # epsilon 0 - no attack
+
+        "gaussian_std": config.get("gaussian_std", False),
     }
     return config
 
@@ -411,6 +437,7 @@ def main():
         assert config["optimizer"] in ["adam"], "Invalid optimizer"
         assert config["criterion"] in ["CE"], "Invalid criterion"
         assert config["scheduler"] in ["CosineAnnealingLR", "ReduceLROnPlateau"], "Invalid scheduler"
+        assert config["attacker"] in [False, "FGSM", "PGD", "gaussian"], "Invalid attacker"
 
         if config["few_shot"] and config["downsample_fraction"] > 0:
             logger.info("Few shot and downsampling fraction provided! Only doing downsampling.")
@@ -505,6 +532,11 @@ def main():
         if config["ema"]:
             logger.info("Using EMA")
             ema = ExponentialMovingAverage(model.parameters(), decay=0.999)
+        
+        if config["attacker"] == "FGSM":
+            attacker = torchattacks.FGSM(model, eps=config["epsilon"])
+        elif config["attacker"] == "PGD":
+            attacker = torchattacks.PGD(model, eps=config["epsilon"], alpha=2/255, steps=10)
 
         best_loss_model, last_model, train_losses, val_losses, train_acc, val_acc = train_model(
             model, 
@@ -523,13 +555,31 @@ def main():
         torch.save(best_loss_model["model_state"], f"{log_dir}/{config['run_name']}_{time_stamp}_e{best_loss_model['epoch']}_best_model.pt")
         logger.info(f"Best model with lowest val loss {best_loss_model['val_loss']} at {best_loss_model['epoch']} epoch is saved.")
         model.load_state_dict(best_loss_model["model_state"])
-        best_loss_res = test_model(model, test_loader, device, criterion, writer, logger)
+        best_loss_res = test_model(
+            model, 
+            test_loader, 
+            device, 
+            criterion, 
+            writer, 
+            logger, 
+            attacker if config["attacker"] else False, 
+            config["gaussian_std"]
+        )
         best_loss_acc, best_loss_loss, best_loss_cls_report = best_loss_res
 
         torch.save(last_model["model_state"], f"{log_dir}/{config['run_name']}_{time_stamp}_e{last_model['epoch']}_last_model.pt")
         logger.info(f"Last model with val loss {last_model['val_loss']} at {last_model['epoch']} epoch is saved.")
         model.load_state_dict(last_model["model_state"])
-        last_res = test_model(model, test_loader, device, criterion, writer, logger)
+        last_res = test_model(
+            model,
+            test_loader,
+            device,
+            criterion,
+            writer,
+            logger,
+            attacker if config["attacker"] else False,
+            config["gaussian_std"]
+        )
         last_acc, last_loss, last_cls_report = last_res
 
         with open(f"{log_dir}/metrics_{config['run_name']}_{time_stamp}.csv", "w+") as f:
