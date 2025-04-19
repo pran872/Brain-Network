@@ -22,11 +22,11 @@
 
     "use_flex": false,
 
-    "use_pos_embed": false,
-    "add_dropout": false,
-    "mlp_end": false,
-    "add_cls_token": true,
-    "num_layers": 2,
+    "use_pos_embed": true,
+    "add_dropout": true,
+    "mlp_end": true,
+    "add_cls_token": false,
+    "num_layers": 4,
     "transform_type": "custom",
     "label_smoothing": 0,
     "ema": false

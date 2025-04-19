@@ -6,8 +6,10 @@ import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, random_split
 from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingLR
+from torchvision.transforms.autoaugment import AutoAugmentPolicy
+from torch_ema import ExponentialMovingAverage
 from torchinfo import summary
-import timm
+from contextlib import nullcontext
 from tqdm import tqdm
 import time
 import random
@@ -116,6 +118,7 @@ def train_model(
     criterion,
     scheduler,
     early_stopping,
+    ema,
     writer,
     logger,
     verbose=True
@@ -150,6 +153,8 @@ def train_model(
             if writer and batch_idx == 0: 
                 log_grad(writer, model, epoch)
             optimizer.step()
+            if ema:
+                ema.update()
 
             total_loss += loss.item()
             _, predicted = outputs.max(1)
@@ -162,27 +167,33 @@ def train_model(
         train_accuracies.append(train_acc)
 
         # Validation 
-        model.eval()
-        val_loss, val_correct, val_total = 0, 0, 0
-        with torch.no_grad():
-            for images, labels in val_loader:
-                images, labels = images.to(device), labels.to(device)
-                outputs = model(images)
+        if ema:
+            context = ema.average_parameters()
+        else:
+            context = nullcontext()
+        
+        with context:
+            model.eval()
+            val_loss, val_correct, val_total = 0, 0, 0
+            with torch.no_grad():
+                for images, labels in val_loader:
+                    images, labels = images.to(device), labels.to(device)
+                    outputs = model(images)
 
-                if isinstance(outputs, tuple): 
-                    if isinstance(model, ZoomVisionTransformer):
-                        outputs, gamma = outputs
-                        for g, label in zip(gamma, labels):
-                            gamma_by_class[label.item()].append(g.item())
-                    else:
-                        # For flex network
-                        outputs, conv_ratio = outputs
-                
-                loss = criterion(outputs, labels)
-                val_loss += loss.item()
-                _, predicted = outputs.max(1)
-                val_total += labels.size(0)
-                val_correct += predicted.eq(labels).sum().item()
+                    if isinstance(outputs, tuple): 
+                        if isinstance(model, ZoomVisionTransformer):
+                            outputs, gamma = outputs
+                            for g, label in zip(gamma, labels):
+                                gamma_by_class[label.item()].append(g.item())
+                        else:
+                            # For flex network
+                            outputs, conv_ratio = outputs
+                    
+                    loss = criterion(outputs, labels)
+                    val_loss += loss.item()
+                    _, predicted = outputs.max(1)
+                    val_total += labels.size(0)
+                    val_correct += predicted.eq(labels).sum().item()
 
         avg_val_loss = val_loss / len(val_loader)
         val_acc = 100. * val_correct / val_total
@@ -229,7 +240,13 @@ def train_model(
                 logger.info(f"Early stopping triggered at epoch {epoch+1}")
                 break
 
-    return best_model, train_losses, val_losses, train_accuracies, val_accuracies
+    last_model = {
+        "val_loss": avg_val_loss,
+        "model_state": model.state_dict(),
+        "epoch": epoch
+        }
+
+    return best_model, last_model, train_losses, val_losses, train_accuracies, val_accuracies
 
 def test_model(model, test_loader, device, criterion, writer, logger, verbose=True):
     model.eval()
@@ -285,9 +302,6 @@ def parse_args():
         with open(args.config, 'r') as f:
             config = json.load(f)
     except (json.JSONDecodeError, TypeError) as e:
-        if args.verbose:
-            # print(e)
-            print("Config not provided. Using defualts")
         config = {}
     
     return config, args.verbose, args.debug
@@ -317,6 +331,9 @@ def main():
         mlp_end = config.get("mlp_end", False)
         add_cls_token = config.get("add_cls_token", False)
         num_layers = config.get("num_layers", 2)
+        transform_type = config.get("transform_type", "custom")
+        label_smoothing = config.get("label_smoothing", 0)
+        ema = config.get("ema", False)
 
         time_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
         log_dir = get_log_dir(run_name, time_stamp)
@@ -351,24 +368,30 @@ def main():
             logger.info(f"Debug mode: {debug}")
 
         input_size = (32, 32)
-        transform_train_list = [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
-        transform_test_list = [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
-        custom_transform = [transforms.RandomCrop(32, padding=4), 
-                            transforms.RandomHorizontalFlip(),
-                            transforms.ToTensor(),
-                            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+        transform_train = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        transform_test = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        custom_transform = transforms.Compose([
+            transforms.RandomCrop(32, padding=4), 
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        ])
+        custom_transform_agg = transforms.Compose([
+            transforms.RandomCrop(32, padding=4),
+            transforms.AutoAugment(policy=AutoAugmentPolicy.CIFAR10),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        ])
         if model_type == "fast_cnn":
             model = FastCNN().to(device)
         elif model_type == "fast_cnn2":
             model = FastCNN2().to(device)
-            transform_train_list = custom_transform
         elif model_type == "flex_net":
             model = FlexNet(device=device).to(device)
         elif model_type == "custom_vit":
             model = ConvViTHybrid(device=device, use_flex=use_flex).to(device)
         elif model_type == "resnet18":
             model = build_resnet18_for_cifar10().to(device)
-            transform_train_list = custom_transform
         elif model_type == "zoom":
             model = ZoomVisionTransformer(
                 device=device, 
@@ -379,10 +402,13 @@ def main():
                 add_cls_token=add_cls_token,
                 num_layers=num_layers,
             ).to(device)
-            transform_train_list = custom_transform
-
-        transform_train = transforms.Compose(transform_train_list)
-        transform_test = transforms.Compose(transform_test_list)
+        
+        if transform_type == "custom":
+            logger.info("Using custom transform")
+            transform_train = custom_transform
+        elif transform_type == "custom_agg":
+            logger.info("Using custom agg transform")
+            transform_train = custom_transform_agg
 
         train_loader, val_loader, test_loader = load_data(
             transform_train,
@@ -406,12 +432,17 @@ def main():
             scheduler = CosineAnnealingLR(optimizer, T_max=30)
         
         if criterion == "CE":
-            criterion = nn.CrossEntropyLoss()
+            logger.info(f"Label smoothing: {label_smoothing}")
+            criterion = nn.CrossEntropyLoss(label_smoothing=label_smoothing)
 
         if early_stopping:
             early_stopping = EarlyStopping(patience, min_diff)
+        
+        if ema:
+            logger.info("Using EMA")
+            ema = ExponentialMovingAverage(model.parameters(), decay=0.999)
 
-        best_model, train_losses, val_losses, train_acc, val_acc = train_model(
+        best_loss_model, last_model, train_losses, val_losses, train_acc, val_acc = train_model(
             model, 
             epochs, 
             train_loader, 
@@ -421,19 +452,25 @@ def main():
             criterion,
             scheduler,
             early_stopping,
+            ema,
             writer,
             logger,
             verbose
         )
-        torch.save(best_model["model_state"], f"{log_dir}/{run_name}_{time_stamp}_e{best_model['epoch']}_best_model.pt")
-        logger.info(f"Best model with lowest val loss {best_model['val_loss']} at {best_model['epoch']} epoch is saved.")
+        torch.save(best_loss_model["model_state"], f"{log_dir}/{run_name}_{time_stamp}_e{best_loss_model['epoch']}_best_model.pt")
+        logger.info(f"Best model with lowest val loss {best_loss_model['val_loss']} at {best_loss_model['epoch']} epoch is saved.")
+        model.load_state_dict(best_loss_model["model_state"])
+        best_model_test_acc, best_model_test_loss = test_model(model, test_loader, device, criterion, writer, logger, verbose)
 
-        model.load_state_dict(best_model["model_state"])
-        test_acc, test_loss = test_model(model, test_loader, device, criterion, writer, logger, verbose)
+        torch.save(last_model["model_state"], f"{log_dir}/{run_name}_{time_stamp}_e{last_model['epoch']}_last_model.pt")
+        logger.info(f"Last model with val loss {last_model['val_loss']} at {last_model['epoch']} epoch is saved.")
+        model.load_state_dict(last_model["model_state"])
+        last_model_test_acc, last_model_test_loss = test_model(model, test_loader, device, criterion, writer, logger, verbose)
 
         with open(f"{log_dir}/metrics_{run_name}_{time_stamp}.csv", "w+") as f:
             f.write("epoch,train_loss,val_loss,train_acc,val_acc\n")
-            f.write(f"Test acc and loss:,{test_acc},{test_loss},,\n")
+            f.write(f"Best model test acc and loss at epoch {best_loss_model['epoch']}:,{best_model_test_acc},{best_model_test_loss},,\n")
+            f.write(f"Last model test acc and loss at epoch {last_model['epoch']}:,{last_model_test_acc},{last_model_test_loss},,\n")
             for i in range(len(train_losses)):
                 f.write(f"{i},{train_losses[i]},{val_losses[i]},{train_acc[i]},{val_acc[i]}\n")
 

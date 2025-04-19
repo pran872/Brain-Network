@@ -25,9 +25,9 @@
     "use_pos_embed": false,
     "add_dropout": false,
     "mlp_end": false,
-    "add_cls_token": true,
+    "add_cls_token": false,
     "num_layers": 2,
     "transform_type": "custom",
-    "label_smoothing": 0,
+    "label_smoothing": 0.2,
     "ema": false
 }

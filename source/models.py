@@ -251,17 +251,18 @@ class ZoomVisionTransformer(nn.Module):
 
     def compute_token_distance_matrix(self, h=8, w=8, device="cpu"):
         coords = torch.stack(torch.meshgrid(
-            torch.arange(h), torch.arange(w), indexing='ij'
-        ), dim=-1)  # [H, W, 2]
-        coords = coords.view(-1, 2).float()  # [N, 2]
-        dist = torch.cdist(coords, coords, p=2)  # [N, N]
+            torch.arange(h, device=device), torch.arange(w, device=device), indexing='ij'
+        ), dim=-1)
+        coords = coords.view(-1, 2).float()
+        dist = torch.cdist(coords, coords, p=2)
 
-        if self.add_cls_token:
-            # Expanding to 65 tokens (64+cls_token)
-            cls_row = torch.zeros(1, dist.size(1), device=device)
-            cls_col = torch.zeros(dist.size(0) + 1, 1, device=device)
+        if self.add_cls_token: # Expand to fit the extra token
+            # Create on same device!!
+            cls_row = torch.zeros(1, dist.size(1), device=dist.device)
+            cls_col = torch.zeros(dist.size(0) + 1, 1, device=dist.device)
             dist = torch.cat([cls_row, dist], dim=0)
-            dist = torch.cat([cls_col, dist], dim=1) 
+            dist = torch.cat([cls_col, dist], dim=1)
 
-        return dist.to(device)
+        return dist
+
 

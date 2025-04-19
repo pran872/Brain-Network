@@ -26,5 +26,8 @@
     "add_dropout": false,
     "mlp_end": false,
     "add_cls_token": false,
-    "num_layers": 2
+    "num_layers": 2,
+    "transform_type": "custom",
+    "label_smoothing": 0,
+    "ema": false
 }
