@@ -1,0 +1,13 @@
+mv: cannot stat 'job_logs/train.err': No such file or directory
+Starting training on cx3-20-0.cx3.hpc.ic.ac.uk at Sun 20 Apr 16:30:52 BST 2025
+Using config: configs/batch_3/config_resnet_m23.json
+Finished at Sun 20 Apr 16:33:10 BST 2025
+
+====================================
+CPU Time used: 00:00:06
+CPU Percent: 11%
+Memory usage: 1030332kb
+Approx Power usage: 0.0
+Walltime usage: 00:02:28
+
+====================================

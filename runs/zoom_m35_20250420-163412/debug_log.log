@@ -1,0 +1,117 @@
+2025-04-20 16:34:12,940 | INFO | Job Started
+2025-04-20 16:34:12,940 | INFO | Logging run: /rds/general/user/psp20/home/Brain-Network/runs/zoom_m35_20250420-163412
+2025-04-20 16:34:12,940 | INFO | Config:
+{
+  "seed": 42,
+  "run_name": "zoom_m35",
+  "model_type": "zoom",
+  "optimizer": "adam",
+  "scheduler": "ReduceLROnPlateau",
+  "criterion": "CE",
+  "label_smoothing": 0.1,
+  "train_split": 0.9,
+  "batch_size": 256,
+  "num_workers": 2,
+  "lr": 0.001,
+  "epochs": 50,
+  "ema": false,
+  "early_stopping": true,
+  "min_diff": 0.001,
+  "writer": true,
+  "patience": 10,
+  "use_flex": false,
+  "use_pos_embed": true,
+  "add_dropout": false,
+  "mlp_end": false,
+  "add_cls_token": true,
+  "num_layers": 2,
+  "trans_dropout_ratio": 0.0,
+  "standard_scale": true,
+  "transform_type": "custom",
+  "downsample_fraction": 0,
+  "few_shot": false,
+  "attacker": false,
+  "epsilon": false,
+  "gaussian_std": false
+}
+2025-04-20 16:34:13,117 | INFO | Using device: cuda
+2025-04-20 16:34:13,118 | INFO | Training for 50 epochs
+2025-04-20 16:34:13,118 | INFO | Debug mode: False
+2025-04-20 16:34:13,118 | INFO | Downsampling by: 0
+2025-04-20 16:34:13,961 | INFO | Using custom transform
+2025-04-20 16:34:15,685 | INFO | Full train/val size with downsampling (0): 50000
+2025-04-20 16:34:17,724 | INFO | Label smoothing: 0.1
+2025-04-20 16:34:26,710 | INFO | Epoch 1: Train Loss=1.7792, Train Acc=38.30% | Val Loss=1.6655, Val Acc=45.58% | Time: 8.98s
+2025-04-20 16:34:26,711 | INFO | New best model saved (val loss = 1.6655)
+2025-04-20 16:34:34,509 | INFO | Epoch 2: Train Loss=1.3963, Train Acc=58.53% | Val Loss=1.3379, Val Acc=61.36% | Time: 7.80s
+2025-04-20 16:34:34,510 | INFO | New best model saved (val loss = 1.3379)
+2025-04-20 16:34:42,325 | INFO | Epoch 3: Train Loss=1.2059, Train Acc=67.96% | Val Loss=1.2008, Val Acc=68.12% | Time: 7.81s
+2025-04-20 16:34:42,325 | INFO | New best model saved (val loss = 1.2008)
+2025-04-20 16:34:50,126 | INFO | Epoch 4: Train Loss=1.0849, Train Acc=73.96% | Val Loss=1.0524, Val Acc=76.36% | Time: 7.80s
+2025-04-20 16:34:50,136 | INFO | New best model saved (val loss = 1.0524)
+2025-04-20 16:34:58,057 | INFO | Epoch 5: Train Loss=0.9997, Train Acc=77.89% | Val Loss=0.9896, Val Acc=78.16% | Time: 7.92s
+2025-04-20 16:34:58,058 | INFO | New best model saved (val loss = 0.9896)
+2025-04-20 16:35:05,907 | INFO | Epoch 6: Train Loss=0.9412, Train Acc=80.65% | Val Loss=1.1061, Val Acc=73.18% | Time: 7.85s
+2025-04-20 16:35:13,755 | INFO | Epoch 7: Train Loss=0.9011, Train Acc=82.46% | Val Loss=0.9792, Val Acc=79.50% | Time: 7.85s
+2025-04-20 16:35:13,757 | INFO | New best model saved (val loss = 0.9792)
+2025-04-20 16:35:21,631 | INFO | Epoch 8: Train Loss=0.8659, Train Acc=83.97% | Val Loss=1.0120, Val Acc=76.88% | Time: 7.87s
+2025-04-20 16:35:29,532 | INFO | Epoch 9: Train Loss=0.8432, Train Acc=85.18% | Val Loss=0.9339, Val Acc=80.96% | Time: 7.90s
+2025-04-20 16:35:29,533 | INFO | New best model saved (val loss = 0.9339)
+2025-04-20 16:35:37,491 | INFO | Epoch 10: Train Loss=0.8124, Train Acc=86.38% | Val Loss=0.9726, Val Acc=79.56% | Time: 7.96s
+2025-04-20 16:35:45,338 | INFO | Epoch 11: Train Loss=0.7972, Train Acc=87.18% | Val Loss=0.8725, Val Acc=83.52% | Time: 7.84s
+2025-04-20 16:35:45,339 | INFO | New best model saved (val loss = 0.8725)
+2025-04-20 16:35:53,216 | INFO | Epoch 12: Train Loss=0.7824, Train Acc=87.82% | Val Loss=0.8255, Val Acc=85.70% | Time: 7.87s
+2025-04-20 16:35:53,218 | INFO | New best model saved (val loss = 0.8255)
+2025-04-20 16:36:01,142 | INFO | Epoch 13: Train Loss=0.7626, Train Acc=88.58% | Val Loss=0.8380, Val Acc=85.34% | Time: 7.92s
+2025-04-20 16:36:09,008 | INFO | Epoch 14: Train Loss=0.7460, Train Acc=89.46% | Val Loss=0.8253, Val Acc=86.14% | Time: 7.86s
+2025-04-20 16:36:09,010 | INFO | New best model saved (val loss = 0.8253)
+2025-04-20 16:36:17,118 | INFO | Epoch 15: Train Loss=0.7380, Train Acc=89.64% | Val Loss=0.8558, Val Acc=84.66% | Time: 8.10s
+2025-04-20 16:36:25,007 | INFO | Epoch 16: Train Loss=0.7307, Train Acc=90.10% | Val Loss=0.8284, Val Acc=85.80% | Time: 7.88s
+2025-04-20 16:36:32,869 | INFO | Epoch 17: Train Loss=0.7160, Train Acc=90.60% | Val Loss=0.8278, Val Acc=85.56% | Time: 7.86s
+2025-04-20 16:36:40,772 | INFO | Epoch 18: Train Loss=0.7088, Train Acc=90.88% | Val Loss=0.8099, Val Acc=86.80% | Time: 7.90s
+2025-04-20 16:36:40,773 | INFO | New best model saved (val loss = 0.8099)
+2025-04-20 16:36:48,739 | INFO | Epoch 19: Train Loss=0.7090, Train Acc=90.77% | Val Loss=0.9125, Val Acc=82.60% | Time: 7.96s
+2025-04-20 16:36:56,681 | INFO | Epoch 20: Train Loss=0.6929, Train Acc=91.69% | Val Loss=0.8236, Val Acc=85.82% | Time: 7.94s
+2025-04-20 16:37:04,589 | INFO | Epoch 21: Train Loss=0.6856, Train Acc=91.95% | Val Loss=0.8496, Val Acc=85.10% | Time: 7.89s
+2025-04-20 16:37:12,463 | INFO | Epoch 22: Train Loss=0.6833, Train Acc=92.15% | Val Loss=0.8078, Val Acc=86.56% | Time: 7.87s
+2025-04-20 16:37:12,465 | INFO | New best model saved (val loss = 0.8078)
+2025-04-20 16:37:20,388 | INFO | Epoch 23: Train Loss=0.6702, Train Acc=92.62% | Val Loss=0.8066, Val Acc=86.72% | Time: 7.92s
+2025-04-20 16:37:20,389 | INFO | New best model saved (val loss = 0.8066)
+2025-04-20 16:37:28,257 | INFO | Epoch 24: Train Loss=0.6693, Train Acc=92.74% | Val Loss=0.7863, Val Acc=88.00% | Time: 7.86s
+2025-04-20 16:37:28,258 | INFO | New best model saved (val loss = 0.7863)
+2025-04-20 16:37:36,165 | INFO | Epoch 25: Train Loss=0.6589, Train Acc=93.12% | Val Loss=0.8221, Val Acc=86.16% | Time: 7.90s
+2025-04-20 16:37:44,085 | INFO | Epoch 26: Train Loss=0.6549, Train Acc=93.33% | Val Loss=0.8020, Val Acc=87.36% | Time: 7.91s
+2025-04-20 16:37:52,035 | INFO | Epoch 27: Train Loss=0.6508, Train Acc=93.42% | Val Loss=0.7756, Val Acc=88.46% | Time: 7.94s
+2025-04-20 16:37:52,036 | INFO | New best model saved (val loss = 0.7756)
+2025-04-20 16:38:00,016 | INFO | Epoch 28: Train Loss=0.6422, Train Acc=93.87% | Val Loss=0.8266, Val Acc=86.38% | Time: 7.97s
+2025-04-20 16:38:07,983 | INFO | Epoch 29: Train Loss=0.6452, Train Acc=93.72% | Val Loss=0.8100, Val Acc=87.00% | Time: 7.96s
+2025-04-20 16:38:15,988 | INFO | Epoch 30: Train Loss=0.6382, Train Acc=94.02% | Val Loss=0.8110, Val Acc=86.72% | Time: 8.00s
+2025-04-20 16:38:23,953 | INFO | Epoch 31: Train Loss=0.6337, Train Acc=94.27% | Val Loss=0.8092, Val Acc=86.90% | Time: 7.96s
+2025-04-20 16:38:31,958 | INFO | Epoch 32: Train Loss=0.5789, Train Acc=96.70% | Val Loss=0.6868, Val Acc=92.10% | Time: 8.00s
+2025-04-20 16:38:31,960 | INFO | New best model saved (val loss = 0.6868)
+2025-04-20 16:38:40,062 | INFO | Epoch 33: Train Loss=0.5536, Train Acc=97.82% | Val Loss=0.6970, Val Acc=92.06% | Time: 8.09s
+2025-04-20 16:38:48,056 | INFO | Epoch 34: Train Loss=0.5467, Train Acc=98.13% | Val Loss=0.6989, Val Acc=92.16% | Time: 7.98s
+2025-04-20 16:38:56,062 | INFO | Epoch 35: Train Loss=0.5422, Train Acc=98.36% | Val Loss=0.6848, Val Acc=92.68% | Time: 8.00s
+2025-04-20 16:38:56,063 | INFO | New best model saved (val loss = 0.6848)
+2025-04-20 16:39:04,097 | INFO | Epoch 36: Train Loss=0.5368, Train Acc=98.53% | Val Loss=0.6977, Val Acc=92.34% | Time: 8.02s
+2025-04-20 16:39:12,093 | INFO | Epoch 37: Train Loss=0.5336, Train Acc=98.70% | Val Loss=0.6867, Val Acc=92.54% | Time: 7.99s
+2025-04-20 16:39:20,096 | INFO | Epoch 38: Train Loss=0.5303, Train Acc=98.86% | Val Loss=0.6910, Val Acc=92.44% | Time: 7.99s
+2025-04-20 16:39:28,095 | INFO | Epoch 39: Train Loss=0.5281, Train Acc=98.96% | Val Loss=0.6947, Val Acc=92.66% | Time: 7.99s
+2025-04-20 16:39:36,093 | INFO | Epoch 40: Train Loss=0.5244, Train Acc=99.10% | Val Loss=0.7002, Val Acc=92.38% | Time: 7.99s
+2025-04-20 16:39:44,087 | INFO | Epoch 41: Train Loss=0.5218, Train Acc=99.23% | Val Loss=0.6808, Val Acc=93.08% | Time: 7.98s
+2025-04-20 16:39:44,089 | INFO | New best model saved (val loss = 0.6808)
+2025-04-20 16:39:52,084 | INFO | Epoch 42: Train Loss=0.5204, Train Acc=99.30% | Val Loss=0.6926, Val Acc=92.72% | Time: 7.98s
+2025-04-20 16:40:00,081 | INFO | Epoch 43: Train Loss=0.5212, Train Acc=99.24% | Val Loss=0.6809, Val Acc=93.14% | Time: 7.99s
+2025-04-20 16:40:08,098 | INFO | Epoch 44: Train Loss=0.5190, Train Acc=99.34% | Val Loss=0.6986, Val Acc=92.56% | Time: 8.01s
+2025-04-20 16:40:16,101 | INFO | Epoch 45: Train Loss=0.5204, Train Acc=99.28% | Val Loss=0.6844, Val Acc=93.10% | Time: 7.99s
+2025-04-20 16:40:24,127 | INFO | Epoch 46: Train Loss=0.5196, Train Acc=99.28% | Val Loss=0.6828, Val Acc=92.90% | Time: 8.01s
+2025-04-20 16:40:32,137 | INFO | Epoch 47: Train Loss=0.5194, Train Acc=99.34% | Val Loss=0.6951, Val Acc=92.60% | Time: 8.00s
+2025-04-20 16:40:40,144 | INFO | Epoch 48: Train Loss=0.5193, Train Acc=99.33% | Val Loss=0.6989, Val Acc=92.32% | Time: 8.00s
+2025-04-20 16:40:48,223 | INFO | Epoch 49: Train Loss=0.5197, Train Acc=99.31% | Val Loss=0.6950, Val Acc=92.70% | Time: 8.07s
+2025-04-20 16:40:56,242 | INFO | Epoch 50: Train Loss=0.5189, Train Acc=99.35% | Val Loss=0.6843, Val Acc=92.96% | Time: 8.00s
+2025-04-20 16:40:56,296 | INFO | Best model with lowest val loss 0.6808292388916015 at 40 epoch is saved.
+2025-04-20 16:40:57,189 | INFO | Test Accuracy: 92.73% | Test Loss: 0.70
+2025-04-20 16:40:57,230 | INFO | Last model with val loss 0.6842577964067459 at 49 epoch is saved.
+2025-04-20 16:40:58,022 | INFO | Test Accuracy: 92.73% | Test Loss: 0.70
+2025-04-20 16:40:58,050 | INFO | 
+Job Completed
