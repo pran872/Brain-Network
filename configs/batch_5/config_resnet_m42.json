@@ -1,0 +1,42 @@
+{
+    "run_name": "resnet_m42",
+    "writer": true,
+
+    "seed": 42,
+
+    "train_split": 0.9,
+
+    "batch_size": 256,
+    "num_workers": 2,
+
+    "model_type": "resnet18",
+    "optimizer": "adam",
+    "scheduler": "ReduceLROnPlateau",
+    "criterion": "CE",
+    "lr": 0.001,
+    "epochs": 50,
+    
+    "early_stopping": true,
+    "patience": 10,
+    "min_diff": 0.001,
+
+    "use_flex": false,
+
+    "use_pos_embed": true,
+    "add_dropout": false,
+    "mlp_end": false,
+    "add_cls_token": true,
+    "num_layers": 2,
+    "transform_type": "custom",
+    "label_smoothing": 0.1,
+    "ema": false,
+    "trans_dropout_ratio": 0.0,
+    "standard_scale": true,
+
+    "downsample_fraction": 0,
+    "few_shot": false,
+
+    "attacker": "FGSM",
+    "epsilon": 0.2,
+    "gaussian_std": false
+}

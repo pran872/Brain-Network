@@ -10,7 +10,7 @@ sys.path.append(root_dir)
 errored_out = dict()
 
 def run_tests():
-    dir = "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/batch_4"
+    dir = "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/batch_5"
     
     # pts = [
     #     "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/wildcard/config_zoom_m35.json"
@@ -20,7 +20,7 @@ def run_tests():
         print(f"\nTesting config: {config}")
         try:
             subprocess.run(
-                ["python", "source/simple_cnn.py", "--config", config],
+                ["python", "source/simple_cnn.py", "--config", config, "-d"],
                 capture_output=True,
                 text=True
             )
