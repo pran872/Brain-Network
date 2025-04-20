@@ -1,0 +1,71 @@
+mv: cannot stat 'job_logs/train.err': No such file or directory
+Starting training on cx3-20-4.cx3.hpc.ic.ac.uk at Sun 20 Apr 18:42:12 BST 2025
+Using config: configs/batch_5/config_zoom_m35v2.json
+Traceback (most recent call last):
+  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 633, in <module>
+    main()
+  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 582, in main
+    best_loss_res = test_model(
+                    ^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 318, in test_model
+    adv_images = attacker(images, labels)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/torchattacks/attack.py", line 511, in __call__
+    adv_inputs = self.forward(inputs, labels, *args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/torchattacks/attacks/fgsm.py", line 48, in forward
+    outputs = self.get_logits(images)
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/torchattacks/attack.py", line 79, in get_logits
+    logits = self.model(inputs)
+             ^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/models.py", line 243, in forward
+    feat_map, pooled = self.backbone(x) # [B, C, 8, 8], [B, C]
+                       ^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/zoom_att.py", line 18, in forward
+    feat_map = self.stem(x) # [B, 256, 8, 8]
+               ^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/container.py", line 250, in forward
+    input = module(input)
+            ^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/batchnorm.py", line 193, in forward
+    return F.batch_norm(
+           ^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/functional.py", line 2822, in batch_norm
+    return torch.batch_norm(
+           ^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 64.00 MiB. GPU 0 has a total capacity of 44.42 GiB of which 54.12 MiB is free. Including non-PyTorch memory, this process has 44.36 GiB memory in use. Of the allocated memory 42.47 GiB is allocated by PyTorch, and 1.38 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Finished at Sun 20 Apr 18:49:50 BST 2025
+
+====================================
+CPU Time used: 00:13:27
+CPU Percent: 233%
+Memory usage: 1611944kb
+Approx Power usage: 0.0026
+Walltime usage: 00:07:48
+
+====================================

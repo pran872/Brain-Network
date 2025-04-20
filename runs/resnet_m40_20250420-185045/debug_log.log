@@ -1,0 +1,41 @@
+2025-04-20 18:50:45,472 | INFO | Job Started
+2025-04-20 18:50:45,472 | INFO | Logging run: /rds/general/user/psp20/home/Brain-Network/runs/resnet_m40_20250420-185045
+2025-04-20 18:50:45,472 | INFO | Config:
+{
+  "seed": 42,
+  "run_name": "resnet_m40",
+  "model_type": "resnet18",
+  "optimizer": "adam",
+  "scheduler": "ReduceLROnPlateau",
+  "criterion": "CE",
+  "label_smoothing": 0.1,
+  "train_split": 0.9,
+  "batch_size": 256,
+  "num_workers": 2,
+  "lr": 0.001,
+  "epochs": 50,
+  "ema": false,
+  "early_stopping": true,
+  "min_diff": 0.001,
+  "writer": true,
+  "patience": 10,
+  "use_flex": false,
+  "use_pos_embed": true,
+  "add_dropout": false,
+  "mlp_end": false,
+  "add_cls_token": true,
+  "num_layers": 2,
+  "trans_dropout_ratio": 0.0,
+  "standard_scale": true,
+  "transform_type": "custom",
+  "downsample_fraction": 0,
+  "few_shot": false,
+  "attacker": "FGSM",
+  "epsilon": 0.05,
+  "gaussian_std": false
+}
+2025-04-20 18:50:45,635 | INFO | Using device: cuda
+2025-04-20 18:50:45,635 | INFO | Training for 50 epochs
+2025-04-20 18:50:45,635 | INFO | Debug mode: False
+2025-04-20 18:50:45,635 | INFO | Downsampling by: 0
+2025-04-20 18:50:45,905 | INFO | Using custom transform
