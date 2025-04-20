@@ -118,7 +118,11 @@ def load_data(
     few_shot=False,
     debug=False,
     logger=False,
+    test_batch_size=False,
 ):
+    if not test_batch_size:
+        test_batch_size = batch_size
+
     full_train_set = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
     test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
    
@@ -146,7 +150,7 @@ def load_data(
 
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=num_workers)
-    test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+    test_loader = DataLoader(test_set, batch_size=test_batch_size, shuffle=False, num_workers=num_workers)
 
     return train_loader, val_loader, test_loader
 
@@ -314,8 +318,9 @@ def test_model(model,
 
         if attacker:
             with torch.enable_grad():
+                model.zero_grad(set_to_none=True)
                 images.requires_grad = True
-                adv_images = attacker(images, labels)
+                adv_images = attacker(images, labels).detach()
                 outputs = model(adv_images)
                 del adv_images
         elif gaussian_std:
@@ -331,7 +336,9 @@ def test_model(model,
             outputs, _ = outputs
 
         _, predicted = outputs.max(1)
-        total_loss += criterion(outputs, labels)
+        # loss = criterion(outputs, labels)
+
+        # total_loss += loss.item()
         total += labels.size(0)
         correct += predicted.eq(labels).sum().item()
 
@@ -346,15 +353,17 @@ def test_model(model,
     y_true = np.concatenate(y_true)
     
     test_acc = 100 * correct / total
-    test_loss = (total_loss/len(test_loader)).item()
+    # test_loss = (total_loss/len(test_loader)).item()
     if writer:
         writer.add_text("Test/Accuracy", f"{test_acc:.2f}%")
-        writer.add_text("Test/Loss", f"{test_loss:.4f}")
+        # writer.add_text("Test/Loss", f"{test_loss:.4f}")
 
-    logger.info(f"Test Accuracy: {test_acc:.2f}% | Test Loss: {test_loss:.2f}")
+    # logger.info(f"Test Accuracy: {test_acc:.2f}% | Test Loss: {test_loss:.2f}")
+    logger.info(f"Test Accuracy: {test_acc:.2f}%")
     cls_report = classification_report(y_true, y_pred, output_dict=False)
 
-    return test_acc, test_loss, cls_report
+    # return test_acc, test_loss, cls_report
+    return test_acc, cls_report
 
 def parse_args():
     parser = argparse.ArgumentParser(description="A simple argparse example")
@@ -531,7 +540,8 @@ def main():
             downsample_fraction=config["downsample_fraction"],
             few_shot=config["few_shot"],
             debug=debug,
-            logger=logger
+            logger=logger,
+            test_batch_size=32 if config["attacker"] else config["batch_size"]
         )
 
         summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
@@ -589,7 +599,8 @@ def main():
             attacker if config["attacker"] else False, 
             config["gaussian_std"]
         )
-        best_loss_acc, best_loss_loss, best_loss_cls_report = best_loss_res
+        # best_loss_acc, best_loss_loss, best_loss_cls_report = best_loss_res
+        best_loss_acc, best_loss_cls_report = best_loss_res
 
         torch.save(last_model["model_state"], f"{log_dir}/{config['run_name']}_{time_stamp}_e{last_model['epoch']}_last_model.pt")
         logger.info(f"Last model with val loss {last_model['val_loss']} at {last_model['epoch']} epoch is saved.")
@@ -604,12 +615,15 @@ def main():
             attacker if config["attacker"] else False,
             config["gaussian_std"]
         )
-        last_acc, last_loss, last_cls_report = last_res
+        # last_acc, last_loss, last_cls_report = last_res
+        last_acc, last_cls_report = last_res
 
         with open(f"{log_dir}/metrics_{config['run_name']}_{time_stamp}.csv", "w+") as f:
             f.write("epoch,train_loss,val_loss,train_acc,val_acc\n")
-            f.write(f"Best model test acc and loss at epoch {best_loss_model['epoch']}:,{best_loss_acc},{best_loss_loss},,\n")
-            f.write(f"Last model test acc and loss at epoch {last_model['epoch']}:,{last_acc},{last_loss},,\n")
+            # f.write(f"Best model test acc and loss at epoch {best_loss_model['epoch']}:,{best_loss_acc},{best_loss_loss},,\n")
+            f.write(f"Best model test acc and loss at epoch {best_loss_model['epoch']}:,{best_loss_acc},0,,\n")
+            # f.write(f"Last model test acc and loss at epoch {last_model['epoch']}:,{last_acc},{last_loss},,\n")
+            f.write(f"Last model test acc and loss at epoch {last_model['epoch']}:,{last_acc},0,,\n")
             for i in range(len(train_losses)):
                 f.write(f"{i},{train_losses[i]},{val_losses[i]},{train_acc[i]},{val_acc[i]}\n")
         
