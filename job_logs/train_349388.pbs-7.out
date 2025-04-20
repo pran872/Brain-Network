@@ -1,0 +1,13 @@
+mv: cannot stat 'job_logs/train.err': No such file or directory
+Starting training on cx3-20-2.cx3.hpc.ic.ac.uk at Sun 20 Apr 14:53:21 BST 2025
+Using config: configs/batch_1/config_zoom_m15.json
+Finished at Sun 20 Apr 14:58:39 BST 2025
+
+====================================
+CPU Time used: 00:07:45
+CPU Percent: 233%
+Memory usage: 1512908kb
+Approx Power usage: 0.0014
+Walltime usage: 00:05:27
+
+====================================
