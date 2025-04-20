@@ -1,12 +1,12 @@
 {
-    "run_name": "resnet18_norm",
+    "run_name": "resnet_m22",
     "writer": true,
 
     "seed": 42,
 
     "train_split": 0.9,
 
-    "batch_size": 256,
+    "batch_size": 128,
     "num_workers": 2,
 
     "model_type": "resnet18",
@@ -31,5 +31,5 @@
     "label_smoothing": 0,
     "ema": false,
 
-    "downsample_fraction": 0
+    "downsample_fraction": 0.25
 }

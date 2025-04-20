@@ -17,7 +17,11 @@ import random
 import numpy as np
 import argparse
 import json
-from models import *
+try:
+    from models import *
+except ModuleNotFoundError:
+    from source.models import *
+
 from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
 import os
@@ -112,7 +116,8 @@ def load_data(
     num_workers,
     downsample_fraction=0,
     few_shot=False,
-    debug=False
+    debug=False,
+    logger=False,
 ):
     full_train_set = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
     test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
@@ -132,6 +137,8 @@ def load_data(
         full_train_set = class_balanced_subset(full_train_set, downsample_fraction)
     elif few_shot:
         full_train_set = few_shot_subset(full_train_set, few_shot)
+
+    logger.info(f"Full train/val size with downsampling ({downsample_fraction}): {len(full_train_set)}")
 
     train_size = int(train_split * len(full_train_set))
     val_size = len(full_train_set) - train_size
@@ -517,7 +524,8 @@ def main():
             config["num_workers"],
             downsample_fraction=config["downsample_fraction"],
             few_shot=config["few_shot"],
-            debug=debug
+            debug=debug,
+            logger=logger
         )
 
         summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
@@ -550,7 +558,7 @@ def main():
 
         best_loss_model, last_model, train_losses, val_losses, train_acc, val_acc = train_model(
             model, 
-            config["epochs"], 
+            config["epochs"] if not debug else 1, 
             train_loader, 
             val_loader,
             device,

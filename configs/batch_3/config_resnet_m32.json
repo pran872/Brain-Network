@@ -1,15 +1,15 @@
 {
-    "run_name": "zoom",
+    "run_name": "resnet_m32",
     "writer": true,
 
     "seed": 42,
 
     "train_split": 0.9,
 
-    "batch_size": 128,
+    "batch_size": 64,
     "num_workers": 2,
 
-    "model_type": "zoom",
+    "model_type": "resnet18",
     "optimizer": "adam",
     "scheduler": "ReduceLROnPlateau",
     "criterion": "CE",
@@ -30,6 +30,13 @@
     "transform_type": "custom",
     "label_smoothing": 0,
     "ema": false,
+    "trans_dropout_ratio": 0.0,
+    "standard_scale": false,
 
-    "downsample_fraction": 0.1
+    "downsample_fraction": 0,
+    "few_shot": 100,
+
+    "attacker": false,
+    "epsilon": false,
+    "gaussian_std": false
 }

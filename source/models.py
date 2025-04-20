@@ -1,8 +1,13 @@
 import torch.nn as nn
 import torch.nn.functional as F
-from flex import *
 from torchvision.models import resnet18
-from zoom_att import *
+try:
+    from flex import *
+    from zoom_att import *
+except ModuleNotFoundError:
+    from source.flex import *
+    from source.zoom_att import *
+
 
 
 def build_resnet18_for_cifar10():

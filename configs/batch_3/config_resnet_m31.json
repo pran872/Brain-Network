@@ -1,12 +1,12 @@
 {
-    "run_name": "resnet18_norm",
+    "run_name": "resnet_m31",
     "writer": true,
 
     "seed": 42,
 
     "train_split": 0.9,
 
-    "batch_size": 128,
+    "batch_size": 16,
     "num_workers": 2,
 
     "model_type": "resnet18",
@@ -30,6 +30,13 @@
     "transform_type": "custom",
     "label_smoothing": 0,
     "ema": false,
+    "trans_dropout_ratio": 0.0,
+    "standard_scale": false,
 
-    "downsample_fraction": 0.5
+    "downsample_fraction": 0,
+    "few_shot": 10,
+
+    "attacker": false,
+    "epsilon": false,
+    "gaussian_std": false
 }
