@@ -1,12 +1,12 @@
 {
-    "run_name": "zoom_m25",
+    "run_name": "zoom_m34",
     "writer": true,
 
     "seed": 42,
 
     "train_split": 0.9,
 
-    "batch_size": 128,
+    "batch_size": 16,
     "num_workers": 2,
 
     "model_type": "zoom",
@@ -33,8 +33,8 @@
     "trans_dropout_ratio": 0.0,
     "standard_scale": true,
 
-    "downsample_fraction": 0.25,
-    "few_shot": false,
+    "downsample_fraction": 0,
+    "few_shot": 100,
 
     "attacker": false,
     "epsilon": false,

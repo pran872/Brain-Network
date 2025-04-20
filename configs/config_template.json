@@ -22,16 +22,16 @@
 
     "use_flex": false,
 
-    "use_pos_embed": false,
+    "use_pos_embed": true,
     "add_dropout": false,
     "mlp_end": false,
-    "add_cls_token": false,
+    "add_cls_token": true,
     "num_layers": 2,
     "transform_type": "custom",
-    "label_smoothing": 0,
+    "label_smoothing": 0.1,
     "ema": false,
     "trans_dropout_ratio": 0.0,
-    "standard_scale": false,
+    "standard_scale": true,
 
     "downsample_fraction": 0,
     "few_shot": false,
