@@ -1,5 +1,5 @@
 {
-    "run_name": "zoom",
+    "run_name": "zoom_m16",
     "writer": true,
 
     "seed": 42,
@@ -27,7 +27,7 @@
     "mlp_end": false,
     "add_cls_token": false,
     "num_layers": 2,
-    "transform_type": "custom",
-    "label_smoothing": 0.1,
+    "transform_type": "custom_agg",
+    "label_smoothing": 0,
     "ema": false
 }

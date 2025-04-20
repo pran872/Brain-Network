@@ -446,6 +446,10 @@ def main():
 
         if config["few_shot"] and config["downsample_fraction"] > 0:
             logger.info("Few shot and downsampling fraction provided! Only doing downsampling.")
+        
+        if config["add_cls_token"] and not config["use_pos_embed"]:
+            logger.info("CLS token being used. Setting use_pos_embed to true!")
+            config["use_pos_embed"] = True
 
         if config["writer"]:
             writer = SummaryWriter(log_dir=log_dir)

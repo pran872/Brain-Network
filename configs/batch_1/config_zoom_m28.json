@@ -1,5 +1,5 @@
 {
-    "run_name": "zoom",
+    "run_name": "zoom_m28",
     "writer": true,
 
     "seed": 42,
@@ -14,9 +14,9 @@
     "scheduler": "ReduceLROnPlateau",
     "criterion": "CE",
     "lr": 0.001,
-    "epochs": 50,
+    "epochs": 30,
     
-    "early_stopping": true,
+    "early_stopping": false,
     "patience": 10,
     "min_diff": 0.001,
 
@@ -27,7 +27,16 @@
     "mlp_end": false,
     "add_cls_token": false,
     "num_layers": 2,
-    "transform_type": "custom_agg",
+    "transform_type": "custom",
     "label_smoothing": 0,
-    "ema": false
+    "ema": false,
+    "trans_dropout_ratio": 0.0,
+    "standard_scale": false,
+
+    "downsample_fraction": 0,
+    "few_shot": false,
+
+    "attacker": false,
+    "epsilon": false,
+    "gaussian_std": false
 }
