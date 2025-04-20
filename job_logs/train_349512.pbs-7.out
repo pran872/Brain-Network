@@ -1,0 +1,17 @@
+mv: cannot stat 'job_logs/train.err': No such file or directory
+Starting training on cx3-20-4.cx3.hpc.ic.ac.uk at Sun 20 Apr 17:20:37 BST 2025
+Using config: configs/batch_4/config_zoom_m33.json
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3860: RuntimeWarning: Mean of empty slice.
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/numpy/_core/_methods.py:145: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+Finished at Sun 20 Apr 17:21:43 BST 2025
+
+====================================
+CPU Time used: 00:00:00
+CPU Percent: 0%
+Memory usage: 0b
+Approx Power usage: 0.0
+Walltime usage: 00:01:15
+
+====================================

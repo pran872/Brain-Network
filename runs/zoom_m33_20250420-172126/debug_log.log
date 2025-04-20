@@ -1,0 +1,66 @@
+2025-04-20 17:21:26,356 | INFO | Job Started
+2025-04-20 17:21:26,356 | INFO | Logging run: /rds/general/user/psp20/home/Brain-Network/runs/zoom_m33_20250420-172126
+2025-04-20 17:21:26,356 | INFO | Config:
+{
+  "seed": 42,
+  "run_name": "zoom_m33",
+  "model_type": "zoom",
+  "optimizer": "adam",
+  "scheduler": "ReduceLROnPlateau",
+  "criterion": "CE",
+  "label_smoothing": 0.1,
+  "train_split": 0.9,
+  "batch_size": 16,
+  "num_workers": 2,
+  "lr": 0.001,
+  "epochs": 50,
+  "ema": false,
+  "early_stopping": true,
+  "min_diff": 0.001,
+  "writer": true,
+  "patience": 10,
+  "use_flex": false,
+  "use_pos_embed": true,
+  "add_dropout": false,
+  "mlp_end": false,
+  "add_cls_token": true,
+  "num_layers": 2,
+  "trans_dropout_ratio": 0.0,
+  "standard_scale": true,
+  "transform_type": "custom",
+  "downsample_fraction": 0,
+  "few_shot": 10,
+  "attacker": false,
+  "epsilon": false,
+  "gaussian_std": false
+}
+2025-04-20 17:21:26,532 | INFO | Using device: cuda
+2025-04-20 17:21:26,532 | INFO | Training for 50 epochs
+2025-04-20 17:21:26,532 | INFO | Debug mode: False
+2025-04-20 17:21:26,532 | INFO | Downsampling by: 0
+2025-04-20 17:21:27,768 | INFO | Using custom transform
+2025-04-20 17:21:29,565 | INFO | Full train/val size with downsampling (0): 100
+2025-04-20 17:21:31,450 | INFO | Label smoothing: 0.1
+2025-04-20 17:21:33,709 | INFO | Epoch 1: Train Loss=3.2853, Train Acc=8.89% | Val Loss=3.0703, Val Acc=20.00% | Time: 2.22s
+2025-04-20 17:21:33,710 | INFO | New best model saved (val loss = 3.0703)
+2025-04-20 17:21:34,080 | INFO | Epoch 2: Train Loss=2.4875, Train Acc=13.33% | Val Loss=2.5510, Val Acc=0.00% | Time: 0.37s
+2025-04-20 17:21:34,081 | INFO | New best model saved (val loss = 2.5510)
+2025-04-20 17:21:34,453 | INFO | Epoch 3: Train Loss=2.2927, Train Acc=8.89% | Val Loss=2.4095, Val Acc=0.00% | Time: 0.37s
+2025-04-20 17:21:34,455 | INFO | New best model saved (val loss = 2.4095)
+2025-04-20 17:21:34,827 | INFO | Epoch 4: Train Loss=2.2691, Train Acc=22.22% | Val Loss=2.4753, Val Acc=0.00% | Time: 0.37s
+2025-04-20 17:21:35,199 | INFO | Epoch 5: Train Loss=2.1911, Train Acc=20.00% | Val Loss=2.4382, Val Acc=0.00% | Time: 0.37s
+2025-04-20 17:21:35,568 | INFO | Epoch 6: Train Loss=2.1117, Train Acc=26.67% | Val Loss=2.5266, Val Acc=0.00% | Time: 0.37s
+2025-04-20 17:21:35,947 | INFO | Epoch 7: Train Loss=2.1499, Train Acc=17.78% | Val Loss=2.5210, Val Acc=0.00% | Time: 0.38s
+2025-04-20 17:21:36,319 | INFO | Epoch 8: Train Loss=1.9820, Train Acc=24.44% | Val Loss=2.5425, Val Acc=0.00% | Time: 0.37s
+2025-04-20 17:21:36,691 | INFO | Epoch 9: Train Loss=2.0085, Train Acc=26.67% | Val Loss=2.5120, Val Acc=10.00% | Time: 0.37s
+2025-04-20 17:21:37,060 | INFO | Epoch 10: Train Loss=2.0168, Train Acc=23.33% | Val Loss=2.6201, Val Acc=0.00% | Time: 0.37s
+2025-04-20 17:21:37,426 | INFO | Epoch 11: Train Loss=1.9139, Train Acc=30.00% | Val Loss=2.5358, Val Acc=0.00% | Time: 0.36s
+2025-04-20 17:21:37,791 | INFO | Epoch 12: Train Loss=1.9346, Train Acc=28.89% | Val Loss=2.7447, Val Acc=0.00% | Time: 0.36s
+2025-04-20 17:21:38,158 | INFO | Epoch 13: Train Loss=1.8940, Train Acc=34.44% | Val Loss=2.7309, Val Acc=0.00% | Time: 0.37s
+2025-04-20 17:21:38,159 | INFO | Early stopping triggered at epoch 13
+2025-04-20 17:21:38,192 | INFO | Best model with lowest val loss 2.409450054168701 at 2 epoch is saved.
+2025-04-20 17:21:40,305 | INFO | Test Accuracy: 19.67% | Test Loss: 2.19
+2025-04-20 17:21:40,348 | INFO | Last model with val loss 2.730896234512329 at 12 epoch is saved.
+2025-04-20 17:21:42,469 | INFO | Test Accuracy: 19.67% | Test Loss: 2.19
+2025-04-20 17:21:42,479 | INFO | 
+Job Completed
