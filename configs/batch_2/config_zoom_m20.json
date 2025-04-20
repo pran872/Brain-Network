@@ -1,5 +1,5 @@
 {
-    "run_name": "zoom",
+    "run_name": "zoom_m20",
     "writer": true,
 
     "seed": 42,
@@ -22,12 +22,12 @@
 
     "use_flex": false,
 
-    "use_pos_embed": false,
-    "add_dropout": false,
-    "mlp_end": false,
+    "use_pos_embed": true,
+    "add_dropout": true,
+    "mlp_end": true,
     "add_cls_token": false,
-    "num_layers": 2,
+    "num_layers": 4,
     "transform_type": "custom",
     "label_smoothing": 0,
-    "ema": true
+    "ema": false
 }

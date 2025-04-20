@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -N brainnet_exp1
 #PBS -l select=1:ncpus=4:mem=8gb:ngpus=1
-#PBS -l walltime=00:30:00 
+#PBS -l walltime=00:10:00 
 #PBS -o job_logs/train.out
 #PBS -e job_logs/train.err
 #PBS -j oe
@@ -19,5 +19,5 @@ export OUTPUT_DIR=/rds/general/user/psp20/home/Brain-Network/runs
 echo "Starting training on $(hostname) at $(date)"
 CONFIG=${CONFIG:-configs/config_template.json}
 echo "Using config: $CONFIG"
-python source/simple_cnn.py -v -c $CONFIG
+python source/simple_cnn.py -c $CONFIG
 echo "Finished at $(date)"

@@ -1,5 +1,5 @@
 {
-    "run_name": "zoom",
+    "run_name": "zoom_m30",
     "writer": true,
 
     "seed": 42,
@@ -22,12 +22,21 @@
 
     "use_flex": false,
 
-    "use_pos_embed": true,
-    "add_dropout": true,
-    "mlp_end": true,
+    "use_pos_embed": false,
+    "add_dropout": false,
+    "mlp_end": false,
     "add_cls_token": false,
-    "num_layers": 4,
+    "num_layers": 2,
     "transform_type": "custom",
     "label_smoothing": 0,
-    "ema": false
+    "ema": false,
+    "trans_dropout_ratio": 0.1,
+    "standard_scale": false,
+
+    "downsample_fraction": 0,
+    "few_shot": false,
+
+    "attacker": false,
+    "epsilon": false,
+    "gaussian_std": false
 }
