@@ -313,9 +313,11 @@ def test_model(model,
         images, labels = images.to(device), labels.to(device)
 
         if attacker:
-            images.requires_grad = True
-            adv_images = attacker(images, labels)
-            outputs = model(adv_images)
+            with torch.enable_grad():
+                images.requires_grad = True
+                adv_images = attacker(images, labels)
+                outputs = model(adv_images)
+                del adv_images
         elif gaussian_std:
             with torch.no_grad():
                 noisy_images = add_gaussian_noise(images, std=gaussian_std)
@@ -335,6 +337,10 @@ def test_model(model,
 
         y_pred.append(predicted.cpu().numpy())
         y_true.append(labels.cpu().numpy())
+
+        if attacker:
+            del images, labels, outputs, predicted
+            torch.cuda.empty_cache()
     
     y_pred = np.concatenate(y_pred)
     y_true = np.concatenate(y_true)
