@@ -9,7 +9,7 @@
     "batch_size": 256,
     "num_workers": 2,
 
-    "model_type": "zoom",
+    "model_type": "brainit",
     "optimizer": "adam",
     "scheduler": "ReduceLROnPlateau",
     "criterion": "CE",
@@ -27,7 +27,7 @@
     "mlp_end": false,
     "add_cls_token": true,
     "num_layers": 2,
-    "transform_type": "custom",
+    "transform_type": "foveation",
     "label_smoothing": 0.1,
     "ema": false,
     "trans_dropout_ratio": 0.0,

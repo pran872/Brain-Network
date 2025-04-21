@@ -309,3 +309,137 @@ class ZoomVisionTransformer(nn.Module):
         return dist
 
 
+class BrainiT(nn.Module):
+    def __init__(
+        self,
+        device,
+        num_classes=10,
+        use_pos_embed=True,
+        add_dropout=False,
+        mlp_end=False,
+        add_cls_token=True,
+        num_layers=2,
+        trans_dropout_ratio=0.0,
+        standard_scale=True,
+        embed_dim=256,
+        num_heads=4,
+        resnet_layers=4,
+        multiscale_tokenisation=False,
+        freeze_resnet_early=False,
+        gamma_per_head=False,
+        use_token_mixer=False,
+        remove_zoom=False,
+    ):
+        super().__init__()
+        self.use_pos_embed = use_pos_embed
+        self.add_dropout = add_dropout
+        self.mlp_end = mlp_end
+        self.add_cls_token = add_cls_token
+        self.multiscale_tokenisation = multiscale_tokenisation
+
+        if self.add_dropout or self.add_cls_token:
+            # Dropout and cls token used with pos embeds
+            self.use_pos_embed = True
+        
+        self.register_buffer("dist_matrix", self.compute_token_distance_matrix(device=device))
+        self.backbone = ResNetBackbone(resnet_layers=resnet_layers, freeze_early=freeze_resnet_early)
+        self.token_proj = nn.Linear(self.backbone.out_dim, embed_dim)
+        self.zoom_controller = ZoomController(self.backbone.out_dim, out_dim=1, num_heads=num_heads, gamma_per_head=gamma_per_head)
+        
+        if self.add_cls_token:
+            self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
+            nn.init.trunc_normal_(self.cls_token, std=0.02)
+
+        if self.use_pos_embed:
+            num_patches = 81 if self.multiscale_tokenisation else 64
+            pos_embed_patches = num_patches + 1 if self.add_cls_token else num_patches
+            self.pos_embed = nn.Parameter(torch.zeros(1, pos_embed_patches, embed_dim))
+            nn.init.trunc_normal_(self.pos_embed, std=0.02) # std by convention
+            if self.add_dropout:
+                self.dropout = nn.Dropout(0.1)
+            
+        self.transformer_blocks = nn.ModuleList([
+            ZoomTransformerBlock(
+                embed_dim, 
+                num_heads, 
+                self.dist_matrix, 
+                gamma_per_head=gamma_per_head,
+                dropout_ratio=trans_dropout_ratio, 
+                standard_scale=standard_scale,
+                use_token_mixer=use_token_mixer,
+                remove_zoom=remove_zoom
+            )
+            for _ in range(num_layers)
+        ])
+
+        if self.mlp_end:
+            self.mlp_head = nn.Sequential(
+                nn.LayerNorm(embed_dim),
+                nn.Linear(embed_dim, 128),
+                nn.GELU(),
+                nn.Linear(128, num_classes)
+            )
+        else:
+            self.cls_head = nn.Sequential(
+                nn.LayerNorm(embed_dim),
+                nn.Linear(embed_dim, num_classes)
+            )
+
+    def forward(self, x, return_gamma=False):
+        feat_map, pooled = self.backbone(x) # [B, 512, 8, 8], [B, 512]
+        gamma = self.zoom_controller(pooled) # [B, 1]
+        tokens = feat_map.flatten(2).transpose(1, 2) # [B, 64, 512]
+        if self.multiscale_tokenisation:
+            pooled_4x4 = F.adaptive_avg_pool2d(feat_map, output_size=(4, 4))
+            tokens_4x4 = pooled_4x4.flatten(2).transpose(1, 2)
+            pooled_1x1 = F.adaptive_avg_pool2d(feat_map, 1).reshape(x.shape[0], self.backbone.out_dim)
+            tokens_1x1 = pooled_1x1.unsqueeze(1)
+            tokens = torch.cat([tokens, tokens_4x4, tokens_1x1], dim=1)
+        tokens = self.token_proj(tokens) # [B, N, D]
+
+        if self.add_cls_token:
+            cls_token = self.cls_token.expand(tokens.shape[0], 1, -1)
+            tokens = torch.cat((cls_token, tokens), dim=1)
+
+        if self.use_pos_embed:
+            tokens = tokens + self.pos_embed
+            if self.add_dropout:
+                tokens = self.dropout(tokens)
+
+        for block in self.transformer_blocks:
+            tokens = block(tokens, gamma)
+
+        out = tokens[:, 0] if self.add_cls_token else tokens.mean(dim=1)
+        out = self.mlp_head(out) if self.mlp_end else self.cls_head(out)
+
+        if return_gamma:
+            return out, gamma
+        else:
+            return out
+
+    def compute_token_distance_matrix(self, h=8, w=8, device="cpu"):
+        coords = torch.stack(torch.meshgrid(
+            torch.arange(h, device=device), torch.arange(w, device=device), indexing='ij'
+        ), dim=-1).view(-1, 2).float()
+
+        if self.multiscale_tokenisation:
+            coords_4x4 = torch.stack(torch.meshgrid(
+                torch.linspace(0, h-1, 4, device=device),
+                torch.linspace(0, w-1, 4, device=device),
+                indexing='ij'
+            ), dim=-1).view(-1, 2).float()
+            coords = torch.cat([coords, coords_4x4], dim=0)
+
+            coords_1x1 = torch.tensor([[h / 2, w / 2]], device=device)
+            coords = torch.cat([coords, coords_1x1], dim=0) 
+
+        dist = torch.cdist(coords, coords, p=2)
+
+        if self.add_cls_token: # Expand to fit the extra token
+            # Create on same device!!
+            cls_row = torch.zeros(1, dist.size(1), device=dist.device)
+            cls_col = torch.zeros(dist.size(0) + 1, 1, device=dist.device)
+            dist = torch.cat([cls_row, dist], dim=0)
+            dist = torch.cat([cls_col, dist], dim=1)
+
+        return dist

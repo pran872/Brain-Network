@@ -19,8 +19,10 @@ import argparse
 import json
 try:
     from models import *
+    from brainit import *
 except ModuleNotFoundError:
     from source.models import *
+    from source.brainit import *
 
 from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
@@ -458,6 +460,7 @@ def main():
             "custom_vit",
             "resnet18",
             "zoom",
+            "brainit"
         ]
         assert config["model_type"] in valid_models, "Invalid model type"
         assert config["optimizer"] in ["adam"], "Invalid optimizer"
@@ -502,6 +505,13 @@ def main():
             transforms.ToTensor(),
             transforms.Normalize(norm_means, norm_stds)
         ])
+        foveation_transform = transforms.Compose([
+            transforms.RandomCrop(32, padding=4), 
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            FixedFoveation(),
+            transforms.Normalize(norm_means, norm_stds)
+        ])
         if config["model_type"] == "fast_cnn":
             model = FastCNN().to(device)
         elif config["model_type"] == "fast_cnn2":
@@ -530,6 +540,10 @@ def main():
                 use_token_mixer=config["use_token_mixer"],
                 remove_zoom=config["remove_zoom"]
             ).to(device)
+        elif config["model_type"] == "brainit":
+            model = BrainiT(
+                device=device
+            ).to(device)
         
         if config["transform_type"] == "custom":
             logger.info("Using custom transform")
@@ -537,6 +551,9 @@ def main():
         elif config["transform_type"] == "custom_agg":
             logger.info("Using custom agg transform")
             transform_train = custom_transform_agg
+        elif config["transform_type"] == "foveation":
+            logger.info("Using foveation transform")
+            transform_train = foveation_transform
 
         train_loader, val_loader, test_loader = load_data(
             transform_train,
@@ -551,9 +568,9 @@ def main():
             test_batch_size=32 if config["attacker"] else config["batch_size"]
         )
 
-        # summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
-        # with open(f"{log_dir}/model_summary.txt", "w") as f:
-        #     f.write(str(summary_str))
+        summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
+        with open(f"{log_dir}/model_summary.txt", "w") as f:
+            f.write(str(summary_str))
     
         if config["optimizer"] == "adam":
             optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"], weight_decay=1e-4)
@@ -621,9 +638,7 @@ def main():
 
         with open(f"{log_dir}/metrics_{config['run_name']}_{time_stamp}.csv", "w+") as f:
             f.write("epoch,train_loss,val_loss,train_acc,val_acc\n")
-            # f.write(f"Best model test acc and loss at epoch {best_loss_model['epoch']}:,{best_loss_acc},{best_loss_loss},,\n")
             f.write(f"Best model test acc and loss at epoch {best_loss_model['epoch']}:,{best_loss_acc},0,,\n")
-            # f.write(f"Last model test acc and loss at epoch {last_model['epoch']}:,{last_acc},{last_loss},,\n")
             f.write(f"Last model test acc and loss at epoch {last_model['epoch']}:,{last_acc},0,,\n")
             for i in range(len(train_losses)):
                 f.write(f"{i},{train_losses[i]},{val_losses[i]},{train_acc[i]},{val_acc[i]}\n")
@@ -634,8 +649,6 @@ def main():
             f.write(last_cls_report)
 
         if writer:
-            # dummy_input = torch.randn(1, 3, 32, 32).to(device)
-            # writer.add_graph(model, dummy_input)
             writer.close()
         logger.info("\nJob Completed")
 
