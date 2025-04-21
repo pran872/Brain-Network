@@ -193,7 +193,7 @@ def train_model(
 
             if isinstance(outputs, tuple): 
                 # For flex network
-                outputs, conv_ratio = outputs
+                outputs, _ = outputs
     
             loss = criterion(outputs, labels)
             loss.backward()
@@ -229,6 +229,8 @@ def train_model(
 
                     if isinstance(model, ZoomVisionTransformer):
                         outputs, gamma = model(images, return_gamma=True)
+                        if gamma.ndim == 4:
+                            gamma = gamma.mean(dim=1).view(-1)
                         for g, label in zip(gamma, labels):
                             gamma_by_class[label.item()].append(g.item())
                     else:
@@ -418,11 +420,17 @@ def set_config_defaults(config):
         "num_layers": config.get("num_layers", 2),
         "trans_dropout_ratio": config.get("trans_dropout_ratio", 0.0),
         "standard_scale": config.get("standard_scale", False),
+        "resnet_layers": config.get("resnet_layers", 4),
+        "multiscale_tokenisation": config.get("multiscale_tokenisation", False),
+        "gamma_per_head": config.get("gamma_per_head", False),
+        "use_token_mixer": config.get("use_token_mixer", False),
+        "remove_zoom": config.get("remove_zoom", False),
 
         # Data
         "transform_type": config.get("transform_type", "custom"), # "custom", "custom_agg", "default"
         "downsample_fraction": config.get("downsample_fraction", 0),
         "few_shot": config.get("few_shot", False),
+        "freeze_resnet_early": config.get("freeze_resnet_early", False),
 
         "attacker": config.get("attacker", False), # FGSM, PGD, False
         "epsilon": config.get("epsilon", False), # epsilon 0 - no attack
@@ -514,7 +522,13 @@ def main():
                 add_cls_token=config["add_cls_token"],
                 num_layers=config["num_layers"],
                 trans_dropout_ratio=config["trans_dropout_ratio"],
-                standard_scale=config["standard_scale"]
+                standard_scale=config["standard_scale"],
+                resnet_layers=config["resnet_layers"],
+                multiscale_tokenisation=config["multiscale_tokenisation"],
+                freeze_resnet_early=config["freeze_resnet_early"],
+                gamma_per_head=config["gamma_per_head"],
+                use_token_mixer=config["use_token_mixer"],
+                remove_zoom=config["remove_zoom"]
             ).to(device)
         
         if config["transform_type"] == "custom":
@@ -537,9 +551,9 @@ def main():
             test_batch_size=32 if config["attacker"] else config["batch_size"]
         )
 
-        summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
-        with open(f"{log_dir}/model_summary.txt", "w") as f:
-            f.write(str(summary_str))
+        # summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
+        # with open(f"{log_dir}/model_summary.txt", "w") as f:
+        #     f.write(str(summary_str))
     
         if config["optimizer"] == "adam":
             optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"], weight_decay=1e-4)

@@ -1,5 +1,5 @@
 {
-    "run_name": "zoom",
+    "run_name": "zoom_m58",
     "writer": true,
 
     "seed": 42,
@@ -14,7 +14,7 @@
     "scheduler": "ReduceLROnPlateau",
     "criterion": "CE",
     "lr": 0.001,
-    "epochs": 1,
+    "epochs": 50,
     
     "early_stopping": true,
     "patience": 10,
@@ -36,7 +36,7 @@
     "multiscale_tokenisation": false,
     "gamma_per_head": false,
     "use_token_mixer": false,
-    "remove_zoom": false,
+    "remove_zoom": true,
 
     "downsample_fraction": 0,
     "few_shot": false,

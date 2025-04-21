@@ -1,5 +1,5 @@
 {
-    "run_name": "zoom",
+    "run_name": "zoom_m57",
     "writer": true,
 
     "seed": 42,
@@ -14,7 +14,7 @@
     "scheduler": "ReduceLROnPlateau",
     "criterion": "CE",
     "lr": 0.001,
-    "epochs": 1,
+    "epochs": 50,
     
     "early_stopping": true,
     "patience": 10,
@@ -23,7 +23,7 @@
     "use_flex": false,
 
     "use_pos_embed": true,
-    "add_dropout": false,
+    "add_dropout": true,
     "mlp_end": false,
     "add_cls_token": true,
     "num_layers": 2,

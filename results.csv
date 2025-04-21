@@ -7,7 +7,7 @@ CNN,1,FastCNN,75.44%,7,n,last model,no transforms,,,batch 4
 ,2,FlexCNN,77.61%,19,n,last model,no transforms,,,batch 5
 Hybrid CNN-ViT,3,Basic,72.40%,19,n,last model,no transforms,,,batch 6
 ,4,Flex,74.11%,26,n,last model,no transforms,,,batch 7
-"ResNet18 (built-in) 0.01, 0.05, 0.1, 0.2",5,with transforms,92.28%,29,n,last model,,,,
+ResNet18 (built-in),5,with transforms,92.28%,29,n,last model,,,,
 ,6,no transforms,85.29%,9,n,last model,,,,
 ,7,"128 bz, with transforms",92.27%,24,n,last model,,,,
 ,27,with transforms,92.65%,31/41,y,both,,,,
