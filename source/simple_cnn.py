@@ -304,14 +304,13 @@ def add_gaussian_noise(images, std=0.1):
 def test_model(model,
     test_loader,
     device,
-    criterion,
     writer,
     logger,
     attacker=False,
     gaussian_std=False
 ):
     model.eval()
-    correct, total, total_loss = 0, 0, 0
+    correct, total = 0, 0
     y_pred, y_true = [], []
     for images, labels in tqdm(test_loader, desc="Testing", disable=not sys.stdout.isatty()):
         images, labels = images.to(device), labels.to(device)
@@ -336,9 +335,7 @@ def test_model(model,
             outputs, _ = outputs
 
         _, predicted = outputs.max(1)
-        # loss = criterion(outputs, labels)
 
-        # total_loss += loss.item()
         total += labels.size(0)
         correct += predicted.eq(labels).sum().item()
 
@@ -353,20 +350,16 @@ def test_model(model,
     y_true = np.concatenate(y_true)
     
     test_acc = 100 * correct / total
-    # test_loss = (total_loss/len(test_loader)).item()
     if writer:
         writer.add_text("Test/Accuracy", f"{test_acc:.2f}%")
-        # writer.add_text("Test/Loss", f"{test_loss:.4f}")
 
-    # logger.info(f"Test Accuracy: {test_acc:.2f}% | Test Loss: {test_loss:.2f}")
     logger.info(f"Test Accuracy: {test_acc:.2f}%")
     cls_report = classification_report(y_true, y_pred, output_dict=False)
 
-    # return test_acc, test_loss, cls_report
     return test_acc, cls_report
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="A simple argparse example")
+    parser = argparse.ArgumentParser(description="Pass a config file or enter debug mode")
     parser.add_argument(
         "-c", "--config", 
         type=str, 
@@ -589,34 +582,28 @@ def main():
         torch.save(best_loss_model["model_state"], f"{log_dir}/{config['run_name']}_{time_stamp}_e{best_loss_model['epoch']}_best_model.pt")
         logger.info(f"Best model with lowest val loss {best_loss_model['val_loss']} at {best_loss_model['epoch']} epoch is saved.")
         model.load_state_dict(best_loss_model["model_state"])
-        best_loss_res = test_model(
+        best_loss_acc, best_loss_cls_report = test_model(
             model, 
             test_loader, 
-            device, 
-            criterion, 
+            device,
             writer if config["writer"] else False, 
             logger, 
             attacker if config["attacker"] else False, 
             config["gaussian_std"]
         )
-        # best_loss_acc, best_loss_loss, best_loss_cls_report = best_loss_res
-        best_loss_acc, best_loss_cls_report = best_loss_res
 
         torch.save(last_model["model_state"], f"{log_dir}/{config['run_name']}_{time_stamp}_e{last_model['epoch']}_last_model.pt")
         logger.info(f"Last model with val loss {last_model['val_loss']} at {last_model['epoch']} epoch is saved.")
         model.load_state_dict(last_model["model_state"])
-        last_res = test_model(
+        last_acc, last_cls_report = test_model(
             model,
             test_loader,
             device,
-            criterion,
             writer if config["writer"] else False,
             logger,
             attacker if config["attacker"] else False,
             config["gaussian_std"]
         )
-        # last_acc, last_loss, last_cls_report = last_res
-        last_acc, last_cls_report = last_res
 
         with open(f"{log_dir}/metrics_{config['run_name']}_{time_stamp}.csv", "w+") as f:
             f.write("epoch,train_loss,val_loss,train_acc,val_acc\n")
