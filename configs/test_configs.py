@@ -22,12 +22,14 @@ def run_tests():
             subprocess.run(
                 ["python", "source/simple_cnn.py", "--config", config, "-d"],
                 capture_output=True,
-                text=True
+                text=True,
+                check=True
             )
-        except Exception as e:
+        except subprocess.CalledProcessError as e:
             errored_out[config] = e
-            print(f"Error {config}")
-            print(e)
+            print(f"Error in config: {config}")
+            print("stdout:", e.stdout)
+            print("stderr:", e.stderr)
             continue
         print("Done")
 
