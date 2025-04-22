@@ -10,13 +10,13 @@ sys.path.append(root_dir)
 errored_out = dict()
 
 def run_tests():
-    dir = "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/round_0_seed_tests"
+    # dir = "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/round_0_seed_tests"
     
-    # pts = [
-    #     "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/config_template.json"
-    # ]
-    for config in glob.glob(os.path.join(dir, "**", "*.json"), recursive=True):
-    # for config in pts:
+    pts = [
+        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/round_2/config_resnet_r2_m4.json"
+    ]
+    # for config in glob.glob(os.path.join(dir, "**", "*.json"), recursive=True):
+    for config in pts:
         print(f"\nTesting config: {config}")
         try:
             result = subprocess.run(
