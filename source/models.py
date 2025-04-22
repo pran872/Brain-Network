@@ -4,9 +4,11 @@ from torchvision.models import resnet18
 try:
     from flex import *
     from zoom_att import *
+    from brainit import LearnableFoveation
 except ModuleNotFoundError:
     from source.flex import *
     from source.zoom_att import *
+    from brainit import LearnableFoveation
 
 
 
@@ -313,6 +315,7 @@ class BrainiT(nn.Module):
     def __init__(
         self,
         device,
+        use_retinal_layer=True,
         num_classes=10,
         use_pos_embed=True,
         add_dropout=False,
@@ -331,6 +334,7 @@ class BrainiT(nn.Module):
         remove_zoom=False,
     ):
         super().__init__()
+        self.use_retinal_layer = use_retinal_layer
         self.use_pos_embed = use_pos_embed
         self.add_dropout = add_dropout
         self.mlp_end = mlp_end
@@ -342,6 +346,8 @@ class BrainiT(nn.Module):
             self.use_pos_embed = True
         
         self.register_buffer("dist_matrix", self.compute_token_distance_matrix(device=device))
+        if self.use_retinal_layer:
+            self.retinal_sampling_layer = LearnableFoveation()
         self.backbone = ResNetBackbone(resnet_layers=resnet_layers, freeze_early=freeze_resnet_early)
         self.token_proj = nn.Linear(self.backbone.out_dim, embed_dim)
         self.zoom_controller = ZoomController(self.backbone.out_dim, out_dim=1, num_heads=num_heads, gamma_per_head=gamma_per_head)
@@ -385,7 +391,11 @@ class BrainiT(nn.Module):
                 nn.Linear(embed_dim, num_classes)
             )
 
-    def forward(self, x, return_gamma=False):
+    def forward(self, x, return_cx_cy=False):
+        if self.use_retinal_layer:
+            x = self.retinal_sampling_layer(x, return_cx_cy)
+            if isinstance(x, tuple):
+                x, cx, cy = x
         feat_map, pooled = self.backbone(x) # [B, 512, 8, 8], [B, 512]
         gamma = self.zoom_controller(pooled) # [B, 1]
         tokens = feat_map.flatten(2).transpose(1, 2) # [B, 64, 512]
@@ -412,8 +422,8 @@ class BrainiT(nn.Module):
         out = tokens[:, 0] if self.add_cls_token else tokens.mean(dim=1)
         out = self.mlp_head(out) if self.mlp_end else self.cls_head(out)
 
-        if return_gamma:
-            return out, gamma
+        if return_cx_cy:
+            return out, cx, cy
         else:
             return out
 

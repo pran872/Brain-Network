@@ -1,5 +1,5 @@
 {
-    "run_name": "lord",
+    "run_name": "brainit_m6",
     "writer": true,
 
     "seed": 42,
@@ -11,7 +11,7 @@
 
     "model_type": "brainit",
     "optimizer": "adam",
-    "scheduler": "CosineAnnealingLR",
+    "scheduler": "ReduceLROnPlateau",
     "scheduler_patience": 3,
     "scheduler_T_max": 50,
     "criterion": "CE",
@@ -31,7 +31,7 @@
     "mlp_end": false,
     "add_cls_token": true,
     "num_layers": 2,
-    "transform_type": "foveation",
+    "transform_type": "custom",
     "label_smoothing": 0.1,
     "ema": false,
     "trans_dropout_ratio": 0.0,

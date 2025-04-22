@@ -206,8 +206,9 @@ def train_model(
             outputs = model(images)
 
             if isinstance(outputs, tuple): 
-                # For flex network
-                outputs, _ = outputs
+                # For flex network / zoomvit
+                if len(outputs) == 2:
+                    outputs, _ = outputs
     
             loss = criterion(outputs, labels)
             loss.backward()
@@ -239,21 +240,20 @@ def train_model(
             with torch.no_grad():
                 for images, labels in val_loader:
                     images, labels = images.to(device), labels.to(device)
-                    outputs = model(images)
-
+                    
                     if isinstance(model, ZoomVisionTransformer):
                         outputs, gamma = model(images, return_gamma=True)
                         if gamma.ndim == 4:
                             gamma = gamma.mean(dim=1).view(-1)
                         for g, label in zip(gamma, labels):
                             gamma_by_class[label.item()].append(g.item())
+                    elif isinstance(model, BrainiT):
+                        outputs, cx, cy = model(images, return_cx_cy=True)
+                    elif isinstance(model, FlexNet):
+                        outputs, conv_ratio = outputs
                     else:
                         outputs = model(images)
 
-                    if isinstance(outputs, tuple): 
-                        # For flex network
-                        outputs, conv_ratio = outputs
-                    
                     loss = criterion(outputs, labels)
                     val_loss += loss.item()
                     _, predicted = outputs.max(1)
@@ -288,6 +288,9 @@ def train_model(
                 writer.add_scalar("Gamma/std", gamma.std().item(), epoch)
                 for c in range(10):
                     writer.add_scalar(f"Gamma/Class_{c}", np.mean(gamma_by_class[c]), epoch)
+            elif isinstance(model, BrainiT):
+                writer.add_scalar("Centroid_means/cx", cx, epoch)
+                writer.add_scalar("Centroid_means/cy", cy, epoch)
 
         logger.info(f"Epoch {epoch+1}: Train Loss={avg_train_loss:.4f}, Train Acc={train_acc:.2f}% | "
             f"Val Loss={avg_val_loss:.4f}, Val Acc={val_acc:.2f}% | Time: {end - start:.2f}s")
@@ -347,8 +350,7 @@ def test_model(model,
                 outputs = model(images)
 
         if isinstance(outputs, tuple): 
-            # For flex network
-            outputs, _ = outputs
+            outputs = outputs[0]
 
         _, predicted = outputs.max(1)
 
@@ -407,11 +409,11 @@ def set_config_defaults(config):
         # Model and training details
         "model_type": config.get("model_type", "fast_cnn"), # "fast_cnn", "fast_cnn2", "flex_net", "custom_vit", "resnet18", "zoom",
         "optimizer": config.get("optimizer", "adam"),
-        "scheduler": config.get("scheduler", "ReduceLROnPlateau"), # or CosineAnnealingLR
-        "scheduler_patience": config.get("scheduler_patience", 3),
-        "scheduler_T_max": config.get("scheduler_T_max", 50),
+        "scheduler": config.get("scheduler", "CosineAnnealingLR"), # ReduceLROnPlateau or CosineAnnealingLR
+        "scheduler_patience": config.get("scheduler_patience", 3), # applies only to ReduceLROnPlateau
+        "scheduler_T_max": config.get("scheduler_T_max", 50), # # applies only to CosineAnnealingLR
         "criterion": config.get("criterion", "CE"),
-        "label_smoothing": config.get("label_smoothing", 0), # smoothing for criterion
+        "label_smoothing": config.get("label_smoothing", 0.1), # smoothing for criterion
         "train_split": config.get("train_split", 0.9),
         "batch_size": config.get("batch_size", 256),
         "num_workers": config.get("num_workers", 1),
@@ -424,6 +426,9 @@ def set_config_defaults(config):
         "min_diff": config.get("min_diff", 0.001),
         "writer": config.get("writer", True),
         "patience": config.get("patience", 5),
+
+        # BrainIt specific config
+        "retinal_layer": config.get("retinal_layer", True),
 
         # CustomVit specific config
         "use_flex": config.get("use_flex", False),
@@ -506,7 +511,6 @@ def main():
         logger.info(f"Debug mode: {debug}")
         logger.info(f"Downsampling by: {config['downsample_fraction']}")
 
-        input_size = (32, 32)
         norm_means, norm_stds = [0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]
         transform_train = transforms.Compose([transforms.ToTensor(), transforms.Normalize(norm_means, norm_stds)])
         transform_test = transforms.Compose([transforms.ToTensor(), transforms.Normalize(norm_means, norm_stds)])
@@ -559,6 +563,7 @@ def main():
             ).to(device)
         elif config["model_type"] == "brainit":
             model = BrainiT(
+                use_retinal_layer=config["retinal_layer"],
                 device=device
             ).to(device)
         
@@ -592,9 +597,10 @@ def main():
             test_batch_size=32 if config["attacker"] else config["batch_size"]
         )
 
-        summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
-        with open(os.path.join(log_dir, "model_summary.txt"), "w") as f:
-            f.write(str(summary_str))
+        # input_size = (32, 32)
+        # summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
+        # with open(os.path.join(log_dir, "model_summary.txt"), "w") as f:
+        #     f.write(str(summary_str))
     
         if config["optimizer"] == "adam":
             optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"], weight_decay=1e-4)
