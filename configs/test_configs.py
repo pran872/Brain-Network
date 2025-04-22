@@ -13,7 +13,7 @@ def run_tests():
     # dir = "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/round_0_seed_tests"
     
     pts = [
-        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/round_2/config_resnet_r2_m4.json"
+        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/round_2/config_brainit_m5.json"
     ]
     # for config in glob.glob(os.path.join(dir, "**", "*.json"), recursive=True):
     for config in pts:

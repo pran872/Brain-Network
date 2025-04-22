@@ -409,6 +409,7 @@ def set_config_defaults(config):
         "optimizer": config.get("optimizer", "adam"),
         "scheduler": config.get("scheduler", "ReduceLROnPlateau"), # or CosineAnnealingLR
         "scheduler_patience": config.get("scheduler_patience", 3),
+        "scheduler_T_max": config.get("scheduler_T_max", 50),
         "criterion": config.get("criterion", "CE"),
         "label_smoothing": config.get("label_smoothing", 0), # smoothing for criterion
         "train_split": config.get("train_split", 0.9),
@@ -601,7 +602,7 @@ def main():
         if config["scheduler"] == "ReduceLROnPlateau":
             scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=config["scheduler_patience"])
         elif config["scheduler"] == "CosineAnnealingLR":
-            scheduler = CosineAnnealingLR(optimizer, T_max=30)
+            scheduler = CosineAnnealingLR(optimizer, T_max=config["scheduler_T_max"], eta_min=1e-5)
         
         if config["criterion"] == "CE":
             logger.info(f"Label smoothing: {config['label_smoothing']}")

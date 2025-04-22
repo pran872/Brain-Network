@@ -1,5 +1,5 @@
 {
-    "run_name": "lord",
+    "run_name": "brainit_m5",
     "writer": true,
 
     "seed": 42,
@@ -11,14 +11,14 @@
 
     "model_type": "brainit",
     "optimizer": "adam",
-    "scheduler": "ReduceLROnPlateau",
+    "scheduler": "CosineAnnealingLR",
     "scheduler_patience": 3,
     "scheduler_T_max": 50,
     "criterion": "CE",
     "lr": 0.001,
-    "epochs": 1,
+    "epochs": 50,
     
-    "early_stopping": true,
+    "early_stopping": false,
     "patience": 10,
     "min_diff": 0.001,
 
