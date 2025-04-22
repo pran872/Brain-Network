@@ -14,7 +14,7 @@ mv job_logs/train.err job_logs/train_${PBS_JOBID}.err
 eval "$($HOME/miniforge3/bin/conda shell.bash hook)"
 conda activate brain-network-env
 
-export OUTPUT_DIR=/rds/general/user/psp20/home/Brain-Network/runs
+export OUTPUT_DIR=/rds/general/user/psp20/home/Brain-Network/runs/round_2
 
 echo "Starting training on $(hostname) at $(date)"
 CONFIG=${CONFIG:-configs/config_template.json}
