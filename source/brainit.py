@@ -6,7 +6,6 @@ class FixedFoveation:
     def __init__(self, fovea_size=16, alpha=0.7):
         self.fovea_size = fovea_size
         self.alpha = alpha
-        self.blur = T.GaussianBlur(kernel_size=5, sigma=2)
 
     def __call__(self, img):
         C, H, W = img.shape
@@ -16,7 +15,8 @@ class FixedFoveation:
         
         high_res = F.interpolate(fovea.unsqueeze(0), size=(H, W), mode='bilinear', align_corners=False).squeeze(0)
 
-        low_res = self.blur(img)
+        blur = T.GaussianBlur(kernel_size=5, sigma=2)
+        low_res = blur(img)
         
         # Blend 
         foveated_img = self.alpha * high_res + (1 - self.alpha) * low_res
