@@ -75,7 +75,7 @@ def get_log_dir(run_name: str, time_stamp, base_env_var="OUTPUT_DIR") -> str:
         if "login" in hostname or "node" in hostname or "rds" in os.getcwd():
             output_root = "/rds/general/user/psp20/home/Brain-Network/runs"
         else:
-            output_root = "runs"
+            output_root = "runs/round_2"
 
     log_dir = os.path.join(output_root, full_run_name)
     os.makedirs(log_dir, exist_ok=True)
