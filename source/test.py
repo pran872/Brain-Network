@@ -120,6 +120,7 @@ def load_model(model_pt, config, device):
     elif config["model_type"] == "brainit":
         model = BrainiT(
             device=device,
+            use_retinal_layer=config["retinal_layer"]
         ).to(device)
     
     checkpoint = torch.load(model_pt, map_location=device)
@@ -130,7 +131,7 @@ def get_files(args):
     assert (args.model and args.config) or args.run_folder, "Please provide either (run_directory) or (model and config paths)"
     
     if not args.model and not args.config and args.run_folder:
-        config_file = glob.glob(os.path.join(args.run_folder, "**", "*.json"), recursive=True)
+        config_file = glob.glob(os.path.join(args.run_folder, "**", "*test*.json"), recursive=True)
         assert len(config_file) > 0, "No config file present in the provided directory."
 
         if len(config_file) > 1:
@@ -199,14 +200,14 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     norm_means, norm_stds = [0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]
-    if config["transform_type"] == "foveation":
-        transform = transforms.Compose([
-            transforms.ToTensor(),
-            FixedFoveation(),
-            transforms.Normalize(norm_means, norm_stds)
-        ])
-    else:
-        transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(norm_means, norm_stds)])
+    # if config["transform_type"] == "foveation":
+    #     transform = transforms.Compose([
+    #         transforms.ToTensor(),
+    #         FixedFoveation(),
+    #         transforms.Normalize(norm_means, norm_stds)
+    #     ])
+    # else:
+    transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(norm_means, norm_stds)])
     
     test_dataloader = load_test_data(transform, config["batch_size"], config["num_workers"], debug)
 
