@@ -1,0 +1,13 @@
+mv: cannot stat 'job_logs/train.err': No such file or directory
+Starting training on cx3-20-6.cx3.hpc.ic.ac.uk at Tue 22 Apr 11:21:47 BST 2025
+Using config: configs/round_2/config_brainit_m2.json
+Finished at Tue 22 Apr 11:35:55 BST 2025
+
+====================================
+CPU Time used: 00:30:22
+CPU Percent: 263%
+Memory usage: 1729072kb
+Approx Power usage: 0.006
+Walltime usage: 00:14:18
+
+====================================
