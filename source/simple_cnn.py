@@ -557,6 +557,11 @@ def main():
         elif config["transform_type"] == "foveation":
             logger.info("Using foveation transform")
             transform_train = foveation_transform
+            transform_test = transforms.Compose([
+                transforms.ToTensor(), 
+                FixedFoveation(),
+                transforms.Normalize(norm_means, norm_stds)
+            ])
 
         train_loader, val_loader, test_loader = load_data(
             transform_train,
