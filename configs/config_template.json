@@ -1,6 +1,21 @@
 {
-    "run_name": "lord",
+    "run_name": "template",
     "writer": true,
+
+    "results": {
+        "accuracy_test": true,
+        "sample_efficiency": {
+            "test": true,
+            "downsample_fraction": 0,
+            "few_shot": false
+        },
+        "robustness": {
+            "test": true,
+            "attacker": false,
+            "epsilon": false,
+            "gaussian_std": false
+        }
+    },
 
     "seed": 42,
 
@@ -23,27 +38,23 @@
 
     "use_flex": false,
 
-    "use_pos_embed": true,
-    "add_dropout": false,
-    "mlp_end": false,
-    "add_cls_token": true,
-    "num_layers": 2,
+    "zoomvit_params": {
+        "use_pos_embed": true,
+        "add_dropout": false,
+        "mlp_end": false,
+        "add_cls_token": true,
+        "num_layers": 2,
+        "trans_dropout_ratio": 0.0,
+        "standard_scale": true,
+        "resnet_layers": 3,
+        "multiscale_tokenisation": false,
+        "freeze_resnet_early": false,
+        "gamma_per_head": false,
+        "use_token_mixer": false,
+        "remove_zoom": false
+    },
+
     "transform_type": "foveation",
     "label_smoothing": 0.1,
-    "ema": false,
-    "trans_dropout_ratio": 0.0,
-    "standard_scale": true,
-    "resnet_layers": 3,
-    "multiscale_tokenisation": false,
-    "gamma_per_head": false,
-    "use_token_mixer": false,
-    "remove_zoom": false,
-
-    "downsample_fraction": 0,
-    "few_shot": false,
-    "freeze_resnet_early": false,
-
-    "attacker": false,
-    "epsilon": false,
-    "gaussian_std": false
+    "ema": false
 }

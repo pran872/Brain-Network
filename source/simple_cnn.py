@@ -65,7 +65,7 @@ def set_seed(seed=42):
 
     return torch.Generator().manual_seed(seed)
 
-def get_log_dir(run_name: str, time_stamp, base_env_var="OUTPUT_DIR") -> str:
+def get_log_dir(run_name: str, time_stamp, test_acc, test_sample_eff, test_robust, base_env_var="OUTPUT_DIR") -> str:
     full_run_name = f"{run_name}_{time_stamp}"
 
     output_root = os.environ.get(base_env_var)
@@ -400,9 +400,22 @@ def parse_args():
     return config, args.debug
 
 def set_config_defaults(config):
+    results = config.get("results", {})
+    sample_eff = results.get("sample_efficiency", {})
+    robust = results.get("robustness", {})
     config = {
         "seed": config.get("seed", 42),
         "run_name": config.get("run_name", "run"),
+
+        # Experiment Type
+        "test_acc": results.get("accuracy", True),
+        "test_sample_eff": sample_eff.get("test", False),
+        "test_robust": robust.get("test", False),
+        "downsample_fraction": sample_eff.get("downsample_fraction", 0),
+        "few_shot": sample_eff.get("few_shot", False),
+        "attacker": robust.get("attacker", False),  # FGSM, PGD, False
+        "epsilon": robust.get("epsilon", False), # epsilon 0 - no attack
+        "gaussian_std": robust.get("gaussian_std", False),
 
         # Model and training details
         "model_type": config.get("model_type", "fast_cnn"), # "fast_cnn", "fast_cnn2", "flex_net", "custom_vit", "resnet18", "zoom",
@@ -442,15 +455,10 @@ def set_config_defaults(config):
         "remove_zoom": config.get("remove_zoom", False),
 
         # Data
-        "transform_type": config.get("transform_type", "custom"), # "custom", "custom_agg", "default"
+        "transform_type": config.get("transform_type", "custom"), # "custom", "custom_agg", "foveation", "nothingish"
         "downsample_fraction": config.get("downsample_fraction", 0),
         "few_shot": config.get("few_shot", False),
         "freeze_resnet_early": config.get("freeze_resnet_early", False),
-
-        "attacker": config.get("attacker", False), # FGSM, PGD, False
-        "epsilon": config.get("epsilon", False), # epsilon 0 - no attack
-
-        "gaussian_std": config.get("gaussian_std", False),
     }
     return config
 
@@ -460,7 +468,7 @@ def main():
         config = set_config_defaults(config)
 
         time_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
-        log_dir = get_log_dir(config["run_name"], time_stamp)
+        log_dir = get_log_dir(config["run_name"], time_stamp, config["test_acc"], config["test_sample_eff"], config["test_robust"])
         logger = get_logger(log_dir)
         logger.info("Job Started")
         logger.info(f"Logging run: {log_dir}")
