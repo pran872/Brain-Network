@@ -13,14 +13,14 @@ def run_tests():
     # dir = "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/batch_8"
     
     pts = [
-        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/round_2/config_foveation.json"
+        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/config_template.json"
     ]
     # for config in glob.glob(os.path.join(dir, "**", "*.json"), recursive=True):
     for config in pts:
         print(f"\nTesting config: {config}")
         try:
             result = subprocess.run(
-                ["python", "source/simple_cnn.py", "--config", config, "-d"],
+                ["python", "source/simple_cnn.py", "--config", config],
                 capture_output=True,
                 text=True,
                 check=True

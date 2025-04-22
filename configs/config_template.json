@@ -1,5 +1,5 @@
 {
-    "run_name": "zoom",
+    "run_name": "lord",
     "writer": true,
 
     "seed": 42,
@@ -12,6 +12,7 @@
     "model_type": "brainit",
     "optimizer": "adam",
     "scheduler": "ReduceLROnPlateau",
+    "scheduler_patience": 3,
     "criterion": "CE",
     "lr": 0.001,
     "epochs": 1,

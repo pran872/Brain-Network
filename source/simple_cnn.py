@@ -48,12 +48,21 @@ class EarlyStopping:
             if self.counter >= self.patience:
                 self.should_stop = True
 
+def seed_worker(worker_id):
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
+
 def set_seed(seed=42):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
+    # torch.use_deterministic_algorithms(True)
+
+    return torch.Generator().manual_seed(seed)
 
 def get_log_dir(run_name: str, time_stamp, base_env_var="OUTPUT_DIR") -> str:
     full_run_name = f"{run_name}_{time_stamp}"
@@ -116,6 +125,8 @@ def load_data(
     train_split,
     batch_size,
     num_workers,
+    seed_worker_fn,
+    seed_generator,
     downsample_fraction=0,
     few_shot=False,
     debug=False,
@@ -134,9 +145,9 @@ def load_data(
         val_subset = Subset(full_train_set, subset_indices)
         test_subset = Subset(test_set, subset_indices)
         
-        train_loader = DataLoader(train_subset, batch_size=64, shuffle=True, num_workers=1)
-        val_loader = DataLoader(val_subset, batch_size=64, shuffle=False, num_workers=1)
-        test_loader = DataLoader(test_subset, batch_size=64, shuffle=False, num_workers=1)
+        train_loader = DataLoader(train_subset, batch_size=64, shuffle=True, num_workers=1, worker_init_fn=seed_worker_fn, generator=seed_generator)
+        val_loader = DataLoader(val_subset, batch_size=64, shuffle=False, num_workers=1, worker_init_fn=seed_worker_fn, generator=seed_generator)
+        test_loader = DataLoader(test_subset, batch_size=64, shuffle=False, num_workers=1, worker_init_fn=seed_worker_fn, generator=seed_generator)
         return train_loader, val_loader, test_loader
 
     if downsample_fraction > 0:
@@ -150,9 +161,9 @@ def load_data(
     val_size = len(full_train_set) - train_size
     train_set, val_set = random_split(full_train_set, [train_size, val_size])
 
-    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
-    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=num_workers)
-    test_loader = DataLoader(test_set, batch_size=test_batch_size, shuffle=False, num_workers=num_workers)
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers, worker_init_fn=seed_worker_fn, generator=seed_generator)
+    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=num_workers, worker_init_fn=seed_worker_fn, generator=seed_generator)
+    test_loader = DataLoader(test_set, batch_size=test_batch_size, shuffle=False, num_workers=num_workers, worker_init_fn=seed_worker_fn, generator=seed_generator)
 
     return train_loader, val_loader, test_loader
 
@@ -396,6 +407,7 @@ def set_config_defaults(config):
         "model_type": config.get("model_type", "fast_cnn"), # "fast_cnn", "fast_cnn2", "flex_net", "custom_vit", "resnet18", "zoom",
         "optimizer": config.get("optimizer", "adam"),
         "scheduler": config.get("scheduler", "ReduceLROnPlateau"), # or CosineAnnealingLR
+        "scheduler_patience": config.get("scheduler_patience", 3),
         "criterion": config.get("criterion", "CE"),
         "label_smoothing": config.get("label_smoothing", 0), # smoothing for criterion
         "train_split": config.get("train_split", 0.9),
@@ -484,7 +496,7 @@ def main():
             writer = SummaryWriter(log_dir=log_dir)
             writer.add_text("config", json.dumps(config, indent=2))
 
-        set_seed(config["seed"])
+        g = set_seed(config["seed"])
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         logger.info(f"Using device: {device}")
@@ -569,6 +581,8 @@ def main():
             config["train_split"],
             config["batch_size"],
             config["num_workers"],
+            seed_worker,
+            g,
             downsample_fraction=config["downsample_fraction"],
             few_shot=config["few_shot"],
             debug=debug,
@@ -584,7 +598,7 @@ def main():
             optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"], weight_decay=1e-4)
         
         if config["scheduler"] == "ReduceLROnPlateau":
-            scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3)
+            scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=config["scheduler_patience"])
         elif config["scheduler"] == "CosineAnnealingLR":
             scheduler = CosineAnnealingLR(optimizer, T_max=30)
         
