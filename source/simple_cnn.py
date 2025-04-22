@@ -451,7 +451,10 @@ def main():
         logger = get_logger(log_dir)
         logger.info("Job Started")
         logger.info(f"Logging run: {log_dir}")
-        logger.info("Config:\n" + json.dumps(config, indent=2))
+
+        save_conifg_path = os.path.join(log_dir, f"config_{config['run_name']}.json")
+        with open(save_conifg_path, 'w') as f:
+            f.write(json.dumps(config, indent=2))
 
         valid_models = [
             "fast_cnn",
@@ -569,7 +572,7 @@ def main():
         )
 
         summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
-        with open(f"{log_dir}/model_summary.txt", "w") as f:
+        with open(os.path.join(log_dir, "model_summary.txt"), "w") as f:
             f.write(str(summary_str))
     
         if config["optimizer"] == "adam":
@@ -636,16 +639,19 @@ def main():
             config["gaussian_std"]
         )
 
-        with open(f"{log_dir}/metrics_{config['run_name']}_{time_stamp}.csv", "w+") as f:
+        metric_file_pt = os.path.join(log_dir, f"metrics_{config['run_name']}_{time_stamp}.csv")
+        with open(metric_file_pt, "w+") as f:
             f.write("epoch,train_loss,val_loss,train_acc,val_acc\n")
             f.write(f"Best model test acc and loss at epoch {best_loss_model['epoch']}:,{best_loss_acc},0,,\n")
             f.write(f"Last model test acc and loss at epoch {last_model['epoch']}:,{last_acc},0,,\n")
             for i in range(len(train_losses)):
                 f.write(f"{i},{train_losses[i]},{val_losses[i]},{train_acc[i]},{val_acc[i]}\n")
         
-        with open(f"{log_dir}/cls_report_best_loss_{config['run_name']}_{time_stamp}.txt", "w+") as f:
+        best_cls_report_pt = os.path.join(log_dir, f"cls_report_best_loss_{config['run_name']}_{time_stamp}.txt")
+        last_cls_report_pt = os.path.join(log_dir, f"cls_report_last_{config['run_name']}_{time_stamp}.txt")
+        with open(best_cls_report_pt, "w") as f:
             f.write(best_loss_cls_report)
-        with open(f"{log_dir}/cls_report_last_{config['run_name']}_{time_stamp}.txt", "w+") as f:
+        with open(last_cls_report_pt, "w") as f:
             f.write(last_cls_report)
 
         if writer:
