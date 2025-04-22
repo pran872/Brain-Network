@@ -1,0 +1,61 @@
+2025-04-22 12:58:18,715 | INFO | Job Started
+2025-04-22 12:58:18,715 | INFO | Logging run: /rds/general/user/psp20/home/Brain-Network/runs/brainit_m1_20250422-125818
+2025-04-22 12:58:18,715 | INFO | Config:
+{
+  "seed": 42,
+  "run_name": "brainit_m1",
+  "model_type": "brainit",
+  "optimizer": "adam",
+  "scheduler": "ReduceLROnPlateau",
+  "criterion": "CE",
+  "label_smoothing": 0.1,
+  "train_split": 0.9,
+  "batch_size": 256,
+  "num_workers": 2,
+  "lr": 0.001,
+  "epochs": 100,
+  "ema": false,
+  "early_stopping": true,
+  "min_diff": 0.001,
+  "writer": true,
+  "patience": 10,
+  "use_flex": false,
+  "use_pos_embed": true,
+  "add_dropout": false,
+  "mlp_end": false,
+  "add_cls_token": true,
+  "num_layers": 2,
+  "trans_dropout_ratio": 0.0,
+  "standard_scale": true,
+  "resnet_layers": 3,
+  "multiscale_tokenisation": false,
+  "gamma_per_head": false,
+  "use_token_mixer": false,
+  "remove_zoom": false,
+  "transform_type": "foveation",
+  "downsample_fraction": 0,
+  "few_shot": false,
+  "freeze_resnet_early": false,
+  "attacker": false,
+  "epsilon": false,
+  "gaussian_std": false
+}
+2025-04-22 12:58:18,890 | INFO | Using device: cuda
+2025-04-22 12:58:18,890 | INFO | Training for 100 epochs
+2025-04-22 12:58:18,890 | INFO | Debug mode: False
+2025-04-22 12:58:18,890 | INFO | Downsampling by: 0
+2025-04-22 12:58:19,805 | ERROR | Error occured
+Traceback (most recent call last):
+  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 545, in main
+    model = BrainiT(
+            ^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/models.py", line 344, in __init__
+    self.register_buffer("dist_matrix", self.compute_token_distance_matrix(device=device))
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/models.py", line 436, in compute_token_distance_matrix
+    dist = torch.cdist(coords, coords, p=2)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/functional.py", line 1483, in cdist
+    return _VF.cdist(x1, x2, p, None)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Deterministic behavior was enabled with either `torch.use_deterministic_algorithms(True)` or `at::Context::setDeterministicAlgorithms(true)`, but this operation is not deterministic because it uses CuBLAS and you have CUDA >= 10.2. To enable deterministic behavior in this case, you must set an environment variable before running your PyTorch application: CUBLAS_WORKSPACE_CONFIG=:4096:8 or CUBLAS_WORKSPACE_CONFIG=:16:8. For more information, go to https://docs.nvidia.com/cuda/cublas/index.html#results-reproducibility
