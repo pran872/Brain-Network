@@ -1,0 +1,29 @@
+mv: cannot stat 'job_logs/train.err': No such file or directory
+Starting training on cx3-20-1.cx3.hpc.ic.ac.uk at Tue 22 Apr 12:57:25 BST 2025
+Using config: configs/round_2/config_foveation.json
+Traceback (most recent call last):
+  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 662, in <module>
+    main()
+  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 545, in main
+    model = BrainiT(
+            ^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/models.py", line 344, in __init__
+    self.register_buffer("dist_matrix", self.compute_token_distance_matrix(device=device))
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/models.py", line 436, in compute_token_distance_matrix
+    dist = torch.cdist(coords, coords, p=2)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/functional.py", line 1483, in cdist
+    return _VF.cdist(x1, x2, p, None)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Deterministic behavior was enabled with either `torch.use_deterministic_algorithms(True)` or `at::Context::setDeterministicAlgorithms(true)`, but this operation is not deterministic because it uses CuBLAS and you have CUDA >= 10.2. To enable deterministic behavior in this case, you must set an environment variable before running your PyTorch application: CUBLAS_WORKSPACE_CONFIG=:4096:8 or CUBLAS_WORKSPACE_CONFIG=:16:8. For more information, go to https://docs.nvidia.com/cuda/cublas/index.html#results-reproducibility
+Finished at Tue 22 Apr 12:58:20 BST 2025
+
+====================================
+CPU Time used: 00:00:03
+CPU Percent: 7%
+Memory usage: 478992kb
+Approx Power usage: 0.0
+Walltime usage: 00:01:05
+
+====================================
