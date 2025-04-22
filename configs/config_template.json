@@ -16,7 +16,7 @@
     "scheduler_T_max": 50,
     "criterion": "CE",
     "lr": 0.001,
-    "epochs": 1,
+    "epochs": 50,
     
     "early_stopping": true,
     "patience": 10,
