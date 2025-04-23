@@ -137,8 +137,8 @@ def load_data(
     if not test_batch_size:
         test_batch_size = batch_size
 
-    full_train_set = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
-    test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
+    full_train_set = torchvision.datasets.CIFAR10(root='./data/cifar-10', train=True, download=True, transform=transform_train)
+    test_set = torchvision.datasets.CIFAR10(root='./data/cifar-10', train=False, download=True, transform=transform_test)
    
     if debug:
         subset_indices = list(range(0, 200))
