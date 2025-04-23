@@ -10,15 +10,18 @@ except ModuleNotFoundError:
     from source.zoom_att import *
     from brainit import LearnableFoveation
 
-
-
-def build_resnet18_for_cifar10():
-    model = resnet18(weights=None)
+def build_resnet(dataset_type, weights=None):
+    if dataset_type == "cifar10":
+        model = resnet18(weights=None)
     
-    model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
-    model.maxpool = nn.Identity() 
-    model.fc = nn.Linear(512, 10)
-    return model
+        model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+        model.maxpool = nn.Identity() 
+        model.fc = nn.Linear(512, 10)
+        return model
+    elif dataset_type == "stanford_dogs":
+        model = resnet18(weights=weights) # or IMAGENET1K_V1 for pretrained
+        model.fc = nn.Linear(512, 120)
+        return model
 
 class FastCNN(nn.Module):
     def __init__(self):
@@ -309,7 +312,6 @@ class ZoomVisionTransformer(nn.Module):
             dist = torch.cat([cls_col, dist], dim=1)
 
         return dist
-
 
 class BrainiT(nn.Module):
     def __init__(

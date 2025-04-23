@@ -3,7 +3,6 @@ import os
 import glob
 import subprocess
 
-
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(root_dir)
 
@@ -13,7 +12,7 @@ def run_tests():
     # dir = "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/round_0_seed_tests"
     
     pts = [
-        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/round_2/config_brainit_m7.json"
+        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/round_3/config_dogs.json"
     ]
     # for config in glob.glob(os.path.join(dir, "**", "*.json"), recursive=True):
     for config in pts:

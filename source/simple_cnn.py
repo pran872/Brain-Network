@@ -4,11 +4,9 @@ os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
 import torch
 import torch.nn as nn
 import torchvision
-import torchvision.transforms as transforms
 import torchattacks
 from torch.utils.data import DataLoader, random_split, Subset
 from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingLR
-from torchvision.transforms.autoaugment import AutoAugmentPolicy
 from torch_ema import ExponentialMovingAverage
 from torchinfo import summary
 from contextlib import nullcontext
@@ -19,35 +17,23 @@ import random
 import numpy as np
 import argparse
 import json
-try:
-    from models import *
-    from brainit import *
-except ModuleNotFoundError:
-    from source.models import *
-    from source.brainit import *
-
 from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
 import logging
 import sys
 import socket
+from collections import defaultdict
 
-class EarlyStopping:
-    def __init__(self, patience=5, min_diff=0.0):
-        self.patience = patience
-        self.min_diff = min_diff
-        self.best_loss = float('inf')
-        self.counter = 0
-        self.should_stop = False
-
-    def step(self, val_loss):
-        if val_loss < self.best_loss - self.min_diff:
-            self.best_loss = val_loss
-            self.counter = 0
-        else:
-            self.counter += 1
-            if self.counter >= self.patience:
-                self.should_stop = True
+try:
+    from models import *
+    from transform import get_transform
+    from datasets.get_dataset import get_data
+    from utils import *
+except ModuleNotFoundError:
+    from source.models import *
+    from source.transform import get_transform
+    from source.datasets.get_dataset import get_data
+    from source.utils import *
 
 def seed_worker(worker_id):
     worker_seed = torch.initial_seed() % 2**32
@@ -75,7 +61,7 @@ def get_log_dir(run_name: str, time_stamp, base_env_var="OUTPUT_DIR") -> str:
         if "login" in hostname or "node" in hostname or "rds" in os.getcwd():
             output_root = "/rds/general/user/psp20/home/Brain-Network/runs"
         else:
-            output_root = "runs/round_2"
+            output_root = "runs/stanford_dogs"
 
     log_dir = os.path.join(output_root, full_run_name)
     os.makedirs(log_dir, exist_ok=True)
@@ -94,85 +80,6 @@ def get_logger(log_dir):
         logger.addHandler(fh)
     return logger
 
-def class_balanced_subset(dataset, fraction):
-    targets = np.array(dataset.targets)
-    classes = np.unique(targets)
-    indices = []
-
-    for cls in classes:
-        cls_idx = np.where(targets == cls)[0]
-        selected = np.random.choice(cls_idx, size=int(len(cls_idx) * fraction), replace=False)
-        indices.extend(selected)
-
-    np.random.shuffle(indices) 
-    return Subset(dataset, indices)
-
-def few_shot_subset(dataset, n_per_class):
-    targets = np.array(dataset.targets)
-    classes = np.unique(targets)
-    indices = []
-
-    for cls in classes:
-        cls_idx = np.where(targets == cls)[0]
-        selected = np.random.choice(cls_idx, size=n_per_class, replace=False)
-        indices.extend(selected)
-
-    np.random.shuffle(indices)
-    return Subset(dataset, indices)
-
-def load_data(
-    transform_train,
-    transform_test,
-    train_split,
-    batch_size,
-    num_workers,
-    seed_worker_fn,
-    seed_generator,
-    downsample_fraction=0,
-    few_shot=False,
-    debug=False,
-    logger=False,
-    test_batch_size=False,
-):
-    if not test_batch_size:
-        test_batch_size = batch_size
-
-    full_train_set = torchvision.datasets.CIFAR10(root='./data/cifar-10', train=True, download=True, transform=transform_train)
-    test_set = torchvision.datasets.CIFAR10(root='./data/cifar-10', train=False, download=True, transform=transform_test)
-   
-    if debug:
-        subset_indices = list(range(0, 200))
-        train_subset = Subset(full_train_set, subset_indices)
-        val_subset = Subset(full_train_set, subset_indices)
-        test_subset = Subset(test_set, subset_indices)
-        
-        train_loader = DataLoader(train_subset, batch_size=64, shuffle=True, num_workers=1, worker_init_fn=seed_worker_fn, generator=seed_generator)
-        val_loader = DataLoader(val_subset, batch_size=64, shuffle=False, num_workers=1, worker_init_fn=seed_worker_fn, generator=seed_generator)
-        test_loader = DataLoader(test_subset, batch_size=64, shuffle=False, num_workers=1, worker_init_fn=seed_worker_fn, generator=seed_generator)
-        return train_loader, val_loader, test_loader
-
-    if downsample_fraction > 0:
-        full_train_set = class_balanced_subset(full_train_set, downsample_fraction)
-    elif few_shot:
-        full_train_set = few_shot_subset(full_train_set, few_shot)
-
-    logger.info(f"Full train/val size with downsampling ({downsample_fraction}): {len(full_train_set)}")
-
-    train_size = int(train_split * len(full_train_set))
-    val_size = len(full_train_set) - train_size
-    train_set, val_set = random_split(full_train_set, [train_size, val_size])
-
-    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers, worker_init_fn=seed_worker_fn, generator=seed_generator)
-    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=num_workers, worker_init_fn=seed_worker_fn, generator=seed_generator)
-    test_loader = DataLoader(test_set, batch_size=test_batch_size, shuffle=False, num_workers=num_workers, worker_init_fn=seed_worker_fn, generator=seed_generator)
-
-    return train_loader, val_loader, test_loader
-
-def log_grad(writer, model, epoch):
-    for name, param in model.named_parameters():
-        if param.grad is not None:
-            writer.add_histogram(f"gradients/{name}", param.grad, epoch)
-
 def train_model(
     model,
     epochs,
@@ -187,13 +94,12 @@ def train_model(
     writer,
     logger
 ):
-
     train_losses, val_losses = [], []
     train_accuracies, val_accuracies = [], []
     best_model = {"val_loss": float("inf"),
                   "model_state": None,
                   "epoch": 0}
-    gamma_by_class = {i: [] for i in range(10)}
+    gamma_by_class = defaultdict(list)
 
     for epoch in range(epochs):
         start = time.time()
@@ -286,7 +192,7 @@ def train_model(
             elif isinstance(model, ZoomVisionTransformer):
                 writer.add_scalar("Gamma/mean", gamma.mean().item(), epoch)
                 writer.add_scalar("Gamma/std", gamma.std().item(), epoch)
-                for c in range(10):
+                for c in range(len(gamma_by_class)):
                     writer.add_scalar(f"Gamma/Class_{c}", np.mean(gamma_by_class[c]), epoch)
             elif isinstance(model, BrainiT):
                 writer.add_scalar("Centroid_means/cx", cx, epoch)
@@ -314,11 +220,6 @@ def train_model(
         }
 
     return best_model, last_model, train_losses, val_losses, train_accuracies, val_accuracies
-
-def add_gaussian_noise(images, std=0.1):
-    noise = torch.randn_like(images) * std
-    noisy_images = images + noise
-    return torch.clamp(noisy_images, 0.0, 1.0)
 
 def test_model(model,
     test_loader,
@@ -401,63 +302,14 @@ def parse_args():
     
     return config, args.debug
 
-def set_config_defaults(config):
-    config = {
-        "seed": config.get("seed", 42),
-        "run_name": config.get("run_name", "run"),
+def set_config_defaults(user_config):
+    with open("configs/config_template.json", 'r') as f:
+        config = json.load(f) # default_config
 
-        # Model and training details
-        "model_type": config.get("model_type", "fast_cnn"), # "fast_cnn", "fast_cnn2", "flex_net", "custom_vit", "resnet18", "zoom",
-        "optimizer": config.get("optimizer", "adam"),
-        "scheduler": config.get("scheduler", "CosineAnnealingLR"), # ReduceLROnPlateau or CosineAnnealingLR
-        "scheduler_patience": config.get("scheduler_patience", 3), # applies only to ReduceLROnPlateau
-        "scheduler_T_max": config.get("scheduler_T_max", 50), # # applies only to CosineAnnealingLR
-        "criterion": config.get("criterion", "CE"),
-        "label_smoothing": config.get("label_smoothing", 0.1), # smoothing for criterion
-        "train_split": config.get("train_split", 0.9),
-        "batch_size": config.get("batch_size", 256),
-        "num_workers": config.get("num_workers", 1),
-        "lr": config.get("lr", 0.001),
-        "epochs": config.get("epochs", 1),
-        "ema": config.get("ema", False), # Exponential Moving Average
-    
-        # Early stopping
-        "early_stopping": config.get("early_stopping", True),
-        "min_diff": config.get("min_diff", 0.001),
-        "writer": config.get("writer", True),
-        "patience": config.get("patience", 5),
+    for key in config:
+        if key in user_config:
+            config[key] = user_config[key]
 
-        # BrainIt specific config
-        "retinal_layer": config.get("retinal_layer", True),
-
-        # CustomVit specific config
-        "use_flex": config.get("use_flex", False),
-
-        # ZoomViT-specific configs
-        "use_pos_embed": config.get("use_pos_embed", False),
-        "add_dropout": config.get("add_dropout", False),
-        "mlp_end": config.get("mlp_end", False),
-        "add_cls_token": config.get("add_cls_token", False),
-        "num_layers": config.get("num_layers", 2),
-        "trans_dropout_ratio": config.get("trans_dropout_ratio", 0.0),
-        "standard_scale": config.get("standard_scale", False),
-        "resnet_layers": config.get("resnet_layers", 4),
-        "multiscale_tokenisation": config.get("multiscale_tokenisation", False),
-        "gamma_per_head": config.get("gamma_per_head", False),
-        "use_token_mixer": config.get("use_token_mixer", False),
-        "remove_zoom": config.get("remove_zoom", False),
-
-        # Data
-        "transform_type": config.get("transform_type", "custom"), # "custom", "custom_agg", "default"
-        "downsample_fraction": config.get("downsample_fraction", 0),
-        "few_shot": config.get("few_shot", False),
-        "freeze_resnet_early": config.get("freeze_resnet_early", False),
-
-        "attacker": config.get("attacker", False), # FGSM, PGD, False
-        "epsilon": config.get("epsilon", False), # epsilon 0 - no attack
-
-        "gaussian_std": config.get("gaussian_std", False),
-    }
     return config
 
 def main():
@@ -484,6 +336,7 @@ def main():
             "zoom",
             "brainit"
         ]
+        assert config["dataset"]["type"] in ["cifar10", "stanford_dogs"], "Invalid dataset"
         assert config["model_type"] in valid_models, "Invalid model type"
         assert config["optimizer"] in ["adam"], "Invalid optimizer"
         assert config["criterion"] in ["CE"], "Invalid criterion"
@@ -492,7 +345,7 @@ def main():
         assert (config["attacker"] and config["epsilon"]) or not config["attacker"], "Invalid"
         assert (config["gaussian_std"] and isinstance(config["gaussian_std"], float)) or not config["gaussian_std"], "Invalid"
 
-        if config["few_shot"] and config["downsample_fraction"] > 0:
+        if config["dataset"]["few_shot"] and config["dataset"]["downsample_fraction"] > 0:
             logger.info("Few shot and downsampling fraction provided! Only doing downsampling.")
         
         if config["add_cls_token"] and not config["use_pos_embed"]:
@@ -509,30 +362,20 @@ def main():
         logger.info(f"Using device: {device}")
         logger.info(f"Training for {config['epochs']} epochs")
         logger.info(f"Debug mode: {debug}")
-        logger.info(f"Downsampling by: {config['downsample_fraction']}")
+        logger.info(f"Downsampling by: {config['dataset']['downsample_fraction']}")
 
-        norm_means, norm_stds = [0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]
-        transform_train = transforms.Compose([transforms.ToTensor(), transforms.Normalize(norm_means, norm_stds)])
-        transform_test = transforms.Compose([transforms.ToTensor(), transforms.Normalize(norm_means, norm_stds)])
-        custom_transform = transforms.Compose([
-            transforms.RandomCrop(32, padding=4), 
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize(norm_means, norm_stds)
-        ])
-        custom_transform_agg = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
-            transforms.AutoAugment(policy=AutoAugmentPolicy.CIFAR10),
-            transforms.ToTensor(),
-            transforms.Normalize(norm_means, norm_stds)
-        ])
-        foveation_transform = transforms.Compose([
-            transforms.RandomCrop(32, padding=4), 
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            FixedFoveation(),
-            transforms.Normalize(norm_means, norm_stds)
-        ])
+        transform_train, transform_test = get_transform(config["dataset"]["type"], config["transform_type"])
+        train_loader, val_loader, test_loader = get_data(
+            config["dataset"],
+            transform_train,
+            transform_test,
+            seed_worker,
+            g,
+            logger,
+            test_batch_size=32 if config["attacker"] else None,
+            debug=debug,
+        )
+        
         if config["model_type"] == "fast_cnn":
             model = FastCNN().to(device)
         elif config["model_type"] == "fast_cnn2":
@@ -542,7 +385,7 @@ def main():
         elif config["model_type"] == "custom_vit":
             model = ConvViTHybrid(device=device, use_flex=config["use_flex"]).to(device)
         elif config["model_type"] == "resnet18":
-            model = build_resnet18_for_cifar10().to(device)
+            model = build_resnet(config["dataset"]["type"]).to(device)
         elif config["model_type"] == "zoom":
             model = ZoomVisionTransformer(
                 device=device, 
@@ -567,36 +410,6 @@ def main():
                 device=device
             ).to(device)
         
-        if config["transform_type"] == "custom":
-            logger.info("Using custom transform")
-            transform_train = custom_transform
-        elif config["transform_type"] == "custom_agg":
-            logger.info("Using custom agg transform")
-            transform_train = custom_transform_agg
-        elif config["transform_type"] == "foveation":
-            logger.info("Using foveation transform")
-            transform_train = foveation_transform
-            transform_test = transforms.Compose([
-                transforms.ToTensor(), 
-                FixedFoveation(),
-                transforms.Normalize(norm_means, norm_stds)
-            ])
-
-        train_loader, val_loader, test_loader = load_data(
-            transform_train,
-            transform_test,
-            config["train_split"],
-            config["batch_size"],
-            config["num_workers"],
-            seed_worker,
-            g,
-            downsample_fraction=config["downsample_fraction"],
-            few_shot=config["few_shot"],
-            debug=debug,
-            logger=logger,
-            test_batch_size=32 if config["attacker"] else config["batch_size"]
-        )
-
         # input_size = (32, 32)
         # summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
         # with open(os.path.join(log_dir, "model_summary.txt"), "w") as f:

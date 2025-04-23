@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -N brainnet_exp1
-#PBS -l select=1:ncpus=4:mem=8gb:ngpus=1
-#PBS -l walltime=00:30:00 
+#PBS -l select=1:ncpus=4:mem=16gb:ngpus=1
+#PBS -l walltime=02:0:00 
 #PBS -o job_logs/train.out
 #PBS -e job_logs/train.err
 #PBS -j oe
@@ -14,7 +14,7 @@ mv job_logs/train.err job_logs/train_${PBS_JOBID}.err
 eval "$($HOME/miniforge3/bin/conda shell.bash hook)"
 conda activate brain-network-env
 
-export OUTPUT_DIR=/rds/general/user/psp20/home/Brain-Network/runs/round_2
+export OUTPUT_DIR=/rds/general/user/psp20/home/Brain-Network/runs/stanford_dogs
 
 echo "Starting training on $(hostname) at $(date)"
 CONFIG=${CONFIG:-configs/config_template.json}

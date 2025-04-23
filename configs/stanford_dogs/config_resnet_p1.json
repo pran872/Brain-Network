@@ -1,28 +1,28 @@
 {
-    "run_name": "lord",
+    "run_name": "dogs",
     "writer": true,
 
     "seed": 42,
 
     "dataset": {
-        "type": "cifar10",
+        "type": "stanford_dogs",
         "train_split": 0.9,
-        "batch_size": 256,
+        "batch_size": 64,
         "num_workers": 2,
         "downsample_fraction": 0,
         "few_shot": false
     },  
 
-    "model_type": "brainit",
+    "model_type": "resnet18",
     "optimizer": "adam",
-    "scheduler": "CosineAnnealingLR",
+    "scheduler": "ReduceLROnPlateau",
     "scheduler_patience": 3,
     "scheduler_T_max": 50,
     "criterion": "CE",
     "lr": 0.001,
     "epochs": 50,
     
-    "early_stopping": false,
+    "early_stopping": true,
     "patience": 10,
     "min_diff": 0.001,
 
@@ -35,7 +35,7 @@
     "mlp_end": false,
     "add_cls_token": true,
     "num_layers": 2,
-    "transform_type": "foveation",
+    "transform_type": "custom",
     "label_smoothing": 0.1,
     "ema": false,
     "trans_dropout_ratio": 0.0,
