@@ -12,6 +12,13 @@ def log_grad(writer, model, epoch):
         if param.grad is not None:
             writer.add_histogram(f"gradients/{name}", param.grad, epoch)
 
+def process_gamma(gamma, gamma_by_class, labels):
+    if gamma.ndim == 4:
+        gamma = gamma.mean(dim=1).view(-1)
+    for g, label in zip(gamma, labels):
+        gamma_by_class[label.item()].append(g.item())
+    return gamma_by_class
+
 def compute_mean_std(dataset):
     loader = DataLoader(dataset, batch_size=8, shuffle=False, num_workers=2)
     mean = 0.0

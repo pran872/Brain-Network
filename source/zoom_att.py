@@ -9,13 +9,15 @@ class ResNetBackbone(nn.Module):
         resnet_layers=4, 
         freeze_early=False, 
         upsample_features=True,
-        downsample_features=False
+        downsample_features=False,
+        pretrained=False
     ):
         super().__init__()
         self.upsample_features = upsample_features
         self.downsample_features = downsample_features
-
-        base = resnet18(weights=None)
+        weights = "IMAGENET1K_V1" if pretrained else None
+        
+        base = resnet18(weights=weights)
         base.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
         base.maxpool = nn.Identity() # no maxpool
 
@@ -52,13 +54,14 @@ class ResNetBackbone(nn.Module):
         return feat_map, pooled
 
 class ResNetBackbone224(ResNetBackbone):
-    def __init__(self, out_channels=512, resnet_layers=4, freeze_early=False):
+    def __init__(self, out_channels=512, resnet_layers=4, freeze_early=False, pretrained=False):
         super().__init__(
             out_channels=out_channels, 
             resnet_layers=resnet_layers, 
             freeze_early=freeze_early,
             upsample_features=False,
-            downsample_features=True
+            downsample_features=True,
+            pretrained=pretrained
         )
     
     

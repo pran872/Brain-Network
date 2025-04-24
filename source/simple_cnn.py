@@ -3,10 +3,9 @@ import os
 os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
 import torch
 import torch.nn as nn
-import torchvision
 import torchattacks
-from torch.utils.data import DataLoader, random_split, Subset
 from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingLR
+from timm.scheduler import CosineLRScheduler
 from torch_ema import ExponentialMovingAverage
 from torchinfo import summary
 from contextlib import nullcontext
@@ -111,10 +110,9 @@ def train_model(
             optimizer.zero_grad()
             outputs = model(images)
 
-            if isinstance(outputs, tuple): 
-                # For flex network / zoomvit
-                if len(outputs) == 2:
-                    outputs, _ = outputs
+            if isinstance(outputs, (tuple, list)): 
+                # For flex network / zoomvit / brainit
+                outputs = outputs[0]
     
             loss = criterion(outputs, labels)
             loss.backward()
@@ -147,16 +145,17 @@ def train_model(
                 for images, labels in val_loader:
                     images, labels = images.to(device), labels.to(device)
                     
-                    if isinstance(model, ZoomVisionTransformer):
+                    if isinstance(model, BrainiT):
+                        outputs, cx, cy, gamma = model(images, return_cx_cy=True, return_gamma=True)
+                        gamma_by_class = process_gamma(gamma, gamma_by_class, labels)
+
+                    elif isinstance(model, ZoomVisionTransformer):
                         outputs, gamma = model(images, return_gamma=True)
-                        if gamma.ndim == 4:
-                            gamma = gamma.mean(dim=1).view(-1)
-                        for g, label in zip(gamma, labels):
-                            gamma_by_class[label.item()].append(g.item())
-                    elif isinstance(model, BrainiT):
-                        outputs, cx, cy = model(images, return_cx_cy=True)
+                        gamma_by_class = process_gamma(gamma, gamma_by_class, labels)
+
                     elif isinstance(model, FlexNet):
-                        outputs, conv_ratio = outputs
+                        outputs, conv_ratio = model(images)
+
                     else:
                         outputs = model(images)
 
@@ -175,6 +174,8 @@ def train_model(
             scheduler.step(avg_val_loss)
         elif isinstance(scheduler, CosineAnnealingLR):
             scheduler.step()
+        elif isinstance(scheduler, CosineLRScheduler):
+            scheduler.step(epoch)
     
         end = time.time()
 
@@ -250,7 +251,7 @@ def test_model(model,
             with torch.no_grad():
                 outputs = model(images)
 
-        if isinstance(outputs, tuple): 
+        if isinstance(outputs, (tuple, list)): 
             outputs = outputs[0]
 
         _, predicted = outputs.max(1)
@@ -339,9 +340,9 @@ def main():
         ]
         assert config["dataset"]["type"] in ["cifar10", "stanford_dogs"], "Invalid dataset"
         assert config["model_type"] in valid_models, "Invalid model type"
-        assert config["optimizer"] in ["adam"], "Invalid optimizer"
+        assert config["optimizer"] in ["adam", "adamW"], "Invalid optimizer"
         assert config["criterion"] in ["CE"], "Invalid criterion"
-        assert config["scheduler"] in ["CosineAnnealingLR", "ReduceLROnPlateau"], "Invalid scheduler"
+        assert list(config["scheduler"].keys())[0] in ["CosineAnnealingLR", "ReduceLROnPlateau", "CosineLRScheduler"], "Invalid scheduler"
         assert config["attacker"] in [False, "FGSM", "PGD"], "Invalid attacker"
         assert (config["attacker"] and config["epsilon"]) or not config["attacker"], "Invalid"
         assert (config["gaussian_std"] and isinstance(config["gaussian_std"], float)) or not config["gaussian_std"], "Invalid"
@@ -365,7 +366,9 @@ def main():
         logger.info(f"Debug mode: {debug}")
         logger.info(f"Downsampling by: {config['dataset']['downsample_fraction']}")
 
-        transform_train, transform_test = get_transform(config["dataset"]["type"], config["transforms"])
+        transform_train, transform_test = get_transform(config["dataset"]["type"], config["transforms"], pretrained=config["pretrained"])
+        logger.info(f"Train transforms: \n\t{transform_train}")
+        logger.info(f"Test transforms: \n\t{transform_test}")
         train_loader, val_loader, test_loader = get_data(
             config["dataset"],
             transform_train,
@@ -376,6 +379,9 @@ def main():
             test_batch_size=32 if config["attacker"] else None,
             debug=debug,
         )
+
+        if config["pretrained"]:
+            logger.info(f"Using pretrained weights")
         
         if config["model_type"] == "fast_cnn":
             model = FastCNN().to(device)
@@ -386,36 +392,47 @@ def main():
         elif config["model_type"] == "custom_vit":
             model = ConvViTHybrid(device=device, use_flex=config["use_flex"]).to(device)
         elif config["model_type"] == "resnet18":
-            logger.info(f"Using pretrained weights: {config['weights']}")
-            model = build_resnet(config["dataset"]["type"], weights=config["weights"]).to(device)
-        elif config["model_type"] == "zoom":
-            model = ZoomVisionTransformer(
-                num_classes=10, 
-                use_pos_embed=config["use_pos_embed"],
-                add_dropout=config["add_dropout"],
-                mlp_end=config["mlp_end"],
-                add_cls_token=config["add_cls_token"],
-                num_layers=config["num_layers"],
-                trans_dropout_ratio=config["trans_dropout_ratio"],
-                standard_scale=config["standard_scale"],
-                resnet_layers=config["resnet_layers"],
-                multiscale_tokenisation=config["multiscale_tokenisation"],
-                freeze_resnet_early=config["freeze_resnet_early"],
-                gamma_per_head=config["gamma_per_head"],
-                use_token_mixer=config["use_token_mixer"],
-                remove_zoom=config["remove_zoom"]
-            ).to(device)
-        elif config["model_type"] == "brainit":
-            model = BrainiT(
-                use_retinal_layer=config["retinal_layer"],
-                device=device
-            ).to(device)
-        elif config["model_type"] == "zoom224":
-            model = ZoomVisionTransformer224(
-                num_classes=120,
-                embed_dim=256 if config["weights"] is None else 512,
-            ).to(device)
-        
+            model = build_resnet(config["dataset"]["type"], config["pretrained"]).to(device)
+        elif "zoom" in config["model_type"]:
+            if config["dataset"]["type"] == "cifar10":
+                model = ZoomVisionTransformer(
+                    num_classes=10, 
+                    use_pos_embed=config["use_pos_embed"],
+                    add_dropout=config["add_dropout"],
+                    mlp_end=config["mlp_end"],
+                    add_cls_token=config["add_cls_token"],
+                    num_layers=config["num_layers"],
+                    trans_dropout_ratio=config["trans_dropout_ratio"],
+                    standard_scale=config["standard_scale"],
+                    resnet_layers=config["resnet_layers"],
+                    multiscale_tokenisation=config["multiscale_tokenisation"],
+                    freeze_resnet_early=config["freeze_resnet_early"],
+                    gamma_per_head=config["gamma_per_head"],
+                    use_token_mixer=config["use_token_mixer"],
+                    remove_zoom=config["remove_zoom"],
+                    pretrained=config["pretrained"],
+                ).to(device)
+            else:
+                model = ZoomVisionTransformer224(
+                    num_classes=120,
+                    embed_dim=512 if config["pretrained"] else 256,
+                    pretrained=config["pretrained"]
+                ).to(device)
+        elif "brainit" in config["model_type"]:
+            if config["dataset"]["type"] == "cifar10":
+                model = BrainiT(
+                    num_classes=10,
+                    embed_dim=256,
+                    use_retinal_layer=config["retinal_layer"]
+                ).to(device)
+            else:
+                model = BrainiT224(
+                    num_classes=120,
+                    embed_dim=512 if config["pretrained"] else 256,
+                    use_retinal_layer=config["retinal_layer"],
+                    pretrained=config["pretrained"]
+                ).to(device)
+
         # input_size = (32, 32)
         # summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
         # with open(os.path.join(log_dir, "model_summary.txt"), "w") as f:
@@ -423,12 +440,24 @@ def main():
     
         if config["optimizer"] == "adam":
             optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"], weight_decay=1e-4)
+        elif config["optimizer"] == "adamW":
+            weight_decay = 1e-4 if config["model_type"] in ["resnet18", "fast_cnn2"] else 1e-2
+            optimizer = torch.optim.AdamW(model.parameters(), lr=config["lr"], weight_decay=weight_decay)
         
-        if config["scheduler"] == "ReduceLROnPlateau":
+        if "ReduceLROnPlateau" in config["scheduler"].keys():
             scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=config["scheduler_patience"])
-        elif config["scheduler"] == "CosineAnnealingLR":
-            scheduler = CosineAnnealingLR(optimizer, T_max=config["scheduler_T_max"], eta_min=1e-5)
-        
+        elif "CosineAnnealingLR" in config["scheduler"].keys():
+            scheduler = CosineAnnealingLR(optimizer, T_max=config["CosineAnnealingLR"]["scheduler_T_max"], eta_min=1e-5)
+        elif "CosineLRScheduler" in config["scheduler"].keys():
+            warmup_t = config["scheduler"]["CosineLRScheduler"].get("warmup_t", 5)
+            scheduler = CosineLRScheduler(
+                optimizer,
+                t_initial=config["epochs"] - warmup_t,
+                warmup_t=warmup_t,
+                warmup_lr_init=1e-5,
+                lr_min=1e-6,
+            )
+                    
         if config["criterion"] == "CE":
             logger.info(f"Label smoothing: {config['label_smoothing']}")
             criterion = nn.CrossEntropyLoss(label_smoothing=config["label_smoothing"])

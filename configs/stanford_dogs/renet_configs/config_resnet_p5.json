@@ -1,5 +1,5 @@
 {
-    "run_name": "lord",
+    "run_name": "resnet_p5",
     "writer": true,
 
     "seed": 42,
@@ -13,8 +13,8 @@
         "few_shot": false
     },  
 
-    "pretrained": false,
-    "model_type": "brainit",
+    "pretrained": true,
+    "model_type": "resnet18",
     "optimizer": "adamW",
     "scheduler": {
         "CosineLRScheduler": {
@@ -25,7 +25,7 @@
     "criterion": "CE",
     "label_smoothing": 0.1,
     "lr": 0.001,
-    "epochs": 50,
+    "epochs": 30,
 
     "transforms": {
         "transform_type": null,

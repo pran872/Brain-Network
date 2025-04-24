@@ -4,14 +4,20 @@ import copy
 
 try:
     from brainit import *
+    from constants import NORMS
 except ModuleNotFoundError:
     from source.brainit import *
+    from source.constants import NORMS
 
-def get_transform(dataset_type, input_transforms):
+def get_transform(dataset_type, input_transforms, pretrained=False):
+    if pretrained:
+        norm_means, norm_stds = NORMS["imagenet"]
+    else:
+        norm_means, norm_stds = NORMS[dataset_type]
+
     if dataset_type == "cifar10":    
-        norm_means, norm_stds = [0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]
         transform_test_list = [transforms.ToTensor(), transforms.Normalize(norm_means, norm_stds)]
-        transform_type = input_transforms["type"]
+        transform_type = input_transforms["transform_type"]
 
         if transform_type == "custom":
             transform_train_list = [
@@ -47,40 +53,39 @@ def get_transform(dataset_type, input_transforms):
         transform_test = transforms.Compose(transform_test_list)
 
     elif dataset_type == "stanford_dogs":
-        norm_means, norm_stds = [0.4765, 0.4517, 0.3911], [0.2264, 0.2214, 0.2193]
-        transform_train_list = []
 
-        def build_transforms(params):
-            if params.get("color_jitter", {}):
-                params = copy.deepcopy(params)
-                del params["color_jitter"]["use"]
+        transform_train_list = build_transforms(input_transforms["train_transforms"])
+        transform_test_list = build_transforms(input_transforms["test_transforms"])
 
-            transform_dict = {
-                "resize": transforms.Resize((224, 224), antialias=True),
-                "horizontal_flip": transforms.RandomHorizontalFlip(),
-                "color_jitter": transforms.ColorJitter(**params.get("color_jitter")),
-            }
-            return transform_dict
-        
-        transform_dict = build_transforms(input_transforms)
-
-        for key, value in input_transforms.items():
-            if key == "type" or not value["use"]:
-                continue
-        
-            transform_train_list.append(transform_dict[key])
-            
-        transform_train_list.extend([
-            transforms.ToTensor(),
-            transforms.Normalize(norm_means, norm_stds)
-        ])
-        transform_test_list = [
-            transforms.Resize((224, 224), antialias=True),
+        add_ons = [
             transforms.ToTensor(),
             transforms.Normalize(norm_means, norm_stds)
         ]
+        transform_train_list.extend(add_ons)
+        transform_test_list.extend(add_ons)
 
     transform_train = transforms.Compose(transform_train_list)
     transform_test = transforms.Compose(transform_test_list)
     
     return transform_train, transform_test
+
+def build_transforms(transform_config_list):
+    transform_dict = {
+        "RRC": lambda **kwargs: transforms.RandomResizedCrop(**kwargs),
+        "resize": lambda **kwargs: transforms.Resize(**kwargs, antialias=True),
+        "center_crop": lambda **kwargs: transforms.CenterCrop(**kwargs),
+        "horizontal_flip": lambda **kwargs: transforms.RandomHorizontalFlip(**kwargs),
+        "color_jitter": lambda **kwargs: transforms.ColorJitter(**kwargs),
+    }
+
+    transform_list = []
+    for specific_trans in transform_config_list:
+        if isinstance(specific_trans, str):
+            trans = transform_dict[specific_trans]()
+        elif isinstance(specific_trans, dict):
+            name, params = list(specific_trans.items())[0] # e.g., ('RRC', {'size': 224, 'scale': [0, 1]})
+            trans = transform_dict[name](**params)
+        
+        transform_list.append(trans)
+
+    return transform_list

@@ -75,9 +75,9 @@ def load_stanford_dogs(
 
     train_set, val_set = dogs_class_balanced_split(full_train_set, train_size=train_split)
     if debug:
-        train_set = train_set[:100]
-        val_set = val_set[:100]
-        test_set = test_set[:100]
+        train_set = train_set[:50]
+        val_set = val_set[:50]
+        test_set = test_set[:50]
         batch_size=8
 
     train_dataset = StanfordDogsDataset(train_set, transform_train)

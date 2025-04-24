@@ -1,5 +1,5 @@
 {
-    "run_name": "lord",
+    "run_name": "zoomvit_p7",
     "writer": true,
 
     "seed": 42,
@@ -13,8 +13,8 @@
         "few_shot": false
     },  
 
-    "pretrained": false,
-    "model_type": "brainit",
+    "pretrained": true,
+    "model_type": "zoom224",
     "optimizer": "adamW",
     "scheduler": {
         "CosineLRScheduler": {

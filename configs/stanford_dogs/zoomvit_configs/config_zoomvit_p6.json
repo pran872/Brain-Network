@@ -1,5 +1,5 @@
 {
-    "run_name": "lord",
+    "run_name": "zoomvit_p6",
     "writer": true,
 
     "seed": 42,
@@ -14,7 +14,7 @@
     },  
 
     "pretrained": false,
-    "model_type": "brainit",
+    "model_type": "zoom224",
     "optimizer": "adamW",
     "scheduler": {
         "CosineLRScheduler": {
@@ -32,7 +32,7 @@
         "train_transforms": [
             {"RRC": {
                 "size": 224, 
-                "scale": [0.7, 1]
+                "scale": [0.8, 1]
             }},
             "horizontal_flip",
             {"color_jitter": {
@@ -42,8 +42,7 @@
             }}
         ],
         "test_transforms": [
-            {"resize": {"size": 256}},
-            {"center_crop": {"size": 224}}
+            {"resize": {"size": [224, 224]}}
         ]
     },
     

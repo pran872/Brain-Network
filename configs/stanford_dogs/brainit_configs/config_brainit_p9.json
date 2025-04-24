@@ -1,5 +1,5 @@
 {
-    "run_name": "lord",
+    "run_name": "brainit_p9",
     "writer": true,
 
     "seed": 42,
@@ -13,7 +13,7 @@
         "few_shot": false
     },  
 
-    "pretrained": false,
+    "pretrained": true,
     "model_type": "brainit",
     "optimizer": "adamW",
     "scheduler": {
