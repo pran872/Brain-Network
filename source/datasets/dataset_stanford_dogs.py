@@ -5,19 +5,12 @@ import os
 from PIL import Image
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
-import numpy as np
 from collections import defaultdict
-from torchvision import transforms
 import random
 import sys
 
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(root_dir)
-
-try:
-    from utils import compute_mean_std
-except ModuleNotFoundError:
-    from source.utils import compute_mean_std
 
 def load_img_paths(mat_path):
     mat = scipy.io.loadmat(mat_path)

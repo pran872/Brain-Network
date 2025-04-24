@@ -364,7 +364,7 @@ def main():
         logger.info(f"Debug mode: {debug}")
         logger.info(f"Downsampling by: {config['dataset']['downsample_fraction']}")
 
-        transform_train, transform_test = get_transform(config["dataset"]["type"], config["transform_type"])
+        transform_train, transform_test = get_transform(config["dataset"]["type"], config["transforms"])
         train_loader, val_loader, test_loader = get_data(
             config["dataset"],
             transform_train,
@@ -385,7 +385,8 @@ def main():
         elif config["model_type"] == "custom_vit":
             model = ConvViTHybrid(device=device, use_flex=config["use_flex"]).to(device)
         elif config["model_type"] == "resnet18":
-            model = build_resnet(config["dataset"]["type"]).to(device)
+            logger.info(f"Using pretrained weights: {config['weights']}")
+            model = build_resnet(config["dataset"]["type"], weights=config["weights"]).to(device)
         elif config["model_type"] == "zoom":
             model = ZoomVisionTransformer(
                 device=device, 

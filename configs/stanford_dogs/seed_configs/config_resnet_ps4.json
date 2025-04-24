@@ -1,42 +1,42 @@
 {
-    "run_name": "lord",
+    "run_name": "resnet_ps4",
     "writer": true,
 
     "seed": 42,
 
     "dataset": {
-        "type": "cifar10",
+        "type": "stanford_dogs",
         "train_split": 0.9,
-        "batch_size": 256,
+        "batch_size": 64,
         "num_workers": 2,
         "downsample_fraction": 0,
         "few_shot": false
-    },  
+    },
 
     "weights": null,
-    "model_type": "brainit",
+    "model_type": "resnet18",
     "optimizer": "adam",
-    "scheduler": "CosineAnnealingLR",
+    "scheduler": "ReduceLROnPlateau",
     "scheduler_patience": 3,
     "scheduler_T_max": 50,
     "criterion": "CE",
     "label_smoothing": 0.1,
     "lr": 0.001,
-    "epochs": 50,
+    "epochs": 5,
 
     "transforms": {
         "type": null,
         "resize": {"use": true},
         "horizontal_flip": {"use": true},
         "color_jitter": {
-            "use": false,
+            "use": true,
             "brightness": 0.2,
             "contrast": 0.2,
             "saturation": 0.2
         }
     },
     
-    "early_stopping": false,
+    "early_stopping": true,
     "patience": 10,
     "min_diff": 0.001,
 

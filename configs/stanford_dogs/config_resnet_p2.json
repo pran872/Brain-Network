@@ -1,22 +1,22 @@
 {
-    "run_name": "lord",
+    "run_name": "resnet_p2",
     "writer": true,
 
     "seed": 42,
 
     "dataset": {
-        "type": "cifar10",
+        "type": "stanford_dogs",
         "train_split": 0.9,
-        "batch_size": 256,
+        "batch_size": 64,
         "num_workers": 2,
         "downsample_fraction": 0,
         "few_shot": false
-    },  
+    },
 
-    "weights": null,
-    "model_type": "brainit",
+    "weights": "IMAGENET1K_V1",
+    "model_type": "resnet18",
     "optimizer": "adam",
-    "scheduler": "CosineAnnealingLR",
+    "scheduler": "ReduceLROnPlateau",
     "scheduler_patience": 3,
     "scheduler_T_max": 50,
     "criterion": "CE",
@@ -36,7 +36,7 @@
         }
     },
     
-    "early_stopping": false,
+    "early_stopping": true,
     "patience": 10,
     "min_diff": 0.001,
 
