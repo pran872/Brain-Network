@@ -414,7 +414,7 @@ def main():
             model = ZoomVisionTransformer224(
                 num_classes=120,
                 embed_dim=256 if config["weights"] is None else 512,
-            )
+            ).to(device)
         
         # input_size = (32, 32)
         # summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
