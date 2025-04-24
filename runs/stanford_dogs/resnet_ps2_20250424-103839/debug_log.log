@@ -1,0 +1,22 @@
+2025-04-24 10:38:39,837 | INFO | Job Started
+2025-04-24 10:38:39,837 | INFO | Logging run: /rds/general/user/psp20/home/Brain-Network/runs/stanford_dogs/resnet_ps2_20250424-103839
+2025-04-24 10:38:39,990 | INFO | Using device: cuda
+2025-04-24 10:38:39,990 | INFO | Training for 5 epochs
+2025-04-24 10:38:39,990 | INFO | Debug mode: False
+2025-04-24 10:38:39,990 | INFO | Downsampling by: 0
+2025-04-24 10:38:40,244 | INFO | Using pretrained weights: IMAGENET1K_V1
+2025-04-24 10:38:41,019 | INFO | Label smoothing: 0.1
+2025-04-24 10:40:05,939 | INFO | Epoch 1: Train Loss=3.0740, Train Acc=32.06% | Val Loss=2.8476, Val Acc=35.83% | Time: 84.92s
+2025-04-24 10:40:05,940 | INFO | New best model saved (val loss = 2.8476)
+2025-04-24 10:41:24,779 | INFO | Epoch 2: Train Loss=2.2918, Train Acc=52.98% | Val Loss=2.6196, Val Acc=43.92% | Time: 78.84s
+2025-04-24 10:41:24,780 | INFO | New best model saved (val loss = 2.6196)
+2025-04-24 10:42:41,439 | INFO | Epoch 3: Train Loss=1.9707, Train Acc=63.06% | Val Loss=2.4678, Val Acc=48.75% | Time: 76.66s
+2025-04-24 10:42:41,439 | INFO | New best model saved (val loss = 2.4678)
+2025-04-24 10:43:59,843 | INFO | Epoch 4: Train Loss=1.7561, Train Acc=70.98% | Val Loss=2.6723, Val Acc=44.25% | Time: 78.40s
+2025-04-24 10:45:32,808 | INFO | Epoch 5: Train Loss=1.5645, Train Acc=77.91% | Val Loss=2.5379, Val Acc=48.83% | Time: 92.96s
+2025-04-24 10:45:32,881 | INFO | Best model with lowest val loss 2.46781409414191 at 2 epoch is saved.
+2025-04-24 10:46:33,164 | INFO | Test Accuracy: 47.49%
+2025-04-24 10:46:33,242 | INFO | Last model with val loss 2.537870407104492 at 4 epoch is saved.
+2025-04-24 10:47:36,927 | INFO | Test Accuracy: 47.49%
+2025-04-24 10:47:36,948 | INFO | 
+Job Completed
