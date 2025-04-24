@@ -181,18 +181,18 @@ class ConvViTHybrid(nn.Module):
 class ZoomVisionTransformer(nn.Module):
     def __init__(
         self,
-        device,
         num_classes,
-        use_pos_embed=False,
+        num_patches=None,
+        use_pos_embed=True,
         add_dropout=False,
         mlp_end=False,
-        add_cls_token=False,
+        add_cls_token=True,
         num_layers=2,
         trans_dropout_ratio=0.0,
-        standard_scale=False,
+        standard_scale=True,
         embed_dim=256,
         num_heads=4,
-        resnet_layers=3,
+        resnet_layers=4,
         multiscale_tokenisation=False,
         freeze_resnet_early=False,
         gamma_per_head=False,
@@ -210,8 +210,9 @@ class ZoomVisionTransformer(nn.Module):
             # Dropout and cls token used with pos embeds
             self.use_pos_embed = True
         
-        self.register_buffer("dist_matrix", self.compute_token_distance_matrix(device=device))
+        self.dist_matrix = None
         self.backbone = ResNetBackbone(resnet_layers=resnet_layers, freeze_early=freeze_resnet_early)
+        
         self.token_proj = nn.Linear(self.backbone.out_dim, embed_dim)
         self.zoom_controller = ZoomController(self.backbone.out_dim, out_dim=1, num_heads=num_heads, gamma_per_head=gamma_per_head)
         
@@ -220,7 +221,8 @@ class ZoomVisionTransformer(nn.Module):
             nn.init.trunc_normal_(self.cls_token, std=0.02)
 
         if self.use_pos_embed:
-            num_patches = 81 if self.multiscale_tokenisation else 64
+            if num_patches is None:
+                num_patches = 81 if self.multiscale_tokenisation else 64
             pos_embed_patches = num_patches + 1 if self.add_cls_token else num_patches
             self.pos_embed = nn.Parameter(torch.zeros(1, pos_embed_patches, embed_dim))
             nn.init.trunc_normal_(self.pos_embed, std=0.02) # std by convention
@@ -230,8 +232,7 @@ class ZoomVisionTransformer(nn.Module):
         self.transformer_blocks = nn.ModuleList([
             ZoomTransformerBlock(
                 embed_dim, 
-                num_heads, 
-                self.dist_matrix, 
+                num_heads,
                 gamma_per_head=gamma_per_head,
                 dropout_ratio=trans_dropout_ratio, 
                 standard_scale=standard_scale,
@@ -256,6 +257,11 @@ class ZoomVisionTransformer(nn.Module):
 
     def forward(self, x, return_gamma=False):
         feat_map, pooled = self.backbone(x) # [B, 512, 8, 8], [B, 512]
+
+        if self.dist_matrix is None:
+            H, W = feat_map.shape[-2:]
+            self.dist_matrix = self._compute_token_distance_matrix(h=H, w=W, device=feat_map.device)
+
         gamma = self.zoom_controller(pooled) # [B, 1]
         tokens = feat_map.flatten(2).transpose(1, 2) # [B, 64, 512]
         if self.multiscale_tokenisation:
@@ -276,7 +282,7 @@ class ZoomVisionTransformer(nn.Module):
                 tokens = self.dropout(tokens)
 
         for block in self.transformer_blocks:
-            tokens = block(tokens, gamma)
+            tokens = block(tokens, gamma, self.dist_matrix)
 
         out = tokens[:, 0] if self.add_cls_token else tokens.mean(dim=1)
         out = self.mlp_head(out) if self.mlp_end else self.cls_head(out)
@@ -286,10 +292,10 @@ class ZoomVisionTransformer(nn.Module):
         else:
             return out
 
-    def compute_token_distance_matrix(self, h=8, w=8, device="cpu"):
+    def _compute_token_distance_matrix(self, h=8, w=8, device="cpu"):
         coords = torch.stack(torch.meshgrid(
             torch.arange(h, device=device), torch.arange(w, device=device), indexing='ij'
-        ), dim=-1).view(-1, 2).float()
+        ), dim=-1).reshape(-1, 2).float()
 
         if self.multiscale_tokenisation:
             coords_4x4 = torch.stack(torch.meshgrid(
@@ -297,12 +303,10 @@ class ZoomVisionTransformer(nn.Module):
                 torch.linspace(0, w-1, 4, device=device),
                 indexing='ij'
             ), dim=-1).view(-1, 2).float()
-            coords = torch.cat([coords, coords_4x4], dim=0)
-
             coords_1x1 = torch.tensor([[h / 2, w / 2]], device=device)
-            coords = torch.cat([coords, coords_1x1], dim=0) 
+            coords = torch.cat([coords, coords_4x4, coords_1x1], dim=0) 
 
-        dist = torch.cdist(coords, coords, p=2)
+        dist = torch.cdist(coords, coords, p=2) # 2-norm euclidean
 
         if self.add_cls_token: # Expand to fit the extra token
             # Create on same device!!
@@ -455,3 +459,14 @@ class BrainiT(nn.Module):
             dist = torch.cat([cls_col, dist], dim=1)
 
         return dist
+
+class ZoomVisionTransformer224(ZoomVisionTransformer):
+    def __init__(self, num_classes, embed_dim):
+        super().__init__(
+            num_classes=num_classes,
+            embed_dim=embed_dim,
+            num_patches=196,
+            resnet_layers=4,
+        )
+
+        self.backbone = ResNetBackbone224(resnet_layers=4, freeze_early=False)

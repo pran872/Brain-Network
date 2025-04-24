@@ -334,6 +334,7 @@ def main():
             "custom_vit",
             "resnet18",
             "zoom",
+            "zoom224",
             "brainit"
         ]
         assert config["dataset"]["type"] in ["cifar10", "stanford_dogs"], "Invalid dataset"
@@ -389,7 +390,6 @@ def main():
             model = build_resnet(config["dataset"]["type"], weights=config["weights"]).to(device)
         elif config["model_type"] == "zoom":
             model = ZoomVisionTransformer(
-                device=device, 
                 num_classes=10, 
                 use_pos_embed=config["use_pos_embed"],
                 add_dropout=config["add_dropout"],
@@ -410,6 +410,11 @@ def main():
                 use_retinal_layer=config["retinal_layer"],
                 device=device
             ).to(device)
+        elif config["model_type"] == "zoom224":
+            model = ZoomVisionTransformer224(
+                num_classes=120,
+                embed_dim=256 if config["weights"] is None else 512,
+            )
         
         # input_size = (32, 32)
         # summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)

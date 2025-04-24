@@ -1,23 +1,34 @@
 import torch.nn as nn
 from torchvision.models import resnet18
+import torch.nn.functional as F
 
 class ResNetBackbone(nn.Module):
-    def __init__(self, out_channels=512, resnet_layers=4, freeze_early=False):
+    def __init__(
+        self, 
+        out_channels=512, 
+        resnet_layers=4, 
+        freeze_early=False, 
+        upsample_features=True,
+        downsample_features=False
+    ):
         super().__init__()
+        self.upsample_features = upsample_features
+        self.downsample_features = downsample_features
+
         base = resnet18(weights=None)
         base.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
         base.maxpool = nn.Identity() # no maxpool
 
         if resnet_layers==4:
-            self.upsample_features = True
             self.stem = nn.Sequential(
                 base.conv1, base.bn1, base.relu,
                 base.layer1, base.layer2, base.layer3, base.layer4
             )
-            self.upsample = nn.Sequential(
-                nn.Upsample(scale_factor=2, mode='bilinear', align_corners=False),
-                nn.Conv2d(512, 512, kernel_size=1)
-            )
+            if self.upsample_features:
+                self.upsample = nn.Sequential(
+                    nn.Upsample(scale_factor=2, mode='bilinear', align_corners=False),
+                    nn.Conv2d(512, 512, kernel_size=1)
+                )
         else:
             self.upsample_features = False
             self.stem = nn.Sequential(
@@ -27,7 +38,7 @@ class ResNetBackbone(nn.Module):
             out_channels = 256
         self.out_dim = out_channels 
 
-        if freeze_early: # Freezes base.conv1, base.bn1, base.relu, base.layer1
+        if freeze_early: # Freezes base.conv1, base.bn1, base.relu, base.layer1 for sample efficiency stuff
             for param in list(self.stem[:4].parameters()):
                 param.requires_grad = False
 
@@ -35,8 +46,21 @@ class ResNetBackbone(nn.Module):
         feat_map = self.stem(x) # [B, 512, 4, 4]
         if self.upsample_features:
             feat_map = self.upsample(feat_map) # [B, 512, 8, 8]
+        elif self.downsample_features:
+            feat_map = F.adaptive_avg_pool2d(feat_map, output_size=(14, 14)) # 196 tokens
         pooled = feat_map.mean(dim=[2, 3]) # [B, 512]
         return feat_map, pooled
+
+class ResNetBackbone224(ResNetBackbone):
+    def __init__(self, out_channels=512, resnet_layers=4, freeze_early=False):
+        super().__init__(
+            out_channels=out_channels, 
+            resnet_layers=resnet_layers, 
+            freeze_early=freeze_early,
+            upsample_features=False,
+            downsample_features=True
+        )
+    
     
 class ZoomController(nn.Module):
     def __init__(self, in_dim, out_dim=1, num_heads=4, gamma_per_head=False): 
@@ -65,7 +89,6 @@ class ZoomAttention(nn.Module):
         self,
         dim,
         num_heads,
-        dist_matrix,
         gamma_per_head,
         dropout=0.0,
         standard_scale=False,
@@ -84,16 +107,16 @@ class ZoomAttention(nn.Module):
         self.attn_drop = nn.Dropout(dropout)
         self.proj_drop = nn.Dropout(dropout)
 
-        self.register_buffer('dist_matrix', dist_matrix) # [N, N]
+        # self.register_buffer('dist_matrix', dist_matrix) # [N, N]
 
-    def forward(self, x, gamma): # gamma: [B, 1]
+    def forward(self, x, gamma, dist_matrix): # gamma: [B, 1]
         B, N, D = x.shape
         H = self.num_heads
         qkv = self.qkv(x).reshape(B, N, 3, H, D // H).permute(2, 0, 3, 1, 4)
         q, k, v = qkv[0], qkv[1], qkv[2]  # [B, H, N, D_head]
 
         attn_scores = (q @ k.transpose(-2, -1)) * self.scale  # [B, H, N, N]
-        dist = self.dist_matrix.unsqueeze(0).unsqueeze(0) # [1, 1, N, N]
+        dist = dist_matrix.unsqueeze(0).unsqueeze(0) # [1, 1, N, N]
         if self.gamma_per_head:
             gamma = gamma.view(B, H, 1, 1)
         else:
@@ -112,7 +135,6 @@ class ZoomTransformerBlock(nn.Module):
         self,
         dim,
         num_heads,
-        dist_matrix,
         gamma_per_head,
         mlp_ratio=4.0,
         dropout_ratio=0.0,
@@ -123,7 +145,7 @@ class ZoomTransformerBlock(nn.Module):
         super().__init__()
         self.use_token_mixer = use_token_mixer
         self.norm1 = nn.LayerNorm(dim)
-        self.attn = ZoomAttention(dim, num_heads, dist_matrix, gamma_per_head, dropout_ratio, standard_scale, remove_zoom)
+        self.attn = ZoomAttention(dim, num_heads, gamma_per_head, dropout_ratio, standard_scale, remove_zoom)
         self.norm2 = nn.LayerNorm(dim)
         self.mlp = nn.Sequential(
             nn.Linear(dim, int(dim * mlp_ratio)),
@@ -137,8 +159,8 @@ class ZoomTransformerBlock(nn.Module):
                 nn.GELU()
             )
 
-    def forward(self, x, gamma):
-        x = x + self.attn(self.norm1(x), gamma)
+    def forward(self, x, gamma, dist_matrix):
+        x = x + self.attn(self.norm1(x), gamma, dist_matrix)
 
         if self.use_token_mixer:
             x_normed = self.token_norm(x)

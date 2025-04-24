@@ -1,26 +1,25 @@
 {
-    "run_name": "lord",
+    "run_name": "zoomvit_p4",
     "writer": true,
 
     "seed": 42,
 
     "dataset": {
-        "type": "cifar10",
+        "type": "stanford_dogs",
         "train_split": 0.9,
-        "batch_size": 256,
+        "batch_size": 64,
         "num_workers": 2,
         "downsample_fraction": 0,
         "few_shot": false
     },  
 
     "weights": null,
-    "model_type": "brainit",
+    "model_type": "zoom224",
     "optimizer": "adam",
-    "scheduler": "CosineAnnealingLR",
+    "scheduler": "ReduceLROnPlateau",
     "scheduler_patience": 8,
     "scheduler_T_max": 50,
     "criterion": "CE",
-    "label_smoothing": 0.1,
     "lr": 0.001,
     "epochs": 50,
 
@@ -29,18 +28,16 @@
         "resize": {"use": true},
         "horizontal_flip": {"use": true},
         "color_jitter": {
-            "use": false,
-            "brightness": 0.2,
-            "contrast": 0.2,
-            "saturation": 0.2
+            "use": true,
+            "brightness": 0.1,
+            "contrast": 0.1,
+            "saturation": 0.1
         }
     },
     
-    "early_stopping": false,
+    "early_stopping": true,
     "patience": 10,
     "min_diff": 0.001,
-
-    "ema": false,
 
     "use_flex": false,
 
@@ -51,6 +48,8 @@
     "mlp_end": false,
     "add_cls_token": true,
     "num_layers": 2,
+    "label_smoothing": 0.1,
+    "ema": false,
     "trans_dropout_ratio": 0.0,
     "standard_scale": true,
     "resnet_layers": 3,
