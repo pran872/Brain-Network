@@ -21,7 +21,12 @@ def load_img_paths(mat_path):
     ]
     return img_list
 
-def dogs_class_balanced_split(full_train_set, train_size=0.9):
+def dogs_class_balanced_split(
+        full_train_set, 
+        train_size=0.9, 
+        down_frac=0, # downsample fraction
+        few_shot=False,
+    ):
     imgs_by_class = defaultdict(list)
     for img, label in full_train_set:
         imgs_by_class[label].append(img)
@@ -31,8 +36,13 @@ def dogs_class_balanced_split(full_train_set, train_size=0.9):
     for cls, imgs in imgs_by_class.items():
         random.shuffle(imgs)
         split_idx = int(len(imgs) * train_size)
-        train_set.extend([(img, cls) for img in imgs[:split_idx]])
         val_set.extend([(img, cls) for img in imgs[split_idx:]])
+        train_imgs = [(img, cls) for img in imgs[:split_idx]]
+        if down_frac > 0 or few_shot:
+            k = int(len(imgs) * down_frac) if down_frac > 0 else few_shot
+            train_imgs = random.sample(train_imgs, k=k)
+
+        train_set.extend(train_imgs)
 
     random.shuffle(train_set)
     random.shuffle(val_set)
@@ -59,7 +69,7 @@ def load_stanford_dogs(
     │   ├── train_list.mat
     │   └── test_list.mat
     '''
-
+    print('in')
     batch_size = dataset_configs["batch_size"]
     downsample_fraction = dataset_configs["downsample_fraction"]
     few_shot = dataset_configs["few_shot"]
@@ -73,18 +83,31 @@ def load_stanford_dogs(
     test_set = load_img_paths(test_list_pt)
     full_train_set = load_img_paths(train_list_pt)
 
-    train_set, val_set = dogs_class_balanced_split(full_train_set, train_size=train_split)
+    train_set, val_set = dogs_class_balanced_split(
+        full_train_set, 
+        train_size=train_split, 
+        down_frac=downsample_fraction
+    )
+    if downsample_fraction > 0 or few_shot:
+        logger.info(f"Downsampling by: {downsample_fraction}. Few shot: {few_shot}")
+
     if debug:
-        train_set = train_set[:50]
-        val_set = val_set[:50]
-        test_set = test_set[:50]
+        train_set = train_set[:min(50, len(train_set))]
+        val_set = val_set[:min(50, len(train_set))]
+        test_set = test_set[:min(50, len(train_set))]
         batch_size=8
 
     train_dataset = StanfordDogsDataset(train_set, transform_train)
     val_dataset = StanfordDogsDataset(val_set, transform_test)
     test_dataset = StanfordDogsDataset(test_set, transform_test)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, worker_init_fn=seed_worker_fn, generator=seed_generator)
+    if downsample_fraction > 0 and downsample_fraction < 0.2:
+        logger.info(f"Downsample fraction is small - CHANGING TRAIN BATCH SIZE TO 32")
+        train_batch_size = 32
+    else:
+        train_batch_size = batch_size
+
+    train_loader = DataLoader(train_dataset, batch_size=train_batch_size, shuffle=True, num_workers=num_workers, worker_init_fn=seed_worker_fn, generator=seed_generator)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers, worker_init_fn=seed_worker_fn, generator=seed_generator)
     test_loader = DataLoader(test_dataset, batch_size=test_batch_size, shuffle=False, num_workers=num_workers, worker_init_fn=seed_worker_fn, generator=seed_generator)
     return train_loader, val_loader, test_loader

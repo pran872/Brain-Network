@@ -350,11 +350,14 @@ class BrainiT(ZoomVisionTransformer):
 
         return_vars = [out]
 
-        if return_cx_cy: 
+        if return_cx_cy:
             return_vars.extend([cx, cy]) 
         if return_gamma:
             return_vars.append(gamma)
 
+        if len(return_vars) == 1:
+            return out
+        
         return return_vars
      
 class ZoomVisionTransformer224(ZoomVisionTransformer):

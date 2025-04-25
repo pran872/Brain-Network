@@ -145,7 +145,7 @@ def train_model(
                 for images, labels in val_loader:
                     images, labels = images.to(device), labels.to(device)
                     
-                    if isinstance(model, BrainiT):
+                    if isinstance(model, (BrainiT, BrainiT224)):
                         outputs, cx, cy, gamma = model(images, return_cx_cy=True, return_gamma=True)
                         gamma_by_class = process_gamma(gamma, gamma_by_class, labels)
 
@@ -190,12 +190,12 @@ def train_model(
 
             if isinstance(model, FlexNet):
                 writer.add_scalar("Conv_ratio", conv_ratio, epoch)
-            elif isinstance(model, ZoomVisionTransformer):
+            if isinstance(model, ZoomVisionTransformer):
                 writer.add_scalar("Gamma/mean", gamma.mean().item(), epoch)
                 writer.add_scalar("Gamma/std", gamma.std().item(), epoch)
                 for c in range(len(gamma_by_class)):
                     writer.add_scalar(f"Gamma/Class_{c}", np.mean(gamma_by_class[c]), epoch)
-            elif isinstance(model, BrainiT):
+            if isinstance(model, (BrainiT, BrainiT224)):
                 writer.add_scalar("Centroid_means/cx", cx, epoch)
                 writer.add_scalar("Centroid_means/cy", cy, epoch)
 
@@ -230,6 +230,9 @@ def test_model(model,
     attacker=False,
     gaussian_std=False
 ):
+    if attacker:
+        logger.info(f"Using attacker: {attacker}")
+
     model.eval()
     correct, total = 0, 0
     y_pred, y_true = [], []
