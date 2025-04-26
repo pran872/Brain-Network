@@ -1,0 +1,14 @@
+mv: cannot stat 'job_logs/train.err': No such file or directory
+Starting training on cx3-20-4.cx3.hpc.ic.ac.uk at Fri 25 Apr 22:14:43 BST 2025
+Using config: configs/stanford_dogs/renet_configs/config_resnet_p10.json
+in
+Finished at Fri 25 Apr 22:24:09 BST 2025
+
+====================================
+CPU Time used: 00:06:28
+CPU Percent: 104%
+Memory usage: 1721688kb
+Approx Power usage: 0.0012000000000000001
+Walltime usage: 00:09:36
+
+====================================
