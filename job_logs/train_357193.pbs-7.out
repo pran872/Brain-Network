@@ -1,0 +1,27 @@
+mv: cannot stat 'job_logs/train.out': No such file or directory
+mv: cannot stat 'job_logs/train.err': No such file or directory
+Starting training on cx3-20-1.cx3.hpc.ic.ac.uk at Sat 26 Apr 17:55:16 BST 2025
+Using config: configs/stanford_dogs/renet_configs/config_resnet_p21.json
+in
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+Finished at Sat 26 Apr 18:36:20 BST 2025
+
+====================================
+CPU Time used: 00:29:40
+CPU Percent: 86%
+Memory usage: 1665120kb
+Approx Power usage: 0.0058
+Walltime usage: 00:41:10
+
+====================================
