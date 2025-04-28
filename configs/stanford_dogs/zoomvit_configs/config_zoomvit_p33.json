@@ -14,7 +14,7 @@
     },  
 
     "pretrained": false,
-    "model_type": "brainit",
+    "model_type": "zoom",
     "optimizer": "adamW",
     "scheduler": {
         "CosineLRScheduler": {
