@@ -22,7 +22,7 @@ trap cleanup EXIT
 eval "$($HOME/miniforge3/bin/conda shell.bash hook)"
 conda activate brain-network-env
 
-export OUTPUT_DIR=/rds/general/user/psp20/home/Brain-Network/runs/stanford_dogs/batch_7
+export OUTPUT_DIR=/rds/general/user/psp20/home/Brain-Network/runs/stanford_dogs/batch_8
 TRAIN_CMD="python source/simple_cnn.py -c $CONFIG"
 
 MAX_RETRIES=3

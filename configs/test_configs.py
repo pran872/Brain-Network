@@ -12,8 +12,14 @@ def run_tests():
     # dir = "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/round_0_seed_tests"
     
     pts = [
-        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p41.json",
-        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p42.json"
+        # "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p43.json",
+        # "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p44.json",
+        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p45.json",
+        # "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p46.json",
+        # "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p47.json",
+        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p48.json",
+        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p51.json",
+        # "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p52.json",
     ]
     # for config in glob.glob(os.path.join(dir, "**", "*.json"), recursive=True):
     for config in pts:
