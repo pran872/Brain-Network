@@ -1,4 +1,4 @@
-''' General utils that you could use across models and datasets - not integral to the pipeline'''
+''' Helper functions '''
 import torch
 from torch.utils.data import DataLoader
 
@@ -18,6 +18,20 @@ def process_gamma(gamma, gamma_by_class, labels):
     for g, label in zip(gamma, labels):
         gamma_by_class[label.item()].append(g.item())
     return gamma_by_class
+
+def compute_auxiliary_loss(auxiliary_loss, gamma, attn_maps):
+    if "gamma_var_loss" in auxiliary_loss:
+        lambda_param = auxiliary_loss["gamma_var_loss"]
+        gamma_loss = lambda_param * -torch.var(gamma, dim=0).mean()
+    elif "attention_entropy_loss" in auxiliary_loss:
+        lambda_param = auxiliary_loss["attention_entropy_loss"]
+        eps = 1e-8
+        attn_maps = attn_maps.clamp(min=eps)
+        entropy = -torch.sum(attn_maps * torch.log(attn_maps), dim=-1)
+        gamma_loss = lambda_param * entropy.mean()
+    else:
+        gamma_loss = False
+    return gamma_loss
 
 def compute_mean_std(dataset):
     loader = DataLoader(dataset, batch_size=8, shuffle=False, num_workers=2)

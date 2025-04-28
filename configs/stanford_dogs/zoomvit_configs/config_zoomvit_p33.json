@@ -1,5 +1,5 @@
 {
-    "run_name": "lord",
+    "run_name": "zoomvit_p33",
     "writer": true,
 
     "seed": 42,
@@ -24,7 +24,7 @@
     }},
     "criterion": "CE",
     "auxiliary_loss": 
-        {"loss_type": 0.01},
+        {"gamma_var_loss": 0.05},
     
     "label_smoothing": 0.1,
     "lr": 0.001,
@@ -35,7 +35,7 @@
         "train_transforms": [
             {"RRC": {
                 "size": 224, 
-                "scale": [0.7, 1]
+                "scale": [0.8, 1]
             }},
             "horizontal_flip",
             {"color_jitter": {
@@ -45,8 +45,7 @@
             }}
         ],
         "test_transforms": [
-            {"resize": {"size": 256}},
-            {"center_crop": {"size": 224}}
+            {"resize": {"size": [224, 224]}}
         ]
     },
     

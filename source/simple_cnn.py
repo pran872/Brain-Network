@@ -87,6 +87,7 @@ def train_model(
     device,
     optimizer,
     criterion,
+    auxiliary_loss,
     scheduler,
     early_stopping,
     ema,
@@ -99,25 +100,33 @@ def train_model(
                   "model_state": None,
                   "epoch": 0}
     gamma_by_class = defaultdict(list)
+    gamma_loss = False
+    logger.info(f"Auxiliary loss: {auxiliary_loss}")
 
     for epoch in range(epochs):
         start = time.time()
         model.train()
-        total_loss, correct, total = 0, 0, 0
+        total_loss, correct, total, total_gamma_loss = 0, 0, 0, 0
 
         for batch_idx, (images, labels) in tqdm(enumerate(train_loader), desc=f"Epoch {epoch+1} [Train]", disable=not sys.stdout.isatty()):
             images, labels = images.to(device), labels.to(device)
             optimizer.zero_grad()
-            outputs = model(images)
 
-            if isinstance(outputs, (tuple, list)): 
-                # For flex network / zoomvit / brainit
-                outputs = outputs[0]
-    
+            if isinstance(model, ZoomVisionTransformer):
+                outputs, gamma, attn_map = model(images, return_gamma=True, return_attn_map=True)
+                gamma_loss = compute_auxiliary_loss(auxiliary_loss, gamma, attn_map)
+            else:
+                outputs = model(images)
+
             loss = criterion(outputs, labels)
+            if gamma_loss:
+                loss += gamma_loss
+                total_gamma_loss += gamma_loss.item()
             loss.backward()
+
             if writer and batch_idx == 0: 
                 log_grad(writer, model, epoch)
+
             optimizer.step()
             if ema:
                 ema.update()
@@ -128,6 +137,8 @@ def train_model(
             correct += predicted.eq(labels).sum().item()
 
         avg_train_loss = total_loss / len(train_loader)
+        if gamma_loss:
+            avg_train_gamma_loss = total_gamma_loss / len(train_loader)
         train_acc = 100. * correct / total
         train_losses.append(avg_train_loss)
         train_accuracies.append(train_acc)
@@ -140,32 +151,39 @@ def train_model(
         
         with context:
             model.eval()
-            val_loss, val_correct, val_total = 0, 0, 0
+            gamma_loss = False
+            val_loss, val_correct, val_total, val_gamma_loss = 0, 0, 0, 0
             with torch.no_grad():
                 for images, labels in val_loader:
                     images, labels = images.to(device), labels.to(device)
-                    
-                    if isinstance(model, (BrainiT, BrainiT224)):
-                        outputs, cx, cy, gamma = model(images, return_cx_cy=True, return_gamma=True)
-                        gamma_by_class = process_gamma(gamma, gamma_by_class, labels)
+
+                    if isinstance(model, FlexNet):
+                        outputs, conv_ratio = model(images, return_conv_ratio=True)
 
                     elif isinstance(model, ZoomVisionTransformer):
-                        outputs, gamma = model(images, return_gamma=True)
+                        if isinstance(model, (BrainiT, BrainiT224)):
+                            outputs, gamma, attn_map, cx, cy, = model(images, return_cx_cy=True, return_gamma=True, return_attn_map=True)
+                        elif isinstance(model, ZoomVisionTransformer):
+                            outputs, gamma, attn_map = model(images, return_gamma=True, return_attn_map=True)
                         gamma_by_class = process_gamma(gamma, gamma_by_class, labels)
-
-                    elif isinstance(model, FlexNet):
-                        outputs, conv_ratio = model(images)
+                        gamma_loss = compute_auxiliary_loss(auxiliary_loss, gamma, attn_map)
 
                     else:
                         outputs = model(images)
 
                     loss = criterion(outputs, labels)
+                    if gamma_loss is not False:
+                        loss += gamma_loss
+                        val_gamma_loss += gamma_loss
+
                     val_loss += loss.item()
                     _, predicted = outputs.max(1)
                     val_total += labels.size(0)
                     val_correct += predicted.eq(labels).sum().item()
 
         avg_val_loss = val_loss / len(val_loader)
+        if gamma_loss is not False:
+            avg_val_gamma_loss = val_gamma_loss / len(val_loader)
         val_acc = 100. * val_correct / val_total
         val_losses.append(avg_val_loss)
         val_accuracies.append(val_acc)
@@ -184,6 +202,9 @@ def train_model(
             writer.add_scalar("Loss/val", avg_val_loss, epoch)
             writer.add_scalar("Accuracy/train", train_acc, epoch)
             writer.add_scalar("Accuracy/val", val_acc, epoch)
+            if gamma_loss is not False:
+                writer.add_scalar("GammaLoss/train", avg_train_gamma_loss, epoch)
+                writer.add_scalar("GammaLoss/val", avg_val_gamma_loss, epoch)
 
             current_lr = optimizer.param_groups[0]['lr']
             writer.add_scalar("LR", current_lr, epoch)
@@ -208,7 +229,7 @@ def train_model(
             best_model["epoch"] = epoch
             logger.info(f"New best model saved (val loss = {best_model['val_loss']:.4f})")
 
-        if early_stopping:
+        if early_stopping and isinstance(early_stopping, EarlyStopping):
             early_stopping.step(avg_val_loss)
             if early_stopping.should_stop:
                 logger.info(f"Early stopping triggered at epoch {epoch+1}")
@@ -327,8 +348,8 @@ def main():
         logger.info("Job Started")
         logger.info(f"Logging run: {log_dir}")
 
-        save_conifg_path = os.path.join(log_dir, f"config_{config['run_name']}.json")
-        with open(save_conifg_path, 'w') as f:
+        save_config_path = os.path.join(log_dir, f"config_{config['run_name']}.json")
+        with open(save_config_path, 'w') as f:
             f.write(json.dumps(config, indent=2))
 
         valid_models = [
@@ -485,6 +506,7 @@ def main():
             device,
             optimizer,
             criterion,
+            config["auxiliary_loss"],
             scheduler,
             early_stopping if config["early_stopping"] else False,
             ema if config["ema"] else False,

@@ -102,7 +102,7 @@ class FlexNet(nn.Module):
         self.fc2 = nn.Linear(128, 10)
         self.dropout = nn.Dropout(p=0.3)
     
-    def forward(self, x):
+    def forward(self, x, return_conv_ratio=False):
         x = self.pool(F.relu(self.bn1(self.conv1(x))))
         x = self.pool(F.relu(self.bn2(self.conv2(x))))
         x, self.conv_ratio = self.conv3(x)
@@ -111,7 +111,11 @@ class FlexNet(nn.Module):
         x = torch.flatten(x, start_dim=1)
         x = self.dropout(F.relu(self.fc1(x)))
         x = self.fc2(x)
-        return x, self.conv_ratio
+
+        if return_conv_ratio:
+            return x, self.conv_ratio
+        else:
+            return x
 
 class ConvViTHybrid(nn.Module):
     def __init__(self, device, patch_size=4, in_channels=3,
@@ -258,7 +262,7 @@ class ZoomVisionTransformer(nn.Module):
                 nn.Linear(embed_dim, num_classes)
             )
 
-    def forward(self, x, return_gamma=False):
+    def forward(self, x, return_gamma=False, return_attn_map=False):
         feat_map, pooled = self.backbone(x) # [B, 512, 8, 8], [B, 512]
 
         if self.dist_matrix is None:
@@ -284,15 +288,27 @@ class ZoomVisionTransformer(nn.Module):
             if self.add_dropout:
                 tokens = self.dropout(tokens)
 
-        for block in self.transformer_blocks:
-            tokens = block(tokens, gamma, self.dist_matrix)
+        for idx, block in enumerate(self.transformer_blocks):
+            if idx == len(self.transformer_blocks)-1:
+                tokens = block(tokens, gamma, self.dist_matrix, return_attn_map=return_attn_map)
+            else:
+                tokens = block(tokens, gamma, self.dist_matrix, return_attn_map=False)
+            
+            if isinstance(tokens, tuple):
+                tokens, attn_map = tokens
 
         out = tokens[:, 0] if self.add_cls_token else tokens.mean(dim=1)
         out = self.mlp_head(out) if self.mlp_end else self.cls_head(out)
 
+        return_vars = [out]
+
         if return_gamma:
-            return out, gamma
-        else:
+            return_vars.append(gamma)
+        if return_attn_map:
+            return_vars.append(attn_map)
+        if len(return_vars) > 1:
+            return return_vars
+        else: 
             return out
 
     def _compute_token_distance_matrix(self, h=8, w=8, device="cpu"):
@@ -339,21 +355,27 @@ class BrainiT(ZoomVisionTransformer):
         if self.use_retinal_layer:
             self.retinal_sampling_layer = LearnableFoveation()
     
-    def forward(self, x, return_cx_cy=False, return_gamma=False):
+    def forward(self, x, return_cx_cy=False, return_gamma=False, return_attn_map=False):
         if self.use_retinal_layer:
             x = self.retinal_sampling_layer(x, return_cx_cy=return_cx_cy)
             if isinstance(x, tuple):
                 x, cx, cy = x
-        out = super().forward(x, return_gamma=return_gamma)
-        if isinstance(out, tuple):
-            out, gamma = out
+
+        out = super().forward(x, return_gamma=return_gamma, return_attn_map=return_attn_map)
+        if isinstance(out, (tuple, list)):
+            if len(out) == 2:
+                out, gamma = out
+            elif len(out) == 3:
+                out, gamma, attn_map = out
 
         return_vars = [out]
 
-        if return_cx_cy:
-            return_vars.extend([cx, cy]) 
         if return_gamma:
             return_vars.append(gamma)
+        if return_attn_map:
+            return_vars.append(attn_map)
+        if return_cx_cy:
+            return_vars.extend([cx, cy]) 
 
         if len(return_vars) == 1:
             return out

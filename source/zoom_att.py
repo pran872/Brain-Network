@@ -112,7 +112,7 @@ class ZoomAttention(nn.Module):
 
         # self.register_buffer('dist_matrix', dist_matrix) # [N, N]
 
-    def forward(self, x, gamma, dist_matrix): # gamma: [B, 1]
+    def forward(self, x, gamma, dist_matrix, return_attn_map=False): # gamma: [B, 1]
         B, N, D = x.shape
         H = self.num_heads
         qkv = self.qkv(x).reshape(B, N, 3, H, D // H).permute(2, 0, 3, 1, 4)
@@ -131,7 +131,10 @@ class ZoomAttention(nn.Module):
         attn_weights = self.attn_drop(attn_scores.softmax(dim=-1))
         out = (attn_weights @ v).transpose(1, 2).contiguous().view(B, N, D)
 
-        return self.proj_drop(self.proj(out))
+        if return_attn_map:
+            return self.proj_drop(self.proj(out)), attn_weights
+        else:
+            return self.proj_drop(self.proj(out))
 
 class ZoomTransformerBlock(nn.Module):
     def __init__(
@@ -162,8 +165,11 @@ class ZoomTransformerBlock(nn.Module):
                 nn.GELU()
             )
 
-    def forward(self, x, gamma, dist_matrix):
-        x = x + self.attn(self.norm1(x), gamma, dist_matrix)
+    def forward(self, x, gamma, dist_matrix, return_attn_map=False):
+        attn_out = self.attn(self.norm1(x), gamma, dist_matrix, return_attn_map)
+        if isinstance(attn_out, tuple):
+            attn_out, attn_map = attn_out
+        x = x + attn_out
 
         if self.use_token_mixer:
             x_normed = self.token_norm(x)
@@ -171,4 +177,7 @@ class ZoomTransformerBlock(nn.Module):
             x = x + x_mixed.transpose(1, 2)  
 
         x = x + self.mlp(self.norm2(x))
-        return x
+        if return_attn_map:
+            return x, attn_map
+        else:
+            return x

@@ -69,7 +69,6 @@ def load_stanford_dogs(
     │   ├── train_list.mat
     │   └── test_list.mat
     '''
-    print('in')
     batch_size = dataset_configs["batch_size"]
     downsample_fraction = dataset_configs["downsample_fraction"]
     few_shot = dataset_configs["few_shot"]

@@ -1,5 +1,5 @@
 {
-    "run_name": "lord",
+    "run_name": "zoomvit_p34",
     "writer": true,
 
     "seed": 42,
@@ -13,7 +13,7 @@
         "few_shot": false
     },  
 
-    "pretrained": false,
+    "pretrained": true,
     "model_type": "brainit",
     "optimizer": "adamW",
     "scheduler": {
@@ -24,7 +24,7 @@
     }},
     "criterion": "CE",
     "auxiliary_loss": 
-        {"loss_type": 0.01},
+        {"attention_entropy_loss": 0.01},
     
     "label_smoothing": 0.1,
     "lr": 0.001,
