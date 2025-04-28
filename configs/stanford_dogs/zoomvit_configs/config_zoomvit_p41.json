@@ -1,5 +1,5 @@
 {
-    "run_name": "lord",
+    "run_name": "zoomvit_p41",
     "writer": true,
 
     "seed": 42,
@@ -13,8 +13,8 @@
         "few_shot": false
     },  
 
-    "pretrained": false,
-    "model_type": "brainit",
+    "pretrained": true,
+    "model_type": "zoom",
     "optimizer": "adamW",
     "scheduler": {
         "CosineLRScheduler": {
@@ -24,7 +24,7 @@
     }},
     "criterion": "CE",
     "auxiliary_loss": 
-        {"loss_type": 0.01},
+        {"attention_entropy_loss": 0.5},
     
     "label_smoothing": 0.1,
     "lr": 0.001,
@@ -49,7 +49,6 @@
             {"center_crop": {"size": 224}}
         ]
     },
-    "mixup_fn": false,
     
     "early_stopping": false,
     "patience": 10,
@@ -61,19 +60,18 @@
 
     "retinal_layer": true,
 
-    "add_dropout": false,
-    "trans_dropout_ratio": 0.0,
-    "remove_zoom": false,
-
     "use_pos_embed": true,
+    "add_dropout": false,
     "mlp_end": false,
     "add_cls_token": true,
     "num_layers": 2,
+    "trans_dropout_ratio": 0.0,
     "standard_scale": true,
     "resnet_layers": 3,
     "multiscale_tokenisation": false,
     "gamma_per_head": false,
     "use_token_mixer": false,
+    "remove_zoom": false,
 
     "freeze_resnet_early": false,
 

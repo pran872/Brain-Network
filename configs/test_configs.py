@@ -12,8 +12,8 @@ def run_tests():
     # dir = "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/round_0_seed_tests"
     
     pts = [
-        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p32.json",
-        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p34.json"
+        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p41.json",
+        "/Users/pranathipoojary/Imperial/FYP/Brain-Network/configs/stanford_dogs/zoomvit_configs/config_zoomvit_p42.json"
     ]
     # for config in glob.glob(os.path.join(dir, "**", "*.json"), recursive=True):
     for config in pts:

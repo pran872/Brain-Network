@@ -6,6 +6,7 @@ import torch.nn as nn
 import torchattacks
 from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingLR
 from timm.scheduler import CosineLRScheduler
+from timm.loss import SoftTargetCrossEntropy
 from torch_ema import ExponentialMovingAverage
 from torchinfo import summary
 from contextlib import nullcontext
@@ -91,6 +92,7 @@ def train_model(
     scheduler,
     early_stopping,
     ema,
+    mixup_fn,
     writer,
     logger
 ):
@@ -100,18 +102,21 @@ def train_model(
                   "model_state": None,
                   "epoch": 0}
     gamma_by_class = defaultdict(list)
-    gamma_loss = False
     logger.info(f"Auxiliary loss: {auxiliary_loss}")
 
     for epoch in range(epochs):
         start = time.time()
+        gamma_loss = False
         model.train()
         total_loss, correct, total, total_gamma_loss = 0, 0, 0, 0
 
         for batch_idx, (images, labels) in tqdm(enumerate(train_loader), desc=f"Epoch {epoch+1} [Train]", disable=not sys.stdout.isatty()):
-            images, labels = images.to(device), labels.to(device)
-            optimizer.zero_grad()
+            images, labels = images.to(device), labels.to(device) # [B, C, 224, 224], [B]
 
+            if mixup_fn is not None:
+                images, labels = mixup_fn(images, labels) # [B, C, 224, 224], [B, 120]
+
+            optimizer.zero_grad()
             if isinstance(model, ZoomVisionTransformer):
                 outputs, gamma, attn_map = model(images, return_gamma=True, return_attn_map=True)
                 gamma_loss = compute_auxiliary_loss(auxiliary_loss, gamma, attn_map)
@@ -134,7 +139,13 @@ def train_model(
             total_loss += loss.item()
             _, predicted = outputs.max(1)
             total += labels.size(0)
-            correct += predicted.eq(labels).sum().item()
+
+            if mixup_fn is not None:  # [B, num_classes], mixup active
+                targets = labels.argmax(dim=1)
+            else: 
+                targets = labels
+
+            correct += predicted.eq(targets).sum().item()
 
         avg_train_loss = total_loss / len(train_loader)
         if gamma_loss:
@@ -144,6 +155,7 @@ def train_model(
         train_accuracies.append(train_acc)
 
         # Validation 
+        val_criterion = torch.nn.CrossEntropyLoss()
         if ema:
             context = ema.average_parameters()
         else:
@@ -171,7 +183,7 @@ def train_model(
                     else:
                         outputs = model(images)
 
-                    loss = criterion(outputs, labels)
+                    loss = val_criterion(outputs, labels)
                     if gamma_loss is not False:
                         loss += gamma_loss
                         val_gamma_loss += gamma_loss
@@ -390,6 +402,7 @@ def main():
         logger.info(f"Training for {config['epochs']} epochs")
         logger.info(f"Debug mode: {debug}")
         logger.info(f"Downsampling by: {config['dataset']['downsample_fraction']}")
+        logger.info(f"Auxiliary loss: {config['auxiliary_loss']}")
 
         transform_train, transform_test = get_transform(config["dataset"]["type"], config["transforms"], pretrained=config["pretrained"])
         logger.info(f"Train transforms: \n\t{transform_train}")
@@ -441,21 +454,30 @@ def main():
                 model = ZoomVisionTransformer224(
                     num_classes=120,
                     embed_dim=512 if config["pretrained"] else 256,
-                    pretrained=config["pretrained"]
+                    pretrained=config["pretrained"], 
+                    remove_zoom=config["remove_zoom"],
+                    trans_dropout_ratio=config["trans_dropout_ratio"],
+                    add_dropout=config["add_dropout"],
                 ).to(device)
         elif "brainit" in config["model_type"]:
             if config["dataset"]["type"] == "cifar10":
                 model = BrainiT(
                     num_classes=10,
                     embed_dim=256,
-                    use_retinal_layer=config["retinal_layer"]
+                    use_retinal_layer=config["retinal_layer"],
+                    remove_zoom=config["remove_zoom"],
+                    trans_dropout_ratio=config["trans_dropout_ratio"],
+                    add_dropout=config["add_dropout"],
                 ).to(device)
             else:
                 model = BrainiT224(
                     num_classes=120,
                     embed_dim=512 if config["pretrained"] else 256,
                     use_retinal_layer=config["retinal_layer"],
-                    pretrained=config["pretrained"]
+                    pretrained=config["pretrained"],
+                    remove_zoom=config["remove_zoom"],
+                    trans_dropout_ratio=config["trans_dropout_ratio"],
+                    add_dropout=config["add_dropout"],
                 ).to(device)
 
         # input_size = (32, 32)
@@ -482,10 +504,16 @@ def main():
                 warmup_lr_init=1e-5,
                 lr_min=1e-6,
             )
-                    
-        if config["criterion"] == "CE":
-            logger.info(f"Label smoothing: {config['label_smoothing']}")
-            criterion = nn.CrossEntropyLoss(label_smoothing=config["label_smoothing"])
+        
+        if config["mixup_fn"]:
+            num_classes = 120 if config["dataset"]["type"] == "stanford_dogs" else 10
+            mixup_fn = get_mixup_fn(num_classes)
+            logger.info("Using mixup function and SoftTargetCrossEntropy")
+            criterion = SoftTargetCrossEntropy()
+        else:   
+            if config["criterion"] == "CE":
+                logger.info(f"Label smoothing: {config['label_smoothing']}")
+                criterion = nn.CrossEntropyLoss(label_smoothing=config["label_smoothing"])
 
         if config["early_stopping"]:
             early_stopping = EarlyStopping(config["patience"], config["min_diff"])
@@ -511,6 +539,7 @@ def main():
             scheduler,
             early_stopping if config["early_stopping"] else False,
             ema if config["ema"] else False,
+            mixup_fn if config["mixup_fn"] else None,
             writer if config["writer"] else False,
             logger
         )

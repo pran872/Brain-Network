@@ -234,7 +234,7 @@ class ZoomVisionTransformer(nn.Module):
             self.pos_embed = nn.Parameter(torch.zeros(1, pos_embed_patches, embed_dim))
             nn.init.trunc_normal_(self.pos_embed, std=0.02) # std by convention
             if self.add_dropout:
-                self.dropout = nn.Dropout(0.1)
+                self.dropout = nn.Dropout(0.2)
             
         self.transformer_blocks = nn.ModuleList([
             ZoomTransformerBlock(
@@ -343,13 +343,18 @@ class BrainiT(ZoomVisionTransformer):
         embed_dim,
         num_patches=None,
         use_retinal_layer=True,
-
+        remove_zoom=False,
+        trans_dropout_ratio=0.0,
+        add_dropout=False,
     ):
         super().__init__(
             num_classes=num_classes,
             embed_dim=embed_dim,
             num_patches=num_patches,
-            resnet_layers=4
+            resnet_layers=4,
+            remove_zoom=remove_zoom,
+            trans_dropout_ratio=trans_dropout_ratio,
+            add_dropout=add_dropout,
         )
         self.use_retinal_layer = use_retinal_layer
         if self.use_retinal_layer:
@@ -383,23 +388,46 @@ class BrainiT(ZoomVisionTransformer):
         return return_vars
      
 class ZoomVisionTransformer224(ZoomVisionTransformer):
-    def __init__(self, num_classes, embed_dim, pretrained):
+    def __init__(
+        self,
+        num_classes,
+        embed_dim,
+        pretrained,
+        remove_zoom=False,
+        trans_dropout_ratio=0.0,
+        add_dropout=False,
+    ):
         super().__init__(
             num_classes=num_classes,
             embed_dim=embed_dim,
             num_patches=196,
             resnet_layers=4,
+            remove_zoom=remove_zoom,
+            trans_dropout_ratio=trans_dropout_ratio,
+            add_dropout=add_dropout,
         )
 
         self.backbone = ResNetBackbone224(resnet_layers=4, freeze_early=False, pretrained=pretrained)
 
 class BrainiT224(BrainiT):
-    def __init__(self, num_classes, embed_dim, pretrained, use_retinal_layer=True):
+    def __init__(
+        self, 
+        num_classes, 
+        embed_dim,
+        pretrained,
+        use_retinal_layer=True,
+        remove_zoom=False,
+        trans_dropout_ratio=0.0,
+        add_dropout=False,
+    ):
         super().__init__(
             num_classes=num_classes,
             embed_dim=embed_dim,
             num_patches=196,
-            use_retinal_layer=use_retinal_layer
+            use_retinal_layer=use_retinal_layer,
+            remove_zoom=remove_zoom,
+            trans_dropout_ratio=trans_dropout_ratio,
+            add_dropout=add_dropout,
         )
 
         self.backbone = ResNetBackbone224(resnet_layers=4, freeze_early=False, pretrained=pretrained)

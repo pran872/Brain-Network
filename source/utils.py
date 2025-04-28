@@ -1,6 +1,7 @@
 ''' Helper functions '''
 import torch
 from torch.utils.data import DataLoader
+from timm.data import Mixup
 
 def add_gaussian_noise(images, std=0.1):
     noise = torch.randn_like(images) * std
@@ -18,6 +19,18 @@ def process_gamma(gamma, gamma_by_class, labels):
     for g, label in zip(gamma, labels):
         gamma_by_class[label.item()].append(g.item())
     return gamma_by_class
+
+def get_mixup_fn(num_classes):
+    return Mixup(
+        mixup_alpha=0.8,  # controls mixing strength | 0 means no mixing, >1 means a lot of blending
+        cutmix_alpha=1.0,  # CutMix strength - 1 encourage larger patches be cut
+        cutmix_minmax=None, # all patch sizes valid
+        prob=0.5,          # apply CutMix or MixUp 50% of the time
+        switch_prob=0.5,   # probability to switch between CutMix and MixUp
+        mode='batch',      # apply same CutMix/MixUp to all images in one batch 
+        label_smoothing=0.1,
+        num_classes=num_classes
+    )
 
 def compute_auxiliary_loss(auxiliary_loss, gamma, attn_maps):
     if "gamma_var_loss" in auxiliary_loss:

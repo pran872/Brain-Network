@@ -1,5 +1,5 @@
 {
-    "run_name": "lord",
+    "run_name": "zoomvit_p39",
     "writer": true,
 
     "seed": 42,
@@ -13,8 +13,8 @@
         "few_shot": false
     },  
 
-    "pretrained": false,
-    "model_type": "brainit",
+    "pretrained": true,
+    "model_type": "zoom",
     "optimizer": "adamW",
     "scheduler": {
         "CosineLRScheduler": {
@@ -24,7 +24,7 @@
     }},
     "criterion": "CE",
     "auxiliary_loss": 
-        {"loss_type": 0.01},
+        {"attention_entropy_loss": 0.1},
     
     "label_smoothing": 0.1,
     "lr": 0.001,
@@ -49,7 +49,7 @@
             {"center_crop": {"size": 224}}
         ]
     },
-    "mixup_fn": false,
+    "mixup_fn": true,
     
     "early_stopping": false,
     "patience": 10,
@@ -61,8 +61,8 @@
 
     "retinal_layer": true,
 
-    "add_dropout": false,
-    "trans_dropout_ratio": 0.0,
+    "add_dropout": true,
+    "trans_dropout_ratio": 0.1,
     "remove_zoom": false,
 
     "use_pos_embed": true,
