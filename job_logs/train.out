@@ -1,30 +1,16 @@
+mv: cannot stat 'job_logs/train.out': No such file or directory
 mv: cannot stat 'job_logs/train.err': No such file or directory
-Starting training on cx3-20-0.cx3.hpc.ic.ac.uk at Sat 26 Apr 19:48:04 BST 2025
-Using config: configs/stanford_dogs/brainit_configs/config_brainit_p27.json
-in
+Starting training on cx3-20-3.cx3.hpc.ic.ac.uk at Mon 28 Apr 13:07:41 BST 2025
+Using config: configs/stanford_dogs/zoomvit_configs/config_zoomvit_p35.json
 /rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/autograd/graph.py:823: UserWarning: adaptive_avg_pool2d_backward_cuda does not have a deterministic implementation, but you set 'torch.use_deterministic_algorithms(True, warn_only=True)'. You can file an issue at https://github.com/pytorch/pytorch/issues to help us prioritize adding deterministic support for this operation. (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:92.)
   return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
-/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
-  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
-/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
-  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
-/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
-  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
-/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/autograd/graph.py:823: UserWarning: adaptive_avg_pool2d_backward_cuda does not have a deterministic implementation, but you set 'torch.use_deterministic_algorithms(True, warn_only=True)'. You can file an issue at https://github.com/pytorch/pytorch/issues to help us prioritize adding deterministic support for this operation. (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:92.)
-  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
-/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
-  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
-/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
-  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
-/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
-  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
-Finished at Sat 26 Apr 21:31:28 BST 2025
+Finished at Mon 28 Apr 14:28:08 BST 2025
 
 ====================================
-CPU Time used: 02:23:04
-CPU Percent: 145%
-Memory usage: 2554712kb
-Approx Power usage: 0.0286
-Walltime usage: 01:43:37
+CPU Time used: 01:52:09
+CPU Percent: 156%
+Memory usage: 1807548kb
+Approx Power usage: 0.0224
+Walltime usage: 01:20:38
 
 ====================================
