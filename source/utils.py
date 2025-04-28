@@ -21,8 +21,11 @@ def process_gamma(gamma, gamma_by_class, labels):
 
 def compute_auxiliary_loss(auxiliary_loss, gamma, attn_maps):
     if "gamma_var_loss" in auxiliary_loss:
+        max_allowed_var = 1
         lambda_param = auxiliary_loss["gamma_var_loss"]
-        gamma_loss = lambda_param * -torch.var(gamma, dim=0).mean()
+        raw_var = torch.var(gamma, dim=0).mean()
+        clipped_var = torch.clamp(raw_var, max=max_allowed_var)
+        gamma_loss = lambda_param * -clipped_var
     elif "attention_entropy_loss" in auxiliary_loss:
         lambda_param = auxiliary_loss["attention_entropy_loss"]
         eps = 1e-8
