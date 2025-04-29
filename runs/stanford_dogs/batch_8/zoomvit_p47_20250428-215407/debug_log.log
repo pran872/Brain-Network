@@ -1,0 +1,48 @@
+2025-04-28 21:54:07,331 | INFO | Job Started
+2025-04-28 21:54:07,331 | INFO | Logging run: /rds/general/user/psp20/home/Brain-Network/runs/stanford_dogs/batch_8/zoomvit_p47_20250428-215407
+2025-04-28 21:54:07,493 | INFO | Using device: cuda
+2025-04-28 21:54:07,493 | INFO | Training for 50 epochs
+2025-04-28 21:54:07,493 | INFO | Debug mode: False
+2025-04-28 21:54:07,493 | INFO | Downsampling by: 0
+2025-04-28 21:54:07,493 | INFO | Auxiliary loss: {'gamma_var_loss': 0.05}
+2025-04-28 21:54:07,493 | INFO | Train transforms: 
+	Compose(
+    RandomResizedCrop(size=(224, 224), scale=(0.7, 1), ratio=(0.75, 1.3333), interpolation=bilinear, antialias=True)
+    RandomHorizontalFlip(p=0.5)
+    ColorJitter(brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2), hue=None)
+    ToTensor()
+    Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+)
+2025-04-28 21:54:07,493 | INFO | Test transforms: 
+	Compose(
+    Resize(size=256, interpolation=bilinear, max_size=None, antialias=True)
+    CenterCrop(size=(224, 224))
+    ToTensor()
+    Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+)
+2025-04-28 21:54:07,776 | INFO | Using pretrained weights
+2025-04-28 21:54:08,748 | ERROR | Error occured
+Traceback (most recent call last):
+  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 461, in main
+    ).to(device)
+      ^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1343, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1329, in convert
+    return t.to(
+           ^^^^^
+RuntimeError: CUDA error: uncorrectable ECC error encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
