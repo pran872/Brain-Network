@@ -13,13 +13,11 @@ from contextlib import nullcontext
 from sklearn.metrics import classification_report
 from tqdm import tqdm
 import time
-import random
 import numpy as np
 import argparse
 import json
 from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
-import logging
 import sys
 import socket
 from collections import defaultdict
@@ -34,22 +32,6 @@ except ModuleNotFoundError:
     from source.transform import get_transform
     from source.datasets.get_dataset import get_data
     from source.utils import *
-
-def seed_worker(worker_id):
-    worker_seed = torch.initial_seed() % 2**32
-    np.random.seed(worker_seed)
-    random.seed(worker_seed)
-
-def set_seed(seed=42):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-    torch.use_deterministic_algorithms(True, warn_only=True)
-
-    return torch.Generator().manual_seed(seed)
 
 def get_log_dir(run_name: str, time_stamp, base_env_var="OUTPUT_DIR") -> str:
     full_run_name = f"{run_name}_{time_stamp}"
@@ -67,18 +49,6 @@ def get_log_dir(run_name: str, time_stamp, base_env_var="OUTPUT_DIR") -> str:
     os.makedirs(log_dir, exist_ok=True)
 
     return log_dir
-
-def get_logger(log_dir):
-    logger = logging.getLogger("debug_log")
-    logger.setLevel(logging.INFO)
-    fh = logging.FileHandler(f"{log_dir}/debug_log.log")
-    fh.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
-    fh.setFormatter(formatter)
-
-    if not logger.handlers:
-        logger.addHandler(fh)
-    return logger
 
 def train_model(
     model,
@@ -420,66 +390,10 @@ def main():
 
         if config["pretrained"]:
             logger.info(f"Using pretrained weights")
-        
-        if config["model_type"] == "fast_cnn":
-            model = FastCNN().to(device)
-        elif config["model_type"] == "fast_cnn2":
-            model = FastCNN2().to(device)
-        elif config["model_type"] == "flex_net":
-            model = FlexNet(device=device).to(device)
-        elif config["model_type"] == "custom_vit":
-            model = ConvViTHybrid(device=device, use_flex=config["use_flex"]).to(device)
-        elif config["model_type"] == "resnet18":
-            model = build_resnet(config["dataset"]["type"], config["pretrained"]).to(device)
-        elif "zoom" in config["model_type"]:
-            if config["dataset"]["type"] == "cifar10":
-                model = ZoomVisionTransformer(
-                    num_classes=10, 
-                    use_pos_embed=config["use_pos_embed"],
-                    add_dropout=config["add_dropout"],
-                    mlp_end=config["mlp_end"],
-                    add_cls_token=config["add_cls_token"],
-                    num_layers=config["num_layers"],
-                    trans_dropout_ratio=config["trans_dropout_ratio"],
-                    standard_scale=config["standard_scale"],
-                    resnet_layers=config["resnet_layers"],
-                    multiscale_tokenisation=config["multiscale_tokenisation"],
-                    freeze_resnet_early=config["freeze_resnet_early"],
-                    gamma_per_head=config["gamma_per_head"],
-                    use_token_mixer=config["use_token_mixer"],
-                    remove_zoom=config["remove_zoom"],
-                    pretrained=config["pretrained"],
-                ).to(device)
-            else:
-                model = ZoomVisionTransformer224(
-                    num_classes=120,
-                    embed_dim=512 if config["pretrained"] else 256,
-                    pretrained=config["pretrained"], 
-                    remove_zoom=config["remove_zoom"],
-                    trans_dropout_ratio=config["trans_dropout_ratio"],
-                    add_dropout=config["add_dropout"],
-                ).to(device)
-        elif "brainit" in config["model_type"]:
-            if config["dataset"]["type"] == "cifar10":
-                model = BrainiT(
-                    num_classes=10,
-                    embed_dim=256,
-                    use_retinal_layer=config["retinal_layer"],
-                    remove_zoom=config["remove_zoom"],
-                    trans_dropout_ratio=config["trans_dropout_ratio"],
-                    add_dropout=config["add_dropout"],
-                ).to(device)
-            else:
-                model = BrainiT224(
-                    num_classes=120,
-                    embed_dim=512 if config["pretrained"] else 256,
-                    use_retinal_layer=config["retinal_layer"],
-                    pretrained=config["pretrained"],
-                    remove_zoom=config["remove_zoom"],
-                    trans_dropout_ratio=config["trans_dropout_ratio"],
-                    add_dropout=config["add_dropout"],
-                ).to(device)
 
+        model = get_model(config, device)
+        model.to(device)
+        
         # input_size = (32, 32)
         # summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
         # with open(os.path.join(log_dir, "model_summary.txt"), "w") as f:

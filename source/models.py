@@ -431,3 +431,64 @@ class BrainiT224(BrainiT):
         )
 
         self.backbone = ResNetBackbone224(resnet_layers=4, freeze_early=False, pretrained=pretrained)
+
+def get_model(config, device):
+    if config["model_type"] == "fast_cnn":
+        model = FastCNN()
+    elif config["model_type"] == "fast_cnn2":
+        model = FastCNN2()
+    elif config["model_type"] == "flex_net":
+        model = FlexNet(device=device)
+    elif config["model_type"] == "custom_vit":
+        model = ConvViTHybrid(device=device, use_flex=config["use_flex"])
+    elif config["model_type"] == "resnet18":
+        model = build_resnet(config["dataset"]["type"], config["pretrained"])
+    elif "zoom" in config["model_type"]:
+        if config["dataset"]["type"] == "cifar10":
+            model = ZoomVisionTransformer(
+                num_classes=10, 
+                use_pos_embed=config["use_pos_embed"],
+                add_dropout=config["add_dropout"],
+                mlp_end=config["mlp_end"],
+                add_cls_token=config["add_cls_token"],
+                num_layers=config["num_layers"],
+                trans_dropout_ratio=config["trans_dropout_ratio"],
+                standard_scale=config["standard_scale"],
+                resnet_layers=config["resnet_layers"],
+                multiscale_tokenisation=config["multiscale_tokenisation"],
+                freeze_resnet_early=config["freeze_resnet_early"],
+                gamma_per_head=config["gamma_per_head"],
+                use_token_mixer=config["use_token_mixer"],
+                remove_zoom=config["remove_zoom"],
+                pretrained=config["pretrained"],
+            )
+        else:
+            model = ZoomVisionTransformer224(
+                num_classes=120,
+                embed_dim=512 if config["pretrained"] else 256,
+                pretrained=config["pretrained"], 
+                remove_zoom=config["remove_zoom"],
+                trans_dropout_ratio=config["trans_dropout_ratio"],
+                add_dropout=config["add_dropout"],
+            )
+    elif "brainit" in config["model_type"]:
+        if config["dataset"]["type"] == "cifar10":
+            model = BrainiT(
+                num_classes=10,
+                embed_dim=256,
+                use_retinal_layer=config["retinal_layer"],
+                remove_zoom=config["remove_zoom"],
+                trans_dropout_ratio=config["trans_dropout_ratio"],
+                add_dropout=config["add_dropout"],
+            )
+        else:
+            model = BrainiT224(
+                num_classes=120,
+                embed_dim=512 if config["pretrained"] else 256,
+                use_retinal_layer=config["retinal_layer"],
+                pretrained=config["pretrained"],
+                remove_zoom=config["remove_zoom"],
+                trans_dropout_ratio=config["trans_dropout_ratio"],
+                add_dropout=config["add_dropout"],
+            )
+    return model

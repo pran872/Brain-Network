@@ -1,31 +1,30 @@
 #!/bin/bash
 #PBS -N brainnet_exp1
 #PBS -l select=1:ncpus=4:mem=8gb:ngpus=1
-#PBS -l walltime=04:00:00 
+#PBS -l walltime=00:02:00 
 #PBS -j oe
-#PBS -o job_logs/train.out
-#PBS -e job_logs/train.err
+#PBS -o test_job_logs/test.out
+#PBS -e test_job_logs/test.err
 
 cd $PBS_O_WORKDIR
-mkdir -p job_logs
+mkdir -p test_job_logs
 
-CONFIG=${CONFIG:-configs/config_template.json}
-CONFIG_NAME=$(basename "$CONFIG" .json)
+RUNFOLDER=${RUNFOLDER:-}
+RUNFOLDER_NAME=$(basename "$RUNFOLDER" )
 
 eval "$($HOME/miniforge3/bin/conda shell.bash hook)"
 conda activate brain-network-env
 
-export OUTPUT_DIR=/rds/general/user/psp20/home/Brain-Network/runs/stanford_dogs/batch_9
-TRAIN_CMD="python source/simple_cnn.py -c $CONFIG"
+TRAIN_CMD="python source/test.py --run_default_attacks --debug --run_folder $RUNFOLDER"
 
 MAX_RETRIES=3
 RETRY=0
 
 while [ $RETRY -lt $MAX_RETRIES ]; do
-    ATTEMPT_LOG="job_logs/attempt_${PBS_JOBID}_${RETRY}_${CONFIG_NAME}"
+    ATTEMPT_LOG="test_job_logs/attempt_${PBS_JOBID}_${RETRY}_${RUNFOLDER}"
 
     echo "Starting training attempt $((RETRY+1)) on $(hostname) at $(date)"
-    echo "Using config: $CONFIG"
+    echo "Using run folder: $RUNFOLDER"
 
     $TRAIN_CMD >> "${ATTEMPT_LOG}.out" 2>> "${ATTEMPT_LOG}.err"
     EXIT_CODE=$?
@@ -38,7 +37,7 @@ while [ $RETRY -lt $MAX_RETRIES ]; do
         echo "Completed successfully at $(date)" | tee -a "${ATTEMPT_LOG}.out"
         break
     else
-        echo "Training failed with unexpected error (code $EXIT_CODE). Check logs." | tee -a "${ATTEMPT_LOG}.out"
+        echo "Testing failed with unexpected error (code $EXIT_CODE). Check logs." | tee -a "${ATTEMPT_LOG}.out"
         break
     fi
 done    
@@ -47,18 +46,18 @@ if [ $RETRY -ge $MAX_RETRIES ]; then
     echo "Reached maximum retry limit. Job failed with ECC errors. Attempting requeue..." | tee -a "${ATTEMPT_LOG}.out"
 
     # Resubmit itself
-    qsub $0 -v CONFIG=$CONFIG
+    qsub $0 -v RUNFOLDER=$RUNFOLDER
     echo "Resubmitted job at $(date)" | tee -a "${ATTEMPT_LOG}.out"
 fi
 
-FINAL_LOG_DIR="job_logs/job_${PBS_JOBID}_${CONFIG_NAME}"
+FINAL_LOG_DIR="test_job_logs/job_${PBS_JOBID}_${RUNFOLDER_NAME}"
 mkdir -p "$FINAL_LOG_DIR"
-mv job_logs/attempt_${PBS_JOBID}_*_${CONFIG_NAME}.out "$FINAL_LOG_DIR"/
-mv job_logs/attempt_${PBS_JOBID}_*_${CONFIG_NAME}.err "$FINAL_LOG_DIR"/
+mv test_job_logs/attempt_${PBS_JOBID}_*_${RUNFOLDER_NAME}.out "$FINAL_LOG_DIR"/
+mv test_job_logs/attempt_${PBS_JOBID}_*_${RUNFOLDER_NAME}.err "$FINAL_LOG_DIR"/
 
-mv job_logs/train_${PBS_JOBID}.out "$FINAL_LOG_DIR/"
-if [ -f job_logs/train_${PBS_JOBID}.err ]; then
-    mv job_logs/train_${PBS_JOBID}.err "$FINAL_LOG_DIR/"
+mv test_job_logs/train_${PBS_JOBID}.out "$FINAL_LOG_DIR/"
+if [ -f test_job_logs/train_${PBS_JOBID}.err ]; then
+    mv test_job_logs/train_${PBS_JOBID}.err "$FINAL_LOG_DIR/"
 fi
 
 echo "Job cleanup done. Logs stored in $FINAL_LOG_DIR"

@@ -2,6 +2,37 @@
 import torch
 from torch.utils.data import DataLoader
 from timm.data import Mixup
+import numpy as np
+import random
+import logging
+
+def get_logger(log_dir):
+    logger = logging.getLogger("debug_log")
+    logger.setLevel(logging.INFO)
+    fh = logging.FileHandler(f"{log_dir}/debug_log.log")
+    fh.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
+    fh.setFormatter(formatter)
+
+    if not logger.handlers:
+        logger.addHandler(fh)
+    return logger
+
+def seed_worker(worker_id):
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
+
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    torch.use_deterministic_algorithms(True, warn_only=True)
+
+    return torch.Generator().manual_seed(seed)
 
 def add_gaussian_noise(images, std=0.1):
     noise = torch.randn_like(images) * std
