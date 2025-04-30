@@ -75,3 +75,15 @@
 2025-04-25 23:09:02,350 | INFO | Test Accuracy: 45.17%
 2025-04-25 23:09:02,373 | INFO | 
 Job Completed
+2025-04-30 17:39:32,239 | INFO | No test config present. Using train config.
+2025-04-30 17:39:32,650 | INFO | Batch size: 32
+2025-04-30 17:39:32,650 | INFO | Running these attacks:
+2025-04-30 17:39:32,650 | INFO | {'FGSM': [0.01], 'PGD': [0.01], 'gaussian noise': [0.01]}
+2025-04-30 17:39:32,650 | INFO | 
+Testing model: runs/stanford_dogs/batch_5/resnet_p28_20250425-221854/resnet_p28_20250425-221854_e25_best_model.pt
+2025-04-30 17:39:32,650 | INFO | Running attack: FGSM, 0.01
+2025-04-30 17:39:38,074 | INFO | Test accuracy: 16.0
+2025-04-30 17:39:38,075 | INFO | Running attack: PGD, 0.01
+2025-04-30 17:39:39,257 | INFO | Test accuracy: 8.0
+2025-04-30 17:39:39,257 | INFO | Running attack: gaussian noise, 0.01
+2025-04-30 17:39:39,929 | INFO | Test accuracy: 22.0
