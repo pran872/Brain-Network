@@ -17,7 +17,7 @@ ECC_RETRIES=${ECC_RETRIES:-0}
 eval "$($HOME/miniforge3/bin/conda shell.bash hook)"
 conda activate brain-network-env
 
-TRAIN_CMD="python source/test.py --run_default_attacks --debug --run_folder $RUNFOLDER"
+TRAIN_CMD="python source/test.py --run_default_attacks --run_folder $RUNFOLDER"
 ATTEMPT_LOG="test_job_logs/attempt_${CLEAN_JOBID}_ecc${ECC_RETRIES}_${RUNFOLDER_NAME}"
 
 echo "Starting test on $(hostname) at $(date)"

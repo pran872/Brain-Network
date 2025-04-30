@@ -272,18 +272,6 @@
 2025-04-29 00:03:32,627 | INFO | Test Accuracy: 59.97%
 2025-04-29 00:03:32,645 | INFO | 
 Job Completed
-2025-04-30 09:51:06,252 | INFO | No test config present. Using train config.
-2025-04-30 09:51:06,656 | INFO | Batch size: 32
-2025-04-30 09:51:06,656 | INFO | Running these attacks:
-2025-04-30 09:51:06,656 | INFO | {'gaussian noise': [0.01], 'FGSM': [0.01], 'PGD': [0.01]}
-2025-04-30 09:51:06,656 | INFO | 
-Testing model: runs/stanford_dogs/batch_8/zoomvit_p50_20250428-220046/zoomvit_p50_20250428-220046_e65_best_model.pt
-2025-04-30 09:51:06,656 | INFO | Running attack: gaussian noise, 0.01
-2025-04-30 09:51:11,801 | INFO | Test accuracy: 6.0
-2025-04-30 09:51:11,801 | INFO | Running attack: FGSM, 0.01
-2025-04-30 09:51:13,947 | INFO | Test accuracy: 6.0
-2025-04-30 09:51:13,947 | INFO | Running attack: PGD, 0.01
-2025-04-30 09:51:17,087 | INFO | Test accuracy: 4.0
 2025-04-30 10:26:14,203 | INFO | No test config present. Using train config.
 2025-04-30 10:26:14,573 | INFO | Batch size: 32
 2025-04-30 10:26:14,574 | INFO | Running these attacks:

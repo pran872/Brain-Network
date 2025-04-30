@@ -364,39 +364,6 @@
 2025-04-29 19:21:01,511 | INFO | Test Accuracy: 71.63%
 2025-04-29 19:21:01,523 | INFO | 
 Job Completed
-2025-04-30 09:49:38,873 | INFO | No test config present. Using train config.
-2025-04-30 09:49:39,309 | INFO | Batch size: 32
-2025-04-30 09:49:39,309 | INFO | Running these attacks:
-2025-04-30 09:49:39,309 | INFO | {'gaussian noise': [0.01], 'FGSM': [0.01], 'PGD': [0.01]}
-2025-04-30 09:49:39,309 | INFO | 
-Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p53_20250429-152543_e87_best_model.pt
-2025-04-30 09:49:39,309 | INFO | Running attack: gaussian noise, 0.01
-2025-04-30 09:49:45,261 | INFO | Test accuracy: 10.0
-2025-04-30 09:49:45,261 | INFO | Running attack: FGSM, 0.01
-2025-04-30 09:49:47,643 | INFO | Test accuracy: 6.0
-2025-04-30 09:49:47,643 | INFO | Running attack: PGD, 0.01
-2025-04-30 09:49:51,050 | INFO | Test accuracy: 10.0
-2025-04-30 10:28:00,539 | INFO | No test config present. Using train config.
-2025-04-30 10:28:00,935 | INFO | Batch size: 32
-2025-04-30 10:28:00,935 | INFO | Running these attacks:
-2025-04-30 10:28:00,935 | INFO | {'FGSM': [0.01, 0.05, 0.1, 0.2], 'PGD': [0.01, 0.05, 0.1, 0.2], 'gaussian noise': [0.01, 0.05, 0.1, 0.2]}
-2025-04-30 10:28:00,935 | INFO | 
-Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p53_20250429-152543_e87_best_model.pt
-2025-04-30 10:28:00,935 | INFO | Running attack: FGSM, 0.01
-2025-04-30 10:29:07,340 | INFO | No test config present. Using train config.
-2025-04-30 10:29:07,736 | INFO | Batch size: 32
-2025-04-30 10:29:07,736 | INFO | Running these attacks:
-2025-04-30 10:29:07,736 | INFO | {'FGSM': [0.01, 0.05, 0.1, 0.2], 'PGD': [0.01, 0.05, 0.1, 0.2], 'gaussian noise': [0.01, 0.05, 0.1, 0.2]}
-2025-04-30 10:29:07,736 | INFO | 
-Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p53_20250429-152543_e87_best_model.pt
-2025-04-30 10:29:07,736 | INFO | Running attack: FGSM, 0.01
-2025-04-30 10:30:15,356 | INFO | No test config present. Using train config.
-2025-04-30 10:30:15,775 | INFO | Batch size: 32
-2025-04-30 10:30:15,775 | INFO | Running these attacks:
-2025-04-30 10:30:15,775 | INFO | {'FGSM': [0.01, 0.05, 0.1, 0.2], 'PGD': [0.01, 0.05, 0.1, 0.2], 'gaussian noise': [0.01, 0.05, 0.1, 0.2]}
-2025-04-30 10:30:15,775 | INFO | 
-Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p53_20250429-152543_e87_best_model.pt
-2025-04-30 10:30:15,775 | INFO | Running attack: FGSM, 0.01
 2025-04-30 13:26:06,399 | INFO | No test config present. Using train config.
 2025-04-30 13:26:06,849 | INFO | Batch size: 32
 2025-04-30 13:26:06,849 | INFO | Running these attacks:
