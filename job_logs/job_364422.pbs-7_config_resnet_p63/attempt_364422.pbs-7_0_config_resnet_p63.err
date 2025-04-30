@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 511, in <module>
+    main()
+  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 444, in main
+    best_loss_model, last_model, train_losses, val_losses, train_acc, val_acc = train_model(
+                                                                                ^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/simple_cnn.py", line 206, in train_model
+    logger.info(f"Train Loss={avg_train_loss:.4f}, Train Acc={train_acc:.2f}%, Train Gamma Loss={avg_train_gamma_loss:.4f}")
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'avg_train_gamma_loss' where it is not associated with a value

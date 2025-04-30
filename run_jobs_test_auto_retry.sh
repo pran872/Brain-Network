@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -N brainnet_exp1
 #PBS -l select=1:ncpus=4:mem=8gb:ngpus=1
-#PBS -l walltime=00:02:00 
+#PBS -l walltime=02:00:00 
 #PBS -j oe
 #PBS -o test_job_logs/test.out
 #PBS -e test_job_logs/test.err
@@ -15,7 +15,7 @@ RUNFOLDER_NAME=$(basename "$RUNFOLDER" )
 eval "$($HOME/miniforge3/bin/conda shell.bash hook)"
 conda activate brain-network-env
 
-TRAIN_CMD="python source/test.py --run_default_attacks --debug --run_folder $RUNFOLDER"
+TRAIN_CMD="python source/test.py --run_default_attacks --run_folder $RUNFOLDER"
 
 MAX_RETRIES=3
 RETRY=0
@@ -25,7 +25,8 @@ while [ $RETRY -lt $MAX_RETRIES ]; do
 
     echo "Starting training attempt $((RETRY+1)) on $(hostname) at $(date)"
     echo "Using run folder: $RUNFOLDER"
-
+	
+    mkdir -p "$(dirname "${ATTEMPT_LOG}.out")"
     $TRAIN_CMD >> "${ATTEMPT_LOG}.out" 2>> "${ATTEMPT_LOG}.err"
     EXIT_CODE=$?
 

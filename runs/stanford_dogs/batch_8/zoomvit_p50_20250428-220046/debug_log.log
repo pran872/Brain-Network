@@ -272,3 +272,45 @@
 2025-04-29 00:03:32,627 | INFO | Test Accuracy: 59.97%
 2025-04-29 00:03:32,645 | INFO | 
 Job Completed
+2025-04-30 09:51:06,252 | INFO | No test config present. Using train config.
+2025-04-30 09:51:06,656 | INFO | Batch size: 32
+2025-04-30 09:51:06,656 | INFO | Running these attacks:
+2025-04-30 09:51:06,656 | INFO | {'gaussian noise': [0.01], 'FGSM': [0.01], 'PGD': [0.01]}
+2025-04-30 09:51:06,656 | INFO | 
+Testing model: runs/stanford_dogs/batch_8/zoomvit_p50_20250428-220046/zoomvit_p50_20250428-220046_e65_best_model.pt
+2025-04-30 09:51:06,656 | INFO | Running attack: gaussian noise, 0.01
+2025-04-30 09:51:11,801 | INFO | Test accuracy: 6.0
+2025-04-30 09:51:11,801 | INFO | Running attack: FGSM, 0.01
+2025-04-30 09:51:13,947 | INFO | Test accuracy: 6.0
+2025-04-30 09:51:13,947 | INFO | Running attack: PGD, 0.01
+2025-04-30 09:51:17,087 | INFO | Test accuracy: 4.0
+2025-04-30 10:26:14,203 | INFO | No test config present. Using train config.
+2025-04-30 10:26:14,573 | INFO | Batch size: 32
+2025-04-30 10:26:14,574 | INFO | Running these attacks:
+2025-04-30 10:26:14,574 | INFO | {'FGSM': [0.01, 0.05, 0.1, 0.2], 'PGD': [0.01, 0.05, 0.1, 0.2], 'gaussian noise': [0.01, 0.05, 0.1, 0.2]}
+2025-04-30 10:26:14,574 | INFO | 
+Testing model: runs/stanford_dogs/batch_8/zoomvit_p50_20250428-220046/zoomvit_p50_20250428-220046_e65_best_model.pt
+2025-04-30 10:26:14,574 | INFO | Running attack: FGSM, 0.01
+2025-04-30 10:27:36,965 | INFO | Test accuracy: 7.715617715617715
+2025-04-30 10:27:36,965 | INFO | Running attack: FGSM, 0.05
+2025-04-30 10:28:58,483 | INFO | Test accuracy: 2.1445221445221447
+2025-04-30 10:28:58,483 | INFO | Running attack: FGSM, 0.1
+2025-04-30 10:30:21,286 | INFO | Test accuracy: 1.5151515151515151
+2025-04-30 10:30:21,286 | INFO | Running attack: FGSM, 0.2
+2025-04-30 10:31:43,888 | INFO | Test accuracy: 1.386946386946387
+2025-04-30 10:31:43,888 | INFO | Running attack: PGD, 0.01
+2025-04-30 10:39:12,683 | INFO | Test accuracy: 12.109557109557109
+2025-04-30 10:39:12,683 | INFO | Running attack: PGD, 0.05
+2025-04-30 10:46:40,340 | INFO | Test accuracy: 12.109557109557109
+2025-04-30 10:46:40,340 | INFO | Running attack: PGD, 0.1
+2025-04-30 10:54:10,097 | INFO | Test accuracy: 12.109557109557109
+2025-04-30 10:54:10,097 | INFO | Running attack: PGD, 0.2
+2025-04-30 11:01:40,214 | INFO | Test accuracy: 12.109557109557109
+2025-04-30 11:01:40,214 | INFO | Running attack: gaussian noise, 0.01
+2025-04-30 11:02:42,347 | INFO | Test accuracy: 12.097902097902098
+2025-04-30 11:02:42,348 | INFO | Running attack: gaussian noise, 0.05
+2025-04-30 11:03:45,745 | INFO | Test accuracy: 11.958041958041958
+2025-04-30 11:03:45,774 | INFO | Running attack: gaussian noise, 0.1
+2025-04-30 11:04:48,222 | INFO | Test accuracy: 10.233100233100233
+2025-04-30 11:04:48,222 | INFO | Running attack: gaussian noise, 0.2
+2025-04-30 11:05:45,724 | INFO | Test accuracy: 7.331002331002331

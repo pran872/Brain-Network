@@ -1,12 +1,14 @@
-Starting training attempt 1 on cx3-20-0.cx3.hpc.ic.ac.uk at Tue 29 Apr 15:29:01 BST 2025
+Starting training attempt 1 on cx3-20-6.cx3.hpc.ic.ac.uk at Wed 30 Apr 09:51:35 BST 2025
 Using config: configs/stanford_dogs/zoomvit_configs/config_zoomvit_p54.json
-=>> PBS: job killed: walltime 14414 exceeded limit 14400
+Completed successfully at Wed 30 Apr 12:57:42 BST 2025
+mv: cannot stat 'job_logs/train_364406.pbs-7.out': No such file or directory
+Job cleanup done. Logs stored in job_logs/job_364406.pbs-7_config_zoomvit_p54
 
 ====================================
-CPU Time used: 03:40:55
-CPU Percent: 111%
-Memory usage: 2011616kb
-Approx Power usage: 0.044
-Walltime usage: 04:00:25
+CPU Time used: 03:46:19
+CPU Percent: 155%
+Memory usage: 1986116kb
+Approx Power usage: 0.045200000000000004
+Walltime usage: 03:06:17
 
 ====================================

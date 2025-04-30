@@ -1,0 +1,16 @@
+Starting training attempt 1 on cx3-20-6.cx3.hpc.ic.ac.uk at Wed 30 Apr 13:25:10 BST 2025
+Using run folder: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/
+Completed successfully at Wed 30 Apr 14:06:24 BST 2025
+mv: cannot stat 'test_job_logs/attempt_365352.pbs-7_*_zoomvit_p53_20250429-152543.out': No such file or directory
+mv: cannot stat 'test_job_logs/attempt_365352.pbs-7_*_zoomvit_p53_20250429-152543.err': No such file or directory
+mv: cannot stat 'test_job_logs/train_365352.pbs-7.out': No such file or directory
+Job cleanup done. Logs stored in test_job_logs/job_365352.pbs-7_zoomvit_p53_20250429-152543
+
+====================================
+CPU Time used: 00:42:34
+CPU Percent: 134%
+Memory usage: 1888760kb
+Approx Power usage: 0.008399999999999998
+Walltime usage: 00:41:28
+
+====================================
