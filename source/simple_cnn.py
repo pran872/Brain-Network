@@ -203,8 +203,10 @@ def train_model(
                 writer.add_scalar("Centroid_means/cy", cy, epoch)
 
         logger.info(f"Epoch: {epoch+1} | Time: {end - start:.2f}s")
-        logger.info(f"Train Loss={avg_train_loss:.4f}, Train Acc={train_acc:.2f}%, Train Gamma Loss={avg_train_gamma_loss:.4f}")
-        logger.info(f"Val Loss={avg_val_loss:.4f}, Val Acc={val_acc:.2f}%, Val Gamma Loss={avg_val_gamma_loss}")
+        logger.info(f"Train Loss={avg_train_loss:.4f}, Train Acc={train_acc:.2f}%")
+        logger.info(f"Val Loss={avg_val_loss:.4f}, Val Acc={val_acc:.2f}%")
+        if gamma_loss:
+            logger.info(f"Train Gamma Loss={avg_train_gamma_loss:.4f} | Val Gamma Loss={avg_val_gamma_loss}")
         
         if avg_val_loss < best_model["val_loss"]:
             best_model["val_loss"] = avg_val_loss

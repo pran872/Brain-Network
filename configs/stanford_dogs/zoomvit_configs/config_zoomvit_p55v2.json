@@ -19,7 +19,7 @@
     "scheduler": {
         "CosineLRScheduler": {
             "patience": 8,
-            "T_max": 50,
+            "T_max": 100,
             "warmup_t": 5
     }},
     "criterion": "CE",
@@ -28,7 +28,7 @@
     
     "label_smoothing": 0.1,
     "lr": 0.001,
-    "epochs": 50,
+    "epochs": 100,
 
     "transforms": {
         "transform_type": null,
@@ -51,8 +51,8 @@
     },
     "mixup_fn": true,
     
-    "early_stopping": false,
-    "patience": 10,
+    "early_stopping": true,
+    "patience": 20,
     "min_diff": 0.001,
 
     "ema": false,

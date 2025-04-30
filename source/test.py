@@ -193,13 +193,11 @@ def main():
 
     logger.info("Running these attacks:")
     if run_default_attacks:
-        epsilons = [0.01, 0.05, 0.1, 0.2]
-        # epsilons = [0.01]
+        epsilons = [0.01, 0.05, 0.1, 0.2] if not debug else [0.01]
         fgsm_attacks = {"FGSM": epsilons}
         pgd_attacks = {"PGD": epsilons}
         gaussian_noise = {"gaussian noise": epsilons}
-        all_attacks = fgsm_attacks | pgd_attacks | gaussian_noise
-        #all_attacks = gaussian_noise | fgsm_attacks | pgd_attacks
+        all_attacks = fgsm_attacks | pgd_attacks | gaussian_noise # concat dicts
     elif config["attacker"] == "FGSM":
         all_attacks = {"FGSM": config["epsilon"]}
     elif config["attacker"] == "PGD":
@@ -223,7 +221,7 @@ def main():
                 if attack_type == "FGSM":
                     attacker = torchattacks.FGSM(model, eps=epsilon)
                 elif attack_type == "PGD":
-                    attacker = torchattacks.PGD(model, eps=config["epsilon"], alpha=2/255, steps=10)
+                    attacker = torchattacks.PGD(model, eps=epsilon, alpha=2/255, steps=10)
                 elif attack_type == "gaussian noise":
                     gaussian_std = epsilon
                 
