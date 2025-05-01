@@ -198,7 +198,7 @@ def main():
         pgd_attacks = {"PGD": epsilons}
         # gaussian_noise = {"gaussian noise": epsilons}
         # all_attacks = fgsm_attacks | pgd_attacks | gaussian_noise # concat dicts
-	all_attacks = pgd_attacks
+        all_attacks = pgd_attacks
     elif config["attacker"] == "FGSM":
         all_attacks = {"FGSM": config["epsilon"]}
     elif config["attacker"] == "PGD":
