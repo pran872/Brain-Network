@@ -3,8 +3,8 @@
 #PBS -l select=1:ncpus=4:mem=8gb:ngpus=1
 #PBS -l walltime=02:00:00
 #PBS -j oe
-#PBS -o test_job_logs/test_$(date +%Y%m%d_%H%M%S).out
-#PBS -e test_job_logs/test_$(date +%Y%m%d_%H%M%S).err
+#PBS -o test_job_logs/test.out
+#PBS -e test_job_logs/test.err
 
 cd "$PBS_O_WORKDIR"
 mkdir -p test_job_logs

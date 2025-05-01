@@ -435,3 +435,17 @@ Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p5
 2025-05-01 10:12:56,786 | INFO | 
 Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p53_20250429-152543_e87_best_model.pt
 2025-05-01 10:12:56,786 | INFO | Running attack: PGD, 0.01
+2025-05-01 10:33:45,056 | INFO | No test config present. Using train config.
+2025-05-01 10:33:45,489 | INFO | Batch size: 32
+2025-05-01 10:33:45,489 | INFO | Running these attacks:
+2025-05-01 10:33:45,489 | INFO | {'PGD': [0.01, 0.05, 0.1, 0.2]}
+2025-05-01 10:33:45,489 | INFO | 
+Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p53_20250429-152543_e87_best_model.pt
+2025-05-01 10:33:45,489 | INFO | Running attack: PGD, 0.01
+2025-05-01 10:41:25,124 | INFO | Test accuracy: 0.43123543123543123
+2025-05-01 10:41:25,124 | INFO | Running attack: PGD, 0.05
+2025-05-01 10:48:59,332 | INFO | Test accuracy: 0.0
+2025-05-01 10:48:59,332 | INFO | Running attack: PGD, 0.1
+2025-05-01 10:56:33,472 | INFO | Test accuracy: 0.0
+2025-05-01 10:56:33,472 | INFO | Running attack: PGD, 0.2
+2025-05-01 11:04:07,459 | INFO | Test accuracy: 0.0

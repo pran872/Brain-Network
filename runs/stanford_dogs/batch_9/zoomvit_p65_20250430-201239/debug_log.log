@@ -467,3 +467,33 @@
 2025-04-30 23:44:04,804 | INFO | Test Accuracy: 62.58%
 2025-04-30 23:44:04,817 | INFO | 
 Job Completed
+2025-05-01 11:14:25,679 | INFO | No test config present. Using train config.
+2025-05-01 11:14:26,002 | INFO | Batch size: 32
+2025-05-01 11:14:26,003 | INFO | Running these attacks:
+2025-05-01 11:14:26,003 | INFO | {'FGSM': [0.01, 0.05, 0.1, 0.2], 'PGD': [0.01, 0.05, 0.1, 0.2], 'gaussian noise': [0.01, 0.05, 0.1, 0.2]}
+2025-05-01 11:14:26,003 | INFO | 
+Testing model: runs/stanford_dogs/batch_9/zoomvit_p65_20250430-201239/zoomvit_p65_20250430-201239_e94_best_model.pt
+2025-05-01 11:14:26,003 | INFO | Running attack: FGSM, 0.01
+2025-05-01 11:15:51,137 | INFO | Test accuracy: 7.5874125874125875
+2025-05-01 11:15:51,137 | INFO | Running attack: FGSM, 0.05
+2025-05-01 11:17:11,638 | INFO | Test accuracy: 2.3426573426573425
+2025-05-01 11:17:11,639 | INFO | Running attack: FGSM, 0.1
+2025-05-01 11:18:33,030 | INFO | Test accuracy: 1.5967365967365967
+2025-05-01 11:18:33,030 | INFO | Running attack: FGSM, 0.2
+2025-05-01 11:19:54,100 | INFO | Test accuracy: 1.3986013986013985
+2025-05-01 11:19:54,100 | INFO | Running attack: PGD, 0.01
+2025-05-01 11:27:19,074 | INFO | Test accuracy: 0.7226107226107226
+2025-05-01 11:27:19,074 | INFO | Running attack: PGD, 0.05
+2025-05-01 11:34:44,243 | INFO | Test accuracy: 0.0
+2025-05-01 11:34:44,243 | INFO | Running attack: PGD, 0.1
+2025-05-01 11:42:11,493 | INFO | Test accuracy: 0.0
+2025-05-01 11:42:11,493 | INFO | Running attack: PGD, 0.2
+2025-05-01 11:49:36,800 | INFO | Test accuracy: 0.0
+2025-05-01 11:49:36,800 | INFO | Running attack: gaussian noise, 0.01
+2025-05-01 11:50:46,279 | INFO | Test accuracy: 13.216783216783217
+2025-05-01 11:50:46,279 | INFO | Running attack: gaussian noise, 0.05
+2025-05-01 11:52:04,469 | INFO | Test accuracy: 12.377622377622378
+2025-05-01 11:52:04,469 | INFO | Running attack: gaussian noise, 0.1
+2025-05-01 11:53:20,783 | INFO | Test accuracy: 10.233100233100233
+2025-05-01 11:53:20,783 | INFO | Running attack: gaussian noise, 0.2
+2025-05-01 11:54:37,851 | INFO | Test accuracy: 6.561771561771562
