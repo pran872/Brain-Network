@@ -308,3 +308,31 @@ Testing model: runs/stanford_dogs/batch_8/zoomvit_p50_20250428-220046/zoomvit_p5
 2025-04-30 19:28:47,235 | INFO | No test config present. Using train config.
 2025-04-30 19:28:47,677 | INFO | Batch size: 32
 2025-04-30 19:28:47,677 | INFO | Running these attacks:
+2025-05-01 09:33:04,324 | INFO | No test config present. Using train config.
+2025-05-01 09:33:04,704 | INFO | Batch size: 32
+2025-05-01 09:33:04,716 | INFO | Running these attacks:
+2025-05-01 09:33:04,716 | INFO | {'PGD': [0.01, 0.05, 0.1, 0.2]}
+2025-05-01 09:33:04,716 | INFO | 
+Testing model: runs/stanford_dogs/batch_8/zoomvit_p50_20250428-220046/zoomvit_p50_20250428-220046_e65_best_model.pt
+2025-05-01 09:33:04,716 | INFO | Running attack: PGD, 0.01
+2025-05-01 09:43:16,767 | INFO | No test config present. Using train config.
+2025-05-01 09:43:17,172 | INFO | Batch size: 32
+2025-05-01 09:43:17,173 | INFO | Running these attacks:
+2025-05-01 09:43:17,173 | INFO | {'PGD': [0.01, 0.05, 0.1, 0.2]}
+2025-05-01 09:43:17,173 | INFO | 
+Testing model: runs/stanford_dogs/batch_8/zoomvit_p50_20250428-220046/zoomvit_p50_20250428-220046_e65_best_model.pt
+2025-05-01 09:43:17,173 | INFO | Running attack: PGD, 0.01
+2025-05-01 09:52:06,740 | INFO | No test config present. Using train config.
+2025-05-01 09:52:07,143 | INFO | Batch size: 32
+2025-05-01 09:52:07,143 | INFO | Running these attacks:
+2025-05-01 09:52:07,143 | INFO | {'PGD': [0.01, 0.05, 0.1, 0.2]}
+2025-05-01 09:52:07,143 | INFO | 
+Testing model: runs/stanford_dogs/batch_8/zoomvit_p50_20250428-220046/zoomvit_p50_20250428-220046_e65_best_model.pt
+2025-05-01 09:52:07,143 | INFO | Running attack: PGD, 0.01
+2025-05-01 10:02:41,466 | INFO | No test config present. Using train config.
+2025-05-01 10:02:41,864 | INFO | Batch size: 32
+2025-05-01 10:02:41,864 | INFO | Running these attacks:
+2025-05-01 10:02:41,864 | INFO | {'PGD': [0.01, 0.05, 0.1, 0.2]}
+2025-05-01 10:02:41,864 | INFO | 
+Testing model: runs/stanford_dogs/batch_8/zoomvit_p50_20250428-220046/zoomvit_p50_20250428-220046_e65_best_model.pt
+2025-05-01 10:02:41,864 | INFO | Running attack: PGD, 0.01

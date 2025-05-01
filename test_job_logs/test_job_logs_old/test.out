@@ -1,4 +1,4 @@
-Starting test on cx3-20-0.cx3.hpc.ic.ac.uk at Thu  1 May 10:11:58 BST 2025
+Starting test on cx3-20-0.cx3.hpc.ic.ac.uk at Thu  1 May 10:03:04 BST 2025
 Using run folder: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/
 Detected ECC Error.
 Resubmission failed: usage: qsub [-a date_time] [-A account_string] [-c interval]
@@ -8,13 +8,13 @@ Resubmission failed: usage: qsub [-a date_time] [-A account_string] [-c interval
 	[-R o|e|oe] [-S path] [-u user_list] [-W otherattributes=value...]
 	[-v variable_list] [-V ] [-z] [script | -- command [arg1 ...]]
        qsub --version
-Job cleanup done. Logs stored in test_job_logs/job_368613_zoomvit_p53_20250429-152543
+Job cleanup done. Logs stored in test_job_logs/job_368571_zoomvit_p53_20250429-152543
 
 ====================================
-CPU Time used: 00:00:02
-CPU Percent: 6%
-Memory usage: 348808kb
+CPU Time used: 00:00:00
+CPU Percent: 0%
+Memory usage: 0b
 Approx Power usage: 0.0
-Walltime usage: 00:01:12
+Walltime usage: 00:01:10
 
 ====================================

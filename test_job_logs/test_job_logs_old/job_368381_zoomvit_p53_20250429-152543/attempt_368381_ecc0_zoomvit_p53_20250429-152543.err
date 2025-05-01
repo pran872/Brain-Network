@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 250, in <module>
+    main()
+  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 218, in main
+    model = load_model(model_pt, config, device)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 88, in load_model
+    model.to(device)
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1343, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1329, in convert
+    return t.to(
+           ^^^^^
+RuntimeError: CUDA error: uncorrectable ECC error encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+

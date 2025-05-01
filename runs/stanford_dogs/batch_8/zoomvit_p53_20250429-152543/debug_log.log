@@ -400,3 +400,38 @@ Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p5
 2025-04-30 19:28:13,314 | INFO | No test config present. Using train config.
 2025-04-30 19:28:13,747 | INFO | Batch size: 32
 2025-04-30 19:28:13,747 | INFO | Running these attacks:
+2025-05-01 09:31:42,832 | INFO | No test config present. Using train config.
+2025-05-01 09:31:43,236 | INFO | Batch size: 32
+2025-05-01 09:31:43,236 | INFO | Running these attacks:
+2025-05-01 09:31:43,236 | INFO | {'PGD': [0.01, 0.05, 0.1, 0.2]}
+2025-05-01 09:31:43,236 | INFO | 
+Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p53_20250429-152543_e87_best_model.pt
+2025-05-01 09:31:43,271 | INFO | Running attack: PGD, 0.01
+2025-05-01 09:41:50,867 | INFO | No test config present. Using train config.
+2025-05-01 09:41:51,299 | INFO | Batch size: 32
+2025-05-01 09:41:51,299 | INFO | Running these attacks:
+2025-05-01 09:41:51,299 | INFO | {'PGD': [0.01, 0.05, 0.1, 0.2]}
+2025-05-01 09:41:51,299 | INFO | 
+Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p53_20250429-152543_e87_best_model.pt
+2025-05-01 09:41:51,299 | INFO | Running attack: PGD, 0.01
+2025-05-01 09:53:28,788 | INFO | No test config present. Using train config.
+2025-05-01 09:53:29,183 | INFO | Batch size: 32
+2025-05-01 09:53:29,183 | INFO | Running these attacks:
+2025-05-01 09:53:29,183 | INFO | {'PGD': [0.01, 0.05, 0.1, 0.2]}
+2025-05-01 09:53:29,183 | INFO | 
+Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p53_20250429-152543_e87_best_model.pt
+2025-05-01 09:53:29,183 | INFO | Running attack: PGD, 0.01
+2025-05-01 10:04:01,803 | INFO | No test config present. Using train config.
+2025-05-01 10:04:02,198 | INFO | Batch size: 32
+2025-05-01 10:04:02,198 | INFO | Running these attacks:
+2025-05-01 10:04:02,198 | INFO | {'PGD': [0.01, 0.05, 0.1, 0.2]}
+2025-05-01 10:04:02,199 | INFO | 
+Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p53_20250429-152543_e87_best_model.pt
+2025-05-01 10:04:02,199 | INFO | Running attack: PGD, 0.01
+2025-05-01 10:12:56,386 | INFO | No test config present. Using train config.
+2025-05-01 10:12:56,786 | INFO | Batch size: 32
+2025-05-01 10:12:56,786 | INFO | Running these attacks:
+2025-05-01 10:12:56,786 | INFO | {'PGD': [0.01, 0.05, 0.1, 0.2]}
+2025-05-01 10:12:56,786 | INFO | 
+Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p53_20250429-152543_e87_best_model.pt
+2025-05-01 10:12:56,786 | INFO | Running attack: PGD, 0.01
