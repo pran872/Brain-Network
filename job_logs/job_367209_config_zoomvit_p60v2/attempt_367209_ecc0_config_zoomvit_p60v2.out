@@ -1,0 +1,8 @@
+Detected ECC Error.
+Resubmission failed: usage: qsub [-a date_time] [-A account_string] [-c interval]
+	[-C directive_prefix] [-e path] [-f ] [-h ] [-I [-X]] [-j oe|eo] [-J X-Y[:Z]]
+	[-k keep] [-l resource_list] [-m mail_options] [-M user_list]
+	[-N jobname] [-o path] [-p priority] [-P project] [-q queue] [-r y|n]
+	[-R o|e|oe] [-S path] [-u user_list] [-W otherattributes=value...]
+	[-v variable_list] [-V ] [-z] [script | -- command [arg1 ...]]
+       qsub --version

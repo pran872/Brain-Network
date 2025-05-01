@@ -194,10 +194,11 @@ def main():
     logger.info("Running these attacks:")
     if run_default_attacks:
         epsilons = [0.01, 0.05, 0.1, 0.2] if not debug else [0.01]
-        fgsm_attacks = {"FGSM": epsilons}
+        # fgsm_attacks = {"FGSM": epsilons}
         pgd_attacks = {"PGD": epsilons}
-        gaussian_noise = {"gaussian noise": epsilons}
-        all_attacks = fgsm_attacks | pgd_attacks | gaussian_noise # concat dicts
+        # gaussian_noise = {"gaussian noise": epsilons}
+        # all_attacks = fgsm_attacks | pgd_attacks | gaussian_noise # concat dicts
+	all_attacks = pgd_attacks
     elif config["attacker"] == "FGSM":
         all_attacks = {"FGSM": config["epsilon"]}
     elif config["attacker"] == "PGD":

@@ -1,11 +1,9 @@
-Starting test on cx3-20-0.cx3.hpc.ic.ac.uk at Wed 30 Apr 17:40:06 BST 2025
-Using run folder: runs/stanford_dogs/batch_9/zoomvit_p54_20250430-095228/
 
 ====================================
-CPU Time used: 00:00:03
-CPU Percent: 6%
-Memory usage: 404740kb
+CPU Time used: 00:00:00
+CPU Percent: 0%
+Memory usage: 0b
 Approx Power usage: 0.0
-Walltime usage: 00:01:25
+Walltime usage: 00:00:11
 
 ====================================

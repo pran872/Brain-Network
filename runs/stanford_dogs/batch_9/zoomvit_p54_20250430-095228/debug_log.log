@@ -363,3 +363,33 @@
 2025-04-30 12:57:41,556 | INFO | Test Accuracy: 63.24%
 2025-04-30 12:57:41,572 | INFO | 
 Job Completed
+2025-04-30 18:18:07,921 | INFO | No test config present. Using train config.
+2025-04-30 18:18:08,323 | INFO | Batch size: 32
+2025-04-30 18:18:08,323 | INFO | Running these attacks:
+2025-04-30 18:18:08,323 | INFO | {'FGSM': [0.01, 0.05, 0.1, 0.2], 'PGD': [0.01, 0.05, 0.1, 0.2], 'gaussian noise': [0.01, 0.05, 0.1, 0.2]}
+2025-04-30 18:18:08,323 | INFO | 
+Testing model: runs/stanford_dogs/batch_9/zoomvit_p54_20250430-095228/zoomvit_p54_20250430-095228_e94_best_model.pt
+2025-04-30 18:18:08,323 | INFO | Running attack: FGSM, 0.01
+2025-04-30 18:19:34,159 | INFO | Test accuracy: 8.717948717948717
+2025-04-30 18:19:34,160 | INFO | Running attack: FGSM, 0.05
+2025-04-30 18:20:56,551 | INFO | Test accuracy: 2.6806526806526807
+2025-04-30 18:20:56,551 | INFO | Running attack: FGSM, 0.1
+2025-04-30 18:22:20,021 | INFO | Test accuracy: 1.75990675990676
+2025-04-30 18:22:20,021 | INFO | Running attack: FGSM, 0.2
+2025-04-30 18:23:42,149 | INFO | Test accuracy: 1.456876456876457
+2025-04-30 18:23:42,149 | INFO | Running attack: PGD, 0.01
+2025-04-30 18:31:08,661 | INFO | Test accuracy: 0.9090909090909091
+2025-04-30 18:31:08,661 | INFO | Running attack: PGD, 0.05
+2025-04-30 18:38:37,269 | INFO | Test accuracy: 0.011655011655011656
+2025-04-30 18:38:37,270 | INFO | Running attack: PGD, 0.1
+2025-04-30 18:46:04,977 | INFO | Test accuracy: 0.011655011655011656
+2025-04-30 18:46:04,977 | INFO | Running attack: PGD, 0.2
+2025-04-30 18:53:31,236 | INFO | Test accuracy: 0.011655011655011656
+2025-04-30 18:53:31,236 | INFO | Running attack: gaussian noise, 0.01
+2025-04-30 18:54:42,786 | INFO | Test accuracy: 14.836829836829837
+2025-04-30 18:54:42,787 | INFO | Running attack: gaussian noise, 0.05
+2025-04-30 18:55:52,342 | INFO | Test accuracy: 14.487179487179487
+2025-04-30 18:55:52,343 | INFO | Running attack: gaussian noise, 0.1
+2025-04-30 18:56:58,853 | INFO | Test accuracy: 12.412587412587413
+2025-04-30 18:56:58,853 | INFO | Running attack: gaussian noise, 0.2
+2025-04-30 18:57:57,653 | INFO | Test accuracy: 8.006993006993007

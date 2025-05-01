@@ -394,3 +394,9 @@ Testing model: runs/stanford_dogs/batch_8/zoomvit_p53_20250429-152543/zoomvit_p5
 2025-04-30 14:05:12,296 | INFO | Test accuracy: 16.247086247086248
 2025-04-30 14:05:12,297 | INFO | Running attack: gaussian noise, 0.2
 2025-04-30 14:06:24,059 | INFO | Test accuracy: 10.174825174825175
+2025-04-30 19:20:02,112 | INFO | No test config present. Using train config.
+2025-04-30 19:20:02,487 | INFO | Batch size: 32
+2025-04-30 19:20:02,488 | INFO | Running these attacks:
+2025-04-30 19:28:13,314 | INFO | No test config present. Using train config.
+2025-04-30 19:28:13,747 | INFO | Batch size: 32
+2025-04-30 19:28:13,747 | INFO | Running these attacks:
