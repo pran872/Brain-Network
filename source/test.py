@@ -12,14 +12,14 @@ import json
 import glob
 try:
     from models import *
-    from simple_cnn import set_config_defaults
+    from train import set_config_defaults
     from transform import get_transform
     from datasets.get_dataset import get_data
     from brainit import FixedFoveation
     from utils import *
 except ModuleNotFoundError:
     from source.models import *
-    from source.simple_cnn import set_config_defaults
+    from source.train import set_config_defaults
     from source.datasets.get_dataset import get_data
     from source.brainit import FixedFoveation
     from source.transform import get_transform
@@ -83,12 +83,23 @@ def test_model(
 
     return test_acc, cls_report
 
-def load_model(model_pt, config, device):
+def load_model(model_pt, config, device, logger):
     model = get_model(config, device)
     model.to(device)
 
     checkpoint = torch.load(model_pt, map_location=device)
-    model.load_state_dict(checkpoint)
+    try:
+        model.load_state_dict(checkpoint)
+    except RuntimeError:
+        if config["dataset"]["type"] == "cifar10":
+            logger.info("Runtime error occurred. Using old cifar10 models.")
+            model = get_model(config, device, load_old_models=True)
+            model.to(device)
+            checkpoint = torch.load(model_pt, map_location=device)
+            model.load_state_dict(checkpoint)
+
+        else:
+            raise RuntimeError
     return model
 
 def get_files(args, logger):
@@ -102,7 +113,7 @@ def get_files(args, logger):
         assert len(config_file) > 0, "No config file present in the provided directory."
 
         if len(config_file) > 1:
-            logger.info(f"The provided directory has more than one config file. Using {os.path.basename(config_file)}.")
+            logger.info(f"The provided directory has more than one config file. Using {os.path.basename(config_file[0])}.")
         args.config = config_file[0]
 
         args.model = glob.glob(os.path.join(args.run_folder, "**", "*best*.pt"), recursive=True)
@@ -215,7 +226,7 @@ def main():
             for epsilon in all_epsilons:
                 logger.info(f"Running attack: {attack_type}, {epsilon}")
 
-                model = load_model(model_pt, config, device)
+                model = load_model(model_pt, config, device, logger)
 
                 gaussian_std = False
                 attacker = False
