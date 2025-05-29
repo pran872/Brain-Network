@@ -1,17 +1,19 @@
-Starting training on cx3-20-0.cx3.hpc.ic.ac.uk at Thu 29 May 13:58:57 BST 2025
-Using config: configs/cifar/round_3/config_brainit_m9.json
-/rds/general/user/psp20/home/Brain-Network/runs/brainit_m9_sample_eff_0_1_20250529-135952
-/rds/general/user/psp20/home/Brain-Network/runs/brainit_m9_sample_eff_0_25_20250529-140208
-/rds/general/user/psp20/home/Brain-Network/runs/brainit_m9_sample_eff_0_5_20250529-140636
-Finished at Thu 29 May 14:15:53 BST 2025
+Starting training on cx3-20-0.cx3.hpc.ic.ac.uk at Thu 29 May 16:39:02 BST 2025
+Using config: configs/cifar/round_4_29_05/config_zoomvit_4_1.json
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_4_1_acc_20250529-164021
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_4_1_sample_eff_0_1_20250529-165634
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_4_1_sample_eff_0_25_20250529-165855
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_4_1_sample_eff_0_5_20250529-170349
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_4_1_acc_20250529-164021
+Finished at Thu 29 May 17:15:39 BST 2025
 Clean up
 mv: cannot stat 'job_logs/train.err': No such file or directory
 
 ====================================
-CPU Time used: 00:23:11
-CPU Percent: 149%
-Memory usage: 1971148kb
-Approx Power usage: 0.004600000000000001
-Walltime usage: 00:17:04
+CPU Time used: 01:25:51
+CPU Percent: 269%
+Memory usage: 1795656kb
+Approx Power usage: 0.017
+Walltime usage: 00:36:55
 
 ====================================

@@ -1,0 +1,17 @@
+Starting training on cx3-20-0.cx3.hpc.ic.ac.uk at Thu 29 May 13:58:57 BST 2025
+Using config: configs/cifar/round_3/config_brainit_m9.json
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_m9_sample_eff_0_1_20250529-135952
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_m9_sample_eff_0_25_20250529-140208
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_m9_sample_eff_0_5_20250529-140636
+Finished at Thu 29 May 14:15:53 BST 2025
+Clean up
+mv: cannot stat 'job_logs/train.err': No such file or directory
+
+====================================
+CPU Time used: 00:23:11
+CPU Percent: 149%
+Memory usage: 1971148kb
+Approx Power usage: 0.004600000000000001
+Walltime usage: 00:17:04
+
+====================================
