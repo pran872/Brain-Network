@@ -43,7 +43,7 @@ def get_log_dir(run_name: str, time_stamp, base_env_var="OUTPUT_DIR") -> str:
         if "login" in hostname or "node" in hostname or "rds" in os.getcwd():
             output_root = "/rds/general/user/psp20/home/Brain-Network/runs"
         else:
-            output_root = "runs/stanford_dogs"
+            output_root = "runs/"
 
     log_dir = os.path.join(output_root, full_run_name)
     os.makedirs(log_dir, exist_ok=True)
@@ -410,7 +410,7 @@ def main():
         if "ReduceLROnPlateau" in config["scheduler"].keys():
             scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=config["scheduler_patience"])
         elif "CosineAnnealingLR" in config["scheduler"].keys():
-            scheduler = CosineAnnealingLR(optimizer, T_max=config["CosineAnnealingLR"]["scheduler_T_max"], eta_min=1e-5)
+            scheduler = CosineAnnealingLR(optimizer, T_max=config["scheduler"]["CosineAnnealingLR"]["scheduler_T_max"], eta_min=1e-5)
         elif "CosineLRScheduler" in config["scheduler"].keys():
             warmup_t = config["scheduler"]["CosineLRScheduler"].get("warmup_t", 5)
             scheduler = CosineLRScheduler(
