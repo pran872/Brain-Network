@@ -19,7 +19,15 @@ def get_transform(dataset_type, input_transforms, pretrained=False):
         transform_test_list = [transforms.ToTensor(), transforms.Normalize(norm_means, norm_stds)]
         transform_type = input_transforms["transform_type"]
 
-        if transform_type == "custom":
+        if transform_type == "custom_colour":
+            transform_train_list = [
+                transforms.RandomCrop(32, padding=4), 
+                transforms.RandomHorizontalFlip(),
+                transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
+                transforms.ToTensor(),
+                transforms.Normalize(norm_means, norm_stds)
+            ]
+        elif transform_type == "custom":
             transform_train_list = [
                 transforms.RandomCrop(32, padding=4), 
                 transforms.RandomHorizontalFlip(),

@@ -44,11 +44,11 @@ def parse_args():
 def main():
     config, debug, run_all_tests = parse_args()
 
-    # tests_to_run = {"acc": [True]}
-    tests_to_run = {}
+    tests_to_run = {"acc": [True]}
+    # tests_to_run = {}
     if run_all_tests:
         tests_to_run["sample_eff"] = [0.1, 0.25, 0.5]
-        # tests_to_run["robustness"] = [0.01, 0.05, 0.1, 0.2] # Values arent used btw
+        tests_to_run["robustness"] = [0.01, 0.05, 0.1, 0.2] # Values arent used btw
     for test_type, values in tests_to_run.items():
         if test_type == "acc":
             config["run_name"] += "_acc"
