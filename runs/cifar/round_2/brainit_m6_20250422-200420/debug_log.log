@@ -86,3 +86,45 @@
 2025-04-22 20:22:25,126 | INFO | Test Accuracy: 91.72%
 2025-04-22 20:22:25,136 | INFO | 
 Job Completed
+2025-05-29 11:53:47,833 | INFO | Full train/val size with downsampling (0): 50000
+2025-05-29 11:53:47,851 | INFO | Batch size: 32
+2025-05-29 11:53:47,851 | INFO | Running these attacks:
+2025-05-29 11:53:47,851 | INFO | {'FGSM': [0.01, 0.05, 0.1, 0.2], 'PGD': [0.01, 0.05, 0.1, 0.2], 'gaussian noise': [0.01, 0.05, 0.1, 0.2]}
+2025-05-29 11:53:47,851 | INFO | 
+Testing model: runs/cifar/round_2/brainit_m6_20250422-200420/brainit_m6_20250422-200420_e48_best_model.pt
+2025-05-29 11:53:47,851 | INFO | Running attack: FGSM, 0.01
+2025-05-29 11:53:48,573 | INFO | Runtime error occurred. Using old cifar10 models.
+2025-05-29 11:54:07,789 | INFO | Test accuracy: 52.15
+2025-05-29 11:54:07,790 | INFO | Running attack: FGSM, 0.05
+2025-05-29 11:54:08,350 | INFO | Runtime error occurred. Using old cifar10 models.
+2025-05-29 11:54:22,524 | INFO | Test accuracy: 47.37
+2025-05-29 11:54:22,524 | INFO | Running attack: FGSM, 0.1
+2025-05-29 11:54:23,069 | INFO | Runtime error occurred. Using old cifar10 models.
+2025-05-29 11:54:37,322 | INFO | Test accuracy: 42.5
+2025-05-29 11:54:37,322 | INFO | Running attack: FGSM, 0.2
+2025-05-29 11:54:37,778 | INFO | Runtime error occurred. Using old cifar10 models.
+2025-05-29 11:54:51,864 | INFO | Test accuracy: 36.48
+2025-05-29 11:54:51,864 | INFO | Running attack: PGD, 0.01
+2025-05-29 11:54:52,310 | INFO | Runtime error occurred. Using old cifar10 models.
+2025-05-29 11:56:19,591 | INFO | Test accuracy: 39.05
+2025-05-29 11:56:19,592 | INFO | Running attack: PGD, 0.05
+2025-05-29 11:56:20,094 | INFO | Runtime error occurred. Using old cifar10 models.
+2025-05-29 11:57:47,645 | INFO | Test accuracy: 12.48
+2025-05-29 11:57:47,645 | INFO | Running attack: PGD, 0.1
+2025-05-29 11:57:48,192 | INFO | Runtime error occurred. Using old cifar10 models.
+2025-05-29 11:59:15,806 | INFO | Test accuracy: 8.91
+2025-05-29 11:59:15,807 | INFO | Running attack: PGD, 0.2
+2025-05-29 11:59:16,360 | INFO | Runtime error occurred. Using old cifar10 models.
+2025-05-29 12:00:43,809 | INFO | Test accuracy: 6.02
+2025-05-29 12:00:43,809 | INFO | Running attack: gaussian noise, 0.01
+2025-05-29 12:00:44,349 | INFO | Runtime error occurred. Using old cifar10 models.
+2025-05-29 12:00:49,126 | INFO | Test accuracy: 53.46
+2025-05-29 12:00:49,126 | INFO | Running attack: gaussian noise, 0.05
+2025-05-29 12:00:49,329 | INFO | Runtime error occurred. Using old cifar10 models.
+2025-05-29 12:00:53,979 | INFO | Test accuracy: 52.92
+2025-05-29 12:00:53,979 | INFO | Running attack: gaussian noise, 0.1
+2025-05-29 12:00:54,184 | INFO | Runtime error occurred. Using old cifar10 models.
+2025-05-29 12:00:58,851 | INFO | Test accuracy: 51.03
+2025-05-29 12:00:58,851 | INFO | Running attack: gaussian noise, 0.2
+2025-05-29 12:00:59,056 | INFO | Runtime error occurred. Using old cifar10 models.
+2025-05-29 12:01:03,706 | INFO | Test accuracy: 46.63

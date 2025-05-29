@@ -1,13 +1,13 @@
-Starting test on cx3-20-0.cx3.hpc.ic.ac.uk at Thu  1 May 11:13:25 BST 2025
-Using run folder: runs/stanford_dogs/batch_9/zoomvit_p64_20250430-201239/
-Test completed successfully at Thu  1 May 11:54:38 BST 2025
-Job cleanup done. Logs stored in test_job_logs/job_368767_20250501_111315_zoomvit_p64_20250430-201239
+Starting test on cx3-20-1.cx3.hpc.ic.ac.uk at Thu 29 May 11:52:50 BST 2025
+Using run folder: runs/cifar/round_2/brainit_m6_20250422-200420/
+Test completed successfully at Thu 29 May 12:01:04 BST 2025
+Job cleanup done. Logs stored in test_job_logs/job_478685_20250529_115242_brainit_m6_20250422-200420
 
 ====================================
-CPU Time used: 00:41:31
-CPU Percent: 138%
-Memory usage: 1992752kb
-Approx Power usage: 0.008199999999999999
-Walltime usage: 00:41:24
+CPU Time used: 00:07:23
+CPU Percent: 104%
+Memory usage: 1908636kb
+Approx Power usage: 0.0014
+Walltime usage: 00:08:24
 
 ====================================
