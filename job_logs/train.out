@@ -1,13 +1,17 @@
-Starting training on cx3-20-3.cx3.hpc.ic.ac.uk at Wed 30 Apr 20:11:41 BST 2025
-Using config: configs/stanford_dogs/zoomvit_configs/config_zoomvit_p65.json
-Training completed successfully at Wed 30 Apr 23:44:05 BST 2025
-Job cleanup done. Logs stored in job_logs/job_367584_config_zoomvit_p65
+Starting training on cx3-20-0.cx3.hpc.ic.ac.uk at Thu 29 May 13:58:57 BST 2025
+Using config: configs/cifar/round_3/config_brainit_m9.json
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_m9_sample_eff_0_1_20250529-135952
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_m9_sample_eff_0_25_20250529-140208
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_m9_sample_eff_0_5_20250529-140636
+Finished at Thu 29 May 14:15:53 BST 2025
+Clean up
+mv: cannot stat 'job_logs/train.err': No such file or directory
 
 ====================================
-CPU Time used: 03:45:39
-CPU Percent: 142%
-Memory usage: 1989060kb
-Approx Power usage: 0.045
-Walltime usage: 03:32:32
+CPU Time used: 00:23:11
+CPU Percent: 149%
+Memory usage: 1971148kb
+Approx Power usage: 0.004600000000000001
+Walltime usage: 00:17:04
 
 ====================================
