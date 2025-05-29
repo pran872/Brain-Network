@@ -1,0 +1,82 @@
+{
+    "run_name": "zoomvit_4_4",
+    "writer": true,
+
+    "seed": 42,
+
+    "dataset": {
+        "type": "cifar10",
+        "train_split": 0.9,
+        "batch_size": 256,
+        "num_workers": 2,
+        "downsample_fraction": 0,
+        "few_shot": false
+    },  
+
+    "pretrained": true,
+    "model_type": "zoom",
+    "optimizer": "adamW",
+    "scheduler": {
+        "CosineLRScheduler": {
+            "patience": 8,
+            "T_max": 100,
+            "warmup_t": 5
+    }},
+    "criterion": "CE",
+    "auxiliary_loss": 
+        {"attention_entropy_loss": 0.1},
+    
+    "label_smoothing": 0.1,
+    "lr": 0.001,
+    "epochs": 100,
+
+    "transforms": {
+        "transform_type": "custom_colour",
+        "train_transforms": [
+            {"RRC": {
+                "size": 224, 
+                "scale": [0.8, 1]
+            }},
+            "horizontal_flip",
+            {"color_jitter": {
+                "brightness": 0.2, 
+                "contrast": 0.2, 
+                "saturation": 0.2
+            }}
+        ],
+        "test_transforms": [
+            {"resize": {"size": [224, 224]}}
+        ]
+    },
+    "mixup_fn": true,
+    
+    "early_stopping": true,
+    "patience": 20,
+    "min_diff": 0.001,
+
+    "ema": false,
+
+    "use_flex": false,
+
+    "retinal_layer": true,
+
+    "add_dropout": true,
+    "trans_dropout_ratio": 0.1,
+    "remove_zoom": false,
+
+    "use_pos_embed": true,
+    "mlp_end": false,
+    "add_cls_token": true,
+    "num_layers": 2,
+    "standard_scale": true,
+    "resnet_layers": 4,
+    "multiscale_tokenisation": false,
+    "gamma_per_head": false,
+    "use_token_mixer": false,
+
+    "freeze_resnet_early": false,
+
+    "attacker": false,
+    "epsilon": false,
+    "gaussian_std": false
+}
