@@ -165,8 +165,12 @@ def parse_args():
     args = parser.parse_args()
     return args, args.debug, args.run_default_attacks
 
-def main():
-    args, debug, run_default_attacks = parse_args()
+def main(parsed_args=None):
+    if parsed_args is None:
+        args, debug, run_default_attacks = parse_args()
+    else:
+        args, debug, run_default_attacks = parsed_args
+        
     log_dir = args.run_folder if args.run_folder else os.path.dirname(args.config)
     logger = get_logger(log_dir)
 

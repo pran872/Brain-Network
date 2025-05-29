@@ -49,7 +49,7 @@ def get_log_dir(run_name: str, time_stamp, base_env_var="OUTPUT_DIR") -> str:
     os.makedirs(log_dir, exist_ok=True)
 
     return log_dir
-
+    
 def train_model(
     model,
     epochs,
@@ -302,6 +302,38 @@ def parse_args():
         required=False,
         help="Run on debug mode"
     )
+    parser.add_argument(
+        "--run_all_tests",
+        action="store_true",
+        required=False,
+        help="Runs accuracy tests," \
+                "sample efficiency tests: 0.1, 0.25, 0.5," \
+                "and robustness tests: FGSM, PGD, gaussian noise with epsilon [0.01, 0.05, 0.1, 0.2]"
+    )
+    parser.add_argument(
+        "--run_sample_eff",
+        nargs='+',
+        default=[],
+        help="List of sample efficiency tests to run e.g., [0.1, 0.2....]"
+    )
+    parser.add_argument(
+        "--run_FGSM",
+        nargs='+',
+        default=[],
+        help="List of FGSM tests to run with epsilons e.g., [0.1, 0.2....]"
+    )
+    parser.add_argument(
+        "--run_PGD",
+        nargs='+',
+        default=[],
+        help="List of PGD tests to run with epsilons e.g., [0.1, 0.2....]"
+    )
+    parser.add_argument(
+        "--run_gaussian",
+        nargs='+',
+        default=[],
+        help="List of gaussian tests to run with epsilons e.g., [0.1, 0.2....]"
+    )
 
     args = parser.parse_args()
     try:
@@ -310,7 +342,7 @@ def parse_args():
     except (json.JSONDecodeError, TypeError) as e:
         config = {}
     
-    return config, args.debug
+    return config, args.debug, args.run_all_tests, args.run_sample_eff, args.run_FGSM, args.run_PGD, args.run_gaussian
 
 def set_config_defaults(user_config):
     with open("configs/config_template.json", 'r') as f:
@@ -322,9 +354,13 @@ def set_config_defaults(user_config):
 
     return config
 
-def main():
+def main(parsed_args=None):
     try:
-        config, debug = parse_args()
+        if parsed_args is None:
+            config, debug = parse_args()
+        else:
+            config, debug = parsed_args
+
         config = set_config_defaults(config)
 
         time_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
@@ -395,11 +431,6 @@ def main():
 
         model = get_model(config, device)
         model.to(device)
-        
-        # input_size = (32, 32)
-        # summary_str = summary(model, input_size=(1, 3, input_size[0], input_size[1]), device=device, verbose=0)
-        # with open(os.path.join(log_dir, "model_summary.txt"), "w") as f:
-        #     f.write(str(summary_str))
     
         if config["optimizer"] == "adam":
             optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"], weight_decay=1e-4)
@@ -507,6 +538,8 @@ def main():
     except Exception as e:
         logger.exception("Error occured")
         raise
+    
+    return log_dir
     
 
 if __name__ == "__main__":

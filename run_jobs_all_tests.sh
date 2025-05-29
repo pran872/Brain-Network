@@ -26,5 +26,5 @@ export OUTPUT_DIR=/rds/general/user/psp20/home/Brain-Network/runs
 
 echo "Starting training on $(hostname) at $(date)"
 echo "Using config: $CONFIG"
-python source/train.py -c $CONFIG
+python source/run_all_train_tests.py -c $CONFIG --run_all_tests
 echo "Finished at $(date)"

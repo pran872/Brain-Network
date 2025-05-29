@@ -7,8 +7,13 @@ import random
 import logging
 
 def get_logger(log_dir):
+    print(log_dir)
     logger = logging.getLogger("debug_log")
     logger.setLevel(logging.INFO)
+    
+    if logger.hasHandlers():
+        logger.handlers.clear()
+        
     fh = logging.FileHandler(f"{log_dir}/debug_log.log")
     fh.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
