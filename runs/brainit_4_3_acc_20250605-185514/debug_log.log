@@ -1,0 +1,487 @@
+2025-06-05 18:55:14,798 | INFO | Job Started
+2025-06-05 18:55:14,798 | INFO | Logging run: /rds/general/user/psp20/home/Brain-Network/runs/brainit_4_3_acc_20250605-185514
+2025-06-05 18:55:14,973 | INFO | Using device: cuda
+2025-06-05 18:55:14,973 | INFO | Training for 100 epochs
+2025-06-05 18:55:14,973 | INFO | Debug mode: False
+2025-06-05 18:55:14,973 | INFO | Downsampling by: 0
+2025-06-05 18:55:14,973 | INFO | Auxiliary loss: {'attention_entropy_loss': 0.1}
+2025-06-05 18:55:14,973 | INFO | Train transforms: 
+	Compose(
+    RandomCrop(size=(32, 32), padding=4)
+    RandomHorizontalFlip(p=0.5)
+    ColorJitter(brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2), hue=None)
+    ToTensor()
+    Normalize(mean=(0.4914, 0.4822, 0.4465), std=(0.2023, 0.1994, 0.201))
+)
+2025-06-05 18:55:14,973 | INFO | Test transforms: 
+	Compose(
+    ToTensor()
+    Normalize(mean=(0.4914, 0.4822, 0.4465), std=(0.2023, 0.1994, 0.201))
+)
+2025-06-05 18:55:17,293 | INFO | Full train/val size with downsampling (0): 50000
+2025-06-05 18:55:17,738 | INFO | Using mixup function and SoftTargetCrossEntropy
+2025-06-05 18:55:17,738 | INFO | Auxiliary loss: {'attention_entropy_loss': 0.1}
+2025-06-05 18:55:45,775 | INFO | Epoch: 1 | Time: 28.03s
+2025-06-05 18:55:45,775 | INFO | Train Loss=2.2974, Train Acc=21.79%
+2025-06-05 18:55:45,775 | INFO | Val Loss=1.8785, Val Acc=30.42%
+2025-06-05 18:55:45,775 | INFO | Train Gamma Loss=0.1552 | Val Gamma Loss=0.012226779013872147
+2025-06-05 18:55:45,776 | INFO | New best model saved (val loss = 1.8785)
+2025-06-05 18:56:07,608 | INFO | Epoch: 2 | Time: 21.83s
+2025-06-05 18:56:07,608 | INFO | Train Loss=1.9900, Train Acc=30.88%
+2025-06-05 18:56:07,608 | INFO | Val Loss=1.7224, Val Acc=36.82%
+2025-06-05 18:56:07,608 | INFO | Train Gamma Loss=0.0015 | Val Gamma Loss=0.0074295774102211
+2025-06-05 18:56:07,609 | INFO | New best model saved (val loss = 1.7224)
+2025-06-05 18:56:29,308 | INFO | Epoch: 3 | Time: 21.69s
+2025-06-05 18:56:29,308 | INFO | Train Loss=1.8518, Train Acc=39.13%
+2025-06-05 18:56:29,308 | INFO | Val Loss=1.4217, Val Acc=49.18%
+2025-06-05 18:56:29,308 | INFO | Train Gamma Loss=-0.0035 | Val Gamma Loss=0.006585301365703344
+2025-06-05 18:56:29,309 | INFO | New best model saved (val loss = 1.4217)
+2025-06-05 18:56:51,166 | INFO | Epoch: 4 | Time: 21.85s
+2025-06-05 18:56:51,166 | INFO | Train Loss=1.7255, Train Acc=48.11%
+2025-06-05 18:56:51,166 | INFO | Val Loss=1.3041, Val Acc=54.42%
+2025-06-05 18:56:51,166 | INFO | Train Gamma Loss=-0.0043 | Val Gamma Loss=0.005872142966836691
+2025-06-05 18:56:51,168 | INFO | New best model saved (val loss = 1.3041)
+2025-06-05 18:57:12,947 | INFO | Epoch: 5 | Time: 21.78s
+2025-06-05 18:57:12,947 | INFO | Train Loss=1.6239, Train Acc=54.13%
+2025-06-05 18:57:12,947 | INFO | Val Loss=1.1113, Val Acc=63.56%
+2025-06-05 18:57:12,947 | INFO | Train Gamma Loss=-0.0051 | Val Gamma Loss=0.0050154211930930614
+2025-06-05 18:57:12,948 | INFO | New best model saved (val loss = 1.1113)
+2025-06-05 18:57:34,926 | INFO | Epoch: 6 | Time: 21.98s
+2025-06-05 18:57:34,926 | INFO | Train Loss=1.5169, Train Acc=59.90%
+2025-06-05 18:57:34,926 | INFO | Val Loss=0.9886, Val Acc=68.76%
+2025-06-05 18:57:34,926 | INFO | Train Gamma Loss=-0.0064 | Val Gamma Loss=0.004013747908174992
+2025-06-05 18:57:34,928 | INFO | New best model saved (val loss = 0.9886)
+2025-06-05 18:57:56,667 | INFO | Epoch: 7 | Time: 21.74s
+2025-06-05 18:57:56,667 | INFO | Train Loss=1.4420, Train Acc=63.83%
+2025-06-05 18:57:56,667 | INFO | Val Loss=1.0504, Val Acc=65.14%
+2025-06-05 18:57:56,667 | INFO | Train Gamma Loss=-0.0075 | Val Gamma Loss=0.0028066576924175024
+2025-06-05 18:58:18,412 | INFO | Epoch: 8 | Time: 21.74s
+2025-06-05 18:58:18,412 | INFO | Train Loss=1.3596, Train Acc=68.02%
+2025-06-05 18:58:18,412 | INFO | Val Loss=0.9690, Val Acc=69.16%
+2025-06-05 18:58:18,412 | INFO | Train Gamma Loss=-0.0084 | Val Gamma Loss=0.0025085019879043102
+2025-06-05 18:58:18,414 | INFO | New best model saved (val loss = 0.9690)
+2025-06-05 18:58:40,350 | INFO | Epoch: 9 | Time: 21.93s
+2025-06-05 18:58:40,350 | INFO | Train Loss=1.3440, Train Acc=69.68%
+2025-06-05 18:58:40,351 | INFO | Val Loss=0.8463, Val Acc=73.52%
+2025-06-05 18:58:40,351 | INFO | Train Gamma Loss=-0.0089 | Val Gamma Loss=0.001982051646336913
+2025-06-05 18:58:40,352 | INFO | New best model saved (val loss = 0.8463)
+2025-06-05 18:59:02,219 | INFO | Epoch: 10 | Time: 21.86s
+2025-06-05 18:59:02,219 | INFO | Train Loss=1.3267, Train Acc=71.03%
+2025-06-05 18:59:02,219 | INFO | Val Loss=0.8181, Val Acc=77.00%
+2025-06-05 18:59:02,219 | INFO | Train Gamma Loss=-0.0092 | Val Gamma Loss=0.0014805039390921593
+2025-06-05 18:59:02,220 | INFO | New best model saved (val loss = 0.8181)
+2025-06-05 18:59:24,059 | INFO | Epoch: 11 | Time: 21.84s
+2025-06-05 18:59:24,059 | INFO | Train Loss=1.2855, Train Acc=72.10%
+2025-06-05 18:59:24,060 | INFO | Val Loss=0.7762, Val Acc=74.92%
+2025-06-05 18:59:24,060 | INFO | Train Gamma Loss=-0.0095 | Val Gamma Loss=0.0014231721870601177
+2025-06-05 18:59:24,061 | INFO | New best model saved (val loss = 0.7762)
+2025-06-05 18:59:45,810 | INFO | Epoch: 12 | Time: 21.73s
+2025-06-05 18:59:45,810 | INFO | Train Loss=1.2517, Train Acc=74.23%
+2025-06-05 18:59:45,810 | INFO | Val Loss=0.6879, Val Acc=79.04%
+2025-06-05 18:59:45,811 | INFO | Train Gamma Loss=-0.0096 | Val Gamma Loss=0.0012728977017104626
+2025-06-05 18:59:45,812 | INFO | New best model saved (val loss = 0.6879)
+2025-06-05 19:00:07,805 | INFO | Epoch: 13 | Time: 21.99s
+2025-06-05 19:00:07,805 | INFO | Train Loss=1.2532, Train Acc=74.60%
+2025-06-05 19:00:07,805 | INFO | Val Loss=0.7004, Val Acc=80.40%
+2025-06-05 19:00:07,805 | INFO | Train Gamma Loss=-0.0098 | Val Gamma Loss=0.00106263835914433
+2025-06-05 19:00:29,663 | INFO | Epoch: 14 | Time: 21.85s
+2025-06-05 19:00:29,663 | INFO | Train Loss=1.2672, Train Acc=74.27%
+2025-06-05 19:00:29,663 | INFO | Val Loss=0.7748, Val Acc=79.32%
+2025-06-05 19:00:29,663 | INFO | Train Gamma Loss=-0.0098 | Val Gamma Loss=0.0008443119004368782
+2025-06-05 19:00:51,528 | INFO | Epoch: 15 | Time: 21.86s
+2025-06-05 19:00:51,528 | INFO | Train Loss=1.1873, Train Acc=75.92%
+2025-06-05 19:00:51,528 | INFO | Val Loss=0.6385, Val Acc=81.60%
+2025-06-05 19:00:51,529 | INFO | Train Gamma Loss=-0.0099 | Val Gamma Loss=0.000923926301766187
+2025-06-05 19:00:51,530 | INFO | New best model saved (val loss = 0.6385)
+2025-06-05 19:01:13,307 | INFO | Epoch: 16 | Time: 21.77s
+2025-06-05 19:01:13,308 | INFO | Train Loss=1.1529, Train Acc=78.12%
+2025-06-05 19:01:13,308 | INFO | Val Loss=0.5930, Val Acc=82.92%
+2025-06-05 19:01:13,308 | INFO | Train Gamma Loss=-0.0098 | Val Gamma Loss=0.0009578738245181739
+2025-06-05 19:01:13,309 | INFO | New best model saved (val loss = 0.5930)
+2025-06-05 19:01:35,137 | INFO | Epoch: 17 | Time: 21.82s
+2025-06-05 19:01:35,137 | INFO | Train Loss=1.1445, Train Acc=78.08%
+2025-06-05 19:01:35,137 | INFO | Val Loss=0.6090, Val Acc=82.24%
+2025-06-05 19:01:35,137 | INFO | Train Gamma Loss=-0.0099 | Val Gamma Loss=0.001031129970215261
+2025-06-05 19:01:57,084 | INFO | Epoch: 18 | Time: 21.94s
+2025-06-05 19:01:57,084 | INFO | Train Loss=1.1963, Train Acc=77.00%
+2025-06-05 19:01:57,084 | INFO | Val Loss=0.6706, Val Acc=81.72%
+2025-06-05 19:01:57,084 | INFO | Train Gamma Loss=-0.0100 | Val Gamma Loss=0.0006893412792123854
+2025-06-05 19:02:18,865 | INFO | Epoch: 19 | Time: 21.78s
+2025-06-05 19:02:18,865 | INFO | Train Loss=1.1396, Train Acc=79.14%
+2025-06-05 19:02:18,865 | INFO | Val Loss=0.6128, Val Acc=83.28%
+2025-06-05 19:02:18,865 | INFO | Train Gamma Loss=-0.0099 | Val Gamma Loss=0.0007082375232130289
+2025-06-05 19:02:40,833 | INFO | Epoch: 20 | Time: 21.96s
+2025-06-05 19:02:40,833 | INFO | Train Loss=1.1152, Train Acc=80.14%
+2025-06-05 19:02:40,833 | INFO | Val Loss=0.5756, Val Acc=84.64%
+2025-06-05 19:02:40,833 | INFO | Train Gamma Loss=-0.0100 | Val Gamma Loss=0.0006005507311783731
+2025-06-05 19:02:40,834 | INFO | New best model saved (val loss = 0.5756)
+2025-06-05 19:03:02,801 | INFO | Epoch: 21 | Time: 21.96s
+2025-06-05 19:03:02,801 | INFO | Train Loss=1.0979, Train Acc=80.13%
+2025-06-05 19:03:02,801 | INFO | Val Loss=0.5622, Val Acc=85.10%
+2025-06-05 19:03:02,801 | INFO | Train Gamma Loss=-0.0100 | Val Gamma Loss=0.0006841362337581813
+2025-06-05 19:03:02,802 | INFO | New best model saved (val loss = 0.5622)
+2025-06-05 19:03:24,543 | INFO | Epoch: 22 | Time: 21.73s
+2025-06-05 19:03:24,543 | INFO | Train Loss=1.1540, Train Acc=78.90%
+2025-06-05 19:03:24,544 | INFO | Val Loss=0.5374, Val Acc=85.54%
+2025-06-05 19:03:24,544 | INFO | Train Gamma Loss=-0.0100 | Val Gamma Loss=0.0007450508419424295
+2025-06-05 19:03:24,545 | INFO | New best model saved (val loss = 0.5374)
+2025-06-05 19:03:46,411 | INFO | Epoch: 23 | Time: 21.86s
+2025-06-05 19:03:46,411 | INFO | Train Loss=1.1368, Train Acc=79.83%
+2025-06-05 19:03:46,411 | INFO | Val Loss=0.6245, Val Acc=82.70%
+2025-06-05 19:03:46,412 | INFO | Train Gamma Loss=-0.0101 | Val Gamma Loss=0.0007045445963740349
+2025-06-05 19:04:08,193 | INFO | Epoch: 24 | Time: 21.77s
+2025-06-05 19:04:08,193 | INFO | Train Loss=1.1287, Train Acc=79.45%
+2025-06-05 19:04:08,193 | INFO | Val Loss=0.5086, Val Acc=86.20%
+2025-06-05 19:04:08,193 | INFO | Train Gamma Loss=-0.0101 | Val Gamma Loss=0.0006561826448887587
+2025-06-05 19:04:08,194 | INFO | New best model saved (val loss = 0.5086)
+2025-06-05 19:04:30,229 | INFO | Epoch: 25 | Time: 22.03s
+2025-06-05 19:04:30,229 | INFO | Train Loss=1.0544, Train Acc=82.25%
+2025-06-05 19:04:30,229 | INFO | Val Loss=0.5206, Val Acc=85.76%
+2025-06-05 19:04:30,230 | INFO | Train Gamma Loss=-0.0101 | Val Gamma Loss=0.0005676651489920914
+2025-06-05 19:04:52,026 | INFO | Epoch: 26 | Time: 21.79s
+2025-06-05 19:04:52,026 | INFO | Train Loss=1.0118, Train Acc=82.60%
+2025-06-05 19:04:52,026 | INFO | Val Loss=0.5202, Val Acc=85.22%
+2025-06-05 19:04:52,026 | INFO | Train Gamma Loss=-0.0101 | Val Gamma Loss=0.00045861603575758636
+2025-06-05 19:05:13,769 | INFO | Epoch: 27 | Time: 21.74s
+2025-06-05 19:05:13,769 | INFO | Train Loss=0.9562, Train Acc=85.05%
+2025-06-05 19:05:13,769 | INFO | Val Loss=0.4482, Val Acc=86.92%
+2025-06-05 19:05:13,769 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.0005918631213717163
+2025-06-05 19:05:13,770 | INFO | New best model saved (val loss = 0.4482)
+2025-06-05 19:05:35,877 | INFO | Epoch: 28 | Time: 22.10s
+2025-06-05 19:05:35,877 | INFO | Train Loss=1.0650, Train Acc=82.38%
+2025-06-05 19:05:35,877 | INFO | Val Loss=0.4748, Val Acc=87.80%
+2025-06-05 19:05:35,877 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.0005723881185986102
+2025-06-05 19:05:57,880 | INFO | Epoch: 29 | Time: 21.99s
+2025-06-05 19:05:57,880 | INFO | Train Loss=1.0459, Train Acc=84.00%
+2025-06-05 19:05:57,880 | INFO | Val Loss=0.5028, Val Acc=86.30%
+2025-06-05 19:05:57,880 | INFO | Train Gamma Loss=-0.0101 | Val Gamma Loss=0.0005003875121474266
+2025-06-05 19:06:19,798 | INFO | Epoch: 30 | Time: 21.91s
+2025-06-05 19:06:19,799 | INFO | Train Loss=1.0256, Train Acc=83.88%
+2025-06-05 19:06:19,799 | INFO | Val Loss=0.4812, Val Acc=87.44%
+2025-06-05 19:06:19,799 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.0005292657297104597
+2025-06-05 19:06:41,776 | INFO | Epoch: 31 | Time: 21.97s
+2025-06-05 19:06:41,777 | INFO | Train Loss=1.0171, Train Acc=82.96%
+2025-06-05 19:06:41,777 | INFO | Val Loss=0.4898, Val Acc=86.28%
+2025-06-05 19:06:41,777 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.0005206885398365557
+2025-06-05 19:07:03,677 | INFO | Epoch: 32 | Time: 21.89s
+2025-06-05 19:07:03,677 | INFO | Train Loss=1.0266, Train Acc=84.06%
+2025-06-05 19:07:03,677 | INFO | Val Loss=0.4712, Val Acc=87.94%
+2025-06-05 19:07:03,677 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.0004876917810179293
+2025-06-05 19:07:25,555 | INFO | Epoch: 33 | Time: 21.87s
+2025-06-05 19:07:25,555 | INFO | Train Loss=1.0143, Train Acc=84.70%
+2025-06-05 19:07:25,555 | INFO | Val Loss=0.4530, Val Acc=87.88%
+2025-06-05 19:07:25,555 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.0005459408857859671
+2025-06-05 19:07:47,488 | INFO | Epoch: 34 | Time: 21.92s
+2025-06-05 19:07:47,488 | INFO | Train Loss=0.9578, Train Acc=85.85%
+2025-06-05 19:07:47,489 | INFO | Val Loss=0.4344, Val Acc=87.94%
+2025-06-05 19:07:47,489 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.0006093839765526354
+2025-06-05 19:07:47,490 | INFO | New best model saved (val loss = 0.4344)
+2025-06-05 19:08:09,368 | INFO | Epoch: 35 | Time: 21.87s
+2025-06-05 19:08:09,369 | INFO | Train Loss=0.9369, Train Acc=86.13%
+2025-06-05 19:08:09,369 | INFO | Val Loss=0.4441, Val Acc=87.38%
+2025-06-05 19:08:09,369 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.00045935536036267877
+2025-06-05 19:08:31,189 | INFO | Epoch: 36 | Time: 21.81s
+2025-06-05 19:08:31,189 | INFO | Train Loss=0.9925, Train Acc=85.73%
+2025-06-05 19:08:31,189 | INFO | Val Loss=0.4880, Val Acc=86.66%
+2025-06-05 19:08:31,189 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.0003922951000276953
+2025-06-05 19:08:53,097 | INFO | Epoch: 37 | Time: 21.90s
+2025-06-05 19:08:53,098 | INFO | Train Loss=0.9729, Train Acc=84.88%
+2025-06-05 19:08:53,098 | INFO | Val Loss=0.4284, Val Acc=89.68%
+2025-06-05 19:08:53,098 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.0004223028663545847
+2025-06-05 19:08:53,099 | INFO | New best model saved (val loss = 0.4284)
+2025-06-05 19:09:15,088 | INFO | Epoch: 38 | Time: 21.97s
+2025-06-05 19:09:15,088 | INFO | Train Loss=0.9340, Train Acc=87.81%
+2025-06-05 19:09:15,088 | INFO | Val Loss=0.3795, Val Acc=89.78%
+2025-06-05 19:09:15,088 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.0004576156788971275
+2025-06-05 19:09:15,089 | INFO | New best model saved (val loss = 0.3795)
+2025-06-05 19:09:37,082 | INFO | Epoch: 39 | Time: 21.98s
+2025-06-05 19:09:37,082 | INFO | Train Loss=0.9936, Train Acc=85.68%
+2025-06-05 19:09:37,082 | INFO | Val Loss=0.4156, Val Acc=88.90%
+2025-06-05 19:09:37,082 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.00042264489457011223
+2025-06-05 19:09:58,925 | INFO | Epoch: 40 | Time: 21.83s
+2025-06-05 19:09:58,926 | INFO | Train Loss=0.9460, Train Acc=87.93%
+2025-06-05 19:09:58,926 | INFO | Val Loss=0.4618, Val Acc=86.60%
+2025-06-05 19:09:58,926 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.0004466976970434189
+2025-06-05 19:10:20,793 | INFO | Epoch: 41 | Time: 21.86s
+2025-06-05 19:10:20,793 | INFO | Train Loss=1.0199, Train Acc=84.28%
+2025-06-05 19:10:20,793 | INFO | Val Loss=0.4600, Val Acc=88.96%
+2025-06-05 19:10:20,793 | INFO | Train Gamma Loss=-0.0102 | Val Gamma Loss=0.00038291665259748697
+2025-06-05 19:10:42,723 | INFO | Epoch: 42 | Time: 21.92s
+2025-06-05 19:10:42,723 | INFO | Train Loss=1.0012, Train Acc=85.35%
+2025-06-05 19:10:42,723 | INFO | Val Loss=0.4659, Val Acc=87.04%
+2025-06-05 19:10:42,723 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.00043192869634367526
+2025-06-05 19:11:04,609 | INFO | Epoch: 43 | Time: 21.87s
+2025-06-05 19:11:04,609 | INFO | Train Loss=0.9473, Train Acc=88.48%
+2025-06-05 19:11:04,609 | INFO | Val Loss=0.3973, Val Acc=90.14%
+2025-06-05 19:11:04,609 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.00038232500082813203
+2025-06-05 19:11:26,555 | INFO | Epoch: 44 | Time: 21.93s
+2025-06-05 19:11:26,555 | INFO | Train Loss=0.8673, Train Acc=89.62%
+2025-06-05 19:11:26,555 | INFO | Val Loss=0.4050, Val Acc=90.14%
+2025-06-05 19:11:26,555 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.0004155599162913859
+2025-06-05 19:11:48,373 | INFO | Epoch: 45 | Time: 21.81s
+2025-06-05 19:11:48,373 | INFO | Train Loss=1.0093, Train Acc=85.74%
+2025-06-05 19:11:48,373 | INFO | Val Loss=0.4474, Val Acc=90.14%
+2025-06-05 19:11:48,373 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.00036453056964091957
+2025-06-05 19:12:10,258 | INFO | Epoch: 46 | Time: 21.87s
+2025-06-05 19:12:10,258 | INFO | Train Loss=0.9472, Train Acc=88.51%
+2025-06-05 19:12:10,258 | INFO | Val Loss=0.4159, Val Acc=90.20%
+2025-06-05 19:12:10,259 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.0003703657421283424
+2025-06-05 19:12:32,244 | INFO | Epoch: 47 | Time: 21.97s
+2025-06-05 19:12:32,244 | INFO | Train Loss=0.9640, Train Acc=86.18%
+2025-06-05 19:12:32,244 | INFO | Val Loss=0.4369, Val Acc=89.52%
+2025-06-05 19:12:32,244 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.0003664296818897128
+2025-06-05 19:12:54,067 | INFO | Epoch: 48 | Time: 21.81s
+2025-06-05 19:12:54,067 | INFO | Train Loss=0.9906, Train Acc=86.38%
+2025-06-05 19:12:54,067 | INFO | Val Loss=0.3854, Val Acc=91.50%
+2025-06-05 19:12:54,067 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.00035498628858476877
+2025-06-05 19:13:16,018 | INFO | Epoch: 49 | Time: 21.94s
+2025-06-05 19:13:16,018 | INFO | Train Loss=0.9226, Train Acc=87.66%
+2025-06-05 19:13:16,019 | INFO | Val Loss=0.4048, Val Acc=90.00%
+2025-06-05 19:13:16,019 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.0003076758875977248
+2025-06-05 19:13:38,070 | INFO | Epoch: 50 | Time: 22.04s
+2025-06-05 19:13:38,070 | INFO | Train Loss=0.9236, Train Acc=88.10%
+2025-06-05 19:13:38,070 | INFO | Val Loss=0.3819, Val Acc=90.76%
+2025-06-05 19:13:38,070 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.0003956999280489981
+2025-06-05 19:14:00,010 | INFO | Epoch: 51 | Time: 21.93s
+2025-06-05 19:14:00,010 | INFO | Train Loss=0.8893, Train Acc=89.38%
+2025-06-05 19:14:00,010 | INFO | Val Loss=0.3473, Val Acc=91.02%
+2025-06-05 19:14:00,010 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.000356676202500239
+2025-06-05 19:14:00,012 | INFO | New best model saved (val loss = 0.3473)
+2025-06-05 19:14:22,121 | INFO | Epoch: 52 | Time: 22.10s
+2025-06-05 19:14:22,121 | INFO | Train Loss=0.9531, Train Acc=86.58%
+2025-06-05 19:14:22,121 | INFO | Val Loss=0.4131, Val Acc=90.66%
+2025-06-05 19:14:22,121 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.0003306120343040675
+2025-06-05 19:14:44,114 | INFO | Epoch: 53 | Time: 21.98s
+2025-06-05 19:14:44,114 | INFO | Train Loss=0.9402, Train Acc=88.71%
+2025-06-05 19:14:44,114 | INFO | Val Loss=0.3933, Val Acc=90.70%
+2025-06-05 19:14:44,114 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.00033755862386897206
+2025-06-05 19:15:05,967 | INFO | Epoch: 54 | Time: 21.84s
+2025-06-05 19:15:05,967 | INFO | Train Loss=0.9235, Train Acc=87.38%
+2025-06-05 19:15:05,967 | INFO | Val Loss=0.3555, Val Acc=90.90%
+2025-06-05 19:15:05,968 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.00034233913174830377
+2025-06-05 19:15:27,804 | INFO | Epoch: 55 | Time: 21.82s
+2025-06-05 19:15:27,804 | INFO | Train Loss=0.9143, Train Acc=90.19%
+2025-06-05 19:15:27,804 | INFO | Val Loss=0.3615, Val Acc=91.02%
+2025-06-05 19:15:27,804 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.0003254785551689565
+2025-06-05 19:15:49,641 | INFO | Epoch: 56 | Time: 21.82s
+2025-06-05 19:15:49,641 | INFO | Train Loss=0.9116, Train Acc=88.70%
+2025-06-05 19:15:49,641 | INFO | Val Loss=0.4220, Val Acc=91.42%
+2025-06-05 19:15:49,641 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.0003178902843501419
+2025-06-05 19:16:11,574 | INFO | Epoch: 57 | Time: 21.92s
+2025-06-05 19:16:11,575 | INFO | Train Loss=0.9246, Train Acc=89.15%
+2025-06-05 19:16:11,575 | INFO | Val Loss=0.4024, Val Acc=91.40%
+2025-06-05 19:16:11,575 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.0003425865725148469
+2025-06-05 19:16:33,479 | INFO | Epoch: 58 | Time: 21.89s
+2025-06-05 19:16:33,479 | INFO | Train Loss=0.9180, Train Acc=89.35%
+2025-06-05 19:16:33,479 | INFO | Val Loss=0.3746, Val Acc=91.60%
+2025-06-05 19:16:33,479 | INFO | Train Gamma Loss=-0.0103 | Val Gamma Loss=0.00033190762042067945
+2025-06-05 19:16:55,335 | INFO | Epoch: 59 | Time: 21.84s
+2025-06-05 19:16:55,336 | INFO | Train Loss=0.9095, Train Acc=89.42%
+2025-06-05 19:16:55,336 | INFO | Val Loss=0.3695, Val Acc=91.48%
+2025-06-05 19:16:55,336 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00027954482357017696
+2025-06-05 19:17:17,263 | INFO | Epoch: 60 | Time: 21.91s
+2025-06-05 19:17:17,263 | INFO | Train Loss=0.8991, Train Acc=89.33%
+2025-06-05 19:17:17,263 | INFO | Val Loss=0.3585, Val Acc=91.56%
+2025-06-05 19:17:17,263 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002935138763859868
+2025-06-05 19:17:39,257 | INFO | Epoch: 61 | Time: 21.98s
+2025-06-05 19:17:39,257 | INFO | Train Loss=0.9028, Train Acc=89.16%
+2025-06-05 19:17:39,257 | INFO | Val Loss=0.3469, Val Acc=91.94%
+2025-06-05 19:17:39,257 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00026997571694664657
+2025-06-05 19:17:39,258 | INFO | New best model saved (val loss = 0.3469)
+2025-06-05 19:18:01,347 | INFO | Epoch: 62 | Time: 22.06s
+2025-06-05 19:18:01,347 | INFO | Train Loss=0.8701, Train Acc=91.55%
+2025-06-05 19:18:01,347 | INFO | Val Loss=0.3683, Val Acc=91.78%
+2025-06-05 19:18:01,347 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00027498797862790525
+2025-06-05 19:18:23,449 | INFO | Epoch: 63 | Time: 22.09s
+2025-06-05 19:18:23,449 | INFO | Train Loss=0.8740, Train Acc=90.31%
+2025-06-05 19:18:23,449 | INFO | Val Loss=0.3557, Val Acc=92.32%
+2025-06-05 19:18:23,449 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002772929146885872
+2025-06-05 19:18:45,398 | INFO | Epoch: 64 | Time: 21.93s
+2025-06-05 19:18:45,399 | INFO | Train Loss=0.8858, Train Acc=90.15%
+2025-06-05 19:18:45,399 | INFO | Val Loss=0.3670, Val Acc=92.32%
+2025-06-05 19:18:45,399 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.000257572770351544
+2025-06-05 19:19:07,233 | INFO | Epoch: 65 | Time: 21.82s
+2025-06-05 19:19:07,233 | INFO | Train Loss=0.9425, Train Acc=87.21%
+2025-06-05 19:19:07,233 | INFO | Val Loss=0.3601, Val Acc=92.28%
+2025-06-05 19:19:07,233 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002578720450401306
+2025-06-05 19:19:29,293 | INFO | Epoch: 66 | Time: 22.04s
+2025-06-05 19:19:29,293 | INFO | Train Loss=0.8947, Train Acc=88.73%
+2025-06-05 19:19:29,293 | INFO | Val Loss=0.3770, Val Acc=91.72%
+2025-06-05 19:19:29,293 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00027525064069777727
+2025-06-05 19:19:51,194 | INFO | Epoch: 67 | Time: 21.88s
+2025-06-05 19:19:51,194 | INFO | Train Loss=0.8758, Train Acc=90.90%
+2025-06-05 19:19:51,194 | INFO | Val Loss=0.3292, Val Acc=92.00%
+2025-06-05 19:19:51,194 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002317919716006145
+2025-06-05 19:19:51,195 | INFO | New best model saved (val loss = 0.3292)
+2025-06-05 19:20:13,037 | INFO | Epoch: 68 | Time: 21.81s
+2025-06-05 19:20:13,037 | INFO | Train Loss=0.8680, Train Acc=90.71%
+2025-06-05 19:20:13,037 | INFO | Val Loss=0.3382, Val Acc=92.78%
+2025-06-05 19:20:13,037 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00024196690355893224
+2025-06-05 19:20:35,024 | INFO | Epoch: 69 | Time: 21.97s
+2025-06-05 19:20:35,024 | INFO | Train Loss=0.8428, Train Acc=90.90%
+2025-06-05 19:20:35,024 | INFO | Val Loss=0.3762, Val Acc=92.74%
+2025-06-05 19:20:35,024 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002690811816137284
+2025-06-05 19:20:56,887 | INFO | Epoch: 70 | Time: 21.85s
+2025-06-05 19:20:56,887 | INFO | Train Loss=0.9189, Train Acc=89.34%
+2025-06-05 19:20:56,887 | INFO | Val Loss=0.3247, Val Acc=92.52%
+2025-06-05 19:20:56,887 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002321666106581688
+2025-06-05 19:20:56,888 | INFO | New best model saved (val loss = 0.3247)
+2025-06-05 19:21:18,744 | INFO | Epoch: 71 | Time: 21.84s
+2025-06-05 19:21:18,744 | INFO | Train Loss=0.9177, Train Acc=89.81%
+2025-06-05 19:21:18,744 | INFO | Val Loss=0.3725, Val Acc=92.16%
+2025-06-05 19:21:18,744 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00024710691650398076
+2025-06-05 19:21:40,765 | INFO | Epoch: 72 | Time: 22.00s
+2025-06-05 19:21:40,766 | INFO | Train Loss=0.8352, Train Acc=92.18%
+2025-06-05 19:21:40,766 | INFO | Val Loss=0.3690, Val Acc=92.26%
+2025-06-05 19:21:40,766 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002774556342046708
+2025-06-05 19:22:02,575 | INFO | Epoch: 73 | Time: 21.79s
+2025-06-05 19:22:02,576 | INFO | Train Loss=0.8724, Train Acc=90.33%
+2025-06-05 19:22:02,576 | INFO | Val Loss=0.3659, Val Acc=93.00%
+2025-06-05 19:22:02,576 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002741791249718517
+2025-06-05 19:22:24,544 | INFO | Epoch: 74 | Time: 21.95s
+2025-06-05 19:22:24,544 | INFO | Train Loss=0.8322, Train Acc=92.34%
+2025-06-05 19:22:24,544 | INFO | Val Loss=0.3812, Val Acc=92.60%
+2025-06-05 19:22:24,544 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00027442839927971363
+2025-06-05 19:22:46,331 | INFO | Epoch: 75 | Time: 21.77s
+2025-06-05 19:22:46,331 | INFO | Train Loss=0.8826, Train Acc=91.50%
+2025-06-05 19:22:46,331 | INFO | Val Loss=0.3569, Val Acc=92.82%
+2025-06-05 19:22:46,332 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002511513594072312
+2025-06-05 19:23:08,303 | INFO | Epoch: 76 | Time: 21.95s
+2025-06-05 19:23:08,303 | INFO | Train Loss=0.8331, Train Acc=92.92%
+2025-06-05 19:23:08,304 | INFO | Val Loss=0.3471, Val Acc=92.72%
+2025-06-05 19:23:08,304 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002561179280746728
+2025-06-05 19:23:30,134 | INFO | Epoch: 77 | Time: 21.81s
+2025-06-05 19:23:30,134 | INFO | Train Loss=0.8963, Train Acc=89.73%
+2025-06-05 19:23:30,134 | INFO | Val Loss=0.3687, Val Acc=93.36%
+2025-06-05 19:23:30,134 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002684303617570549
+2025-06-05 19:23:52,058 | INFO | Epoch: 78 | Time: 21.91s
+2025-06-05 19:23:52,058 | INFO | Train Loss=0.8415, Train Acc=91.70%
+2025-06-05 19:23:52,058 | INFO | Val Loss=0.3618, Val Acc=92.74%
+2025-06-05 19:23:52,059 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00025662928237579763
+2025-06-05 19:24:14,064 | INFO | Epoch: 79 | Time: 21.99s
+2025-06-05 19:24:14,064 | INFO | Train Loss=0.8892, Train Acc=91.69%
+2025-06-05 19:24:14,064 | INFO | Val Loss=0.3638, Val Acc=92.68%
+2025-06-05 19:24:14,064 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002363598468946293
+2025-06-05 19:24:35,848 | INFO | Epoch: 80 | Time: 21.76s
+2025-06-05 19:24:35,848 | INFO | Train Loss=0.8919, Train Acc=90.22%
+2025-06-05 19:24:35,848 | INFO | Val Loss=0.3562, Val Acc=92.78%
+2025-06-05 19:24:35,848 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00025214458582922816
+2025-06-05 19:24:57,604 | INFO | Epoch: 81 | Time: 21.74s
+2025-06-05 19:24:57,604 | INFO | Train Loss=0.8223, Train Acc=91.96%
+2025-06-05 19:24:57,604 | INFO | Val Loss=0.3439, Val Acc=92.94%
+2025-06-05 19:24:57,604 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00024315575137734413
+2025-06-05 19:25:19,617 | INFO | Epoch: 82 | Time: 21.99s
+2025-06-05 19:25:19,617 | INFO | Train Loss=0.8586, Train Acc=92.53%
+2025-06-05 19:25:19,617 | INFO | Val Loss=0.3257, Val Acc=93.44%
+2025-06-05 19:25:19,617 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00022569469001609832
+2025-06-05 19:25:41,630 | INFO | Epoch: 83 | Time: 21.99s
+2025-06-05 19:25:41,630 | INFO | Train Loss=0.8529, Train Acc=91.35%
+2025-06-05 19:25:41,630 | INFO | Val Loss=0.3342, Val Acc=93.20%
+2025-06-05 19:25:41,630 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00021893477241974324
+2025-06-05 19:26:03,701 | INFO | Epoch: 84 | Time: 22.05s
+2025-06-05 19:26:03,701 | INFO | Train Loss=0.8255, Train Acc=91.47%
+2025-06-05 19:26:03,701 | INFO | Val Loss=0.3403, Val Acc=92.84%
+2025-06-05 19:26:03,701 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00023518793750554323
+2025-06-05 19:26:25,762 | INFO | Epoch: 85 | Time: 22.04s
+2025-06-05 19:26:25,762 | INFO | Train Loss=0.8413, Train Acc=91.64%
+2025-06-05 19:26:25,762 | INFO | Val Loss=0.3287, Val Acc=93.36%
+2025-06-05 19:26:25,762 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00022846483625471592
+2025-06-05 19:26:47,750 | INFO | Epoch: 86 | Time: 21.97s
+2025-06-05 19:26:47,750 | INFO | Train Loss=0.8109, Train Acc=92.27%
+2025-06-05 19:26:47,751 | INFO | Val Loss=0.3191, Val Acc=92.80%
+2025-06-05 19:26:47,751 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00021296448539942503
+2025-06-05 19:26:47,752 | INFO | New best model saved (val loss = 0.3191)
+2025-06-05 19:27:10,136 | INFO | Epoch: 87 | Time: 22.35s
+2025-06-05 19:27:10,136 | INFO | Train Loss=0.8615, Train Acc=90.79%
+2025-06-05 19:27:10,136 | INFO | Val Loss=0.3520, Val Acc=93.04%
+2025-06-05 19:27:10,136 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00023287678777705878
+2025-06-05 19:27:32,257 | INFO | Epoch: 88 | Time: 22.10s
+2025-06-05 19:27:32,257 | INFO | Train Loss=0.8456, Train Acc=91.50%
+2025-06-05 19:27:32,257 | INFO | Val Loss=0.3656, Val Acc=93.22%
+2025-06-05 19:27:32,257 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00025897572049871087
+2025-06-05 19:27:54,373 | INFO | Epoch: 89 | Time: 22.09s
+2025-06-05 19:27:54,373 | INFO | Train Loss=0.8332, Train Acc=91.63%
+2025-06-05 19:27:54,373 | INFO | Val Loss=0.3384, Val Acc=93.24%
+2025-06-05 19:27:54,373 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002357498015044257
+2025-06-05 19:28:16,276 | INFO | Epoch: 90 | Time: 21.88s
+2025-06-05 19:28:16,276 | INFO | Train Loss=0.8067, Train Acc=93.08%
+2025-06-05 19:28:16,276 | INFO | Val Loss=0.3283, Val Acc=93.44%
+2025-06-05 19:28:16,276 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00022075239394325763
+2025-06-05 19:28:38,239 | INFO | Epoch: 91 | Time: 21.94s
+2025-06-05 19:28:38,239 | INFO | Train Loss=0.8274, Train Acc=92.25%
+2025-06-05 19:28:38,239 | INFO | Val Loss=0.3253, Val Acc=92.94%
+2025-06-05 19:28:38,239 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00021160091273486614
+2025-06-05 19:29:00,226 | INFO | Epoch: 92 | Time: 21.97s
+2025-06-05 19:29:00,226 | INFO | Train Loss=0.8944, Train Acc=89.87%
+2025-06-05 19:29:00,226 | INFO | Val Loss=0.3603, Val Acc=93.16%
+2025-06-05 19:29:00,226 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00024808626039884984
+2025-06-05 19:29:22,742 | INFO | Epoch: 93 | Time: 22.49s
+2025-06-05 19:29:22,742 | INFO | Train Loss=0.7935, Train Acc=93.73%
+2025-06-05 19:29:22,742 | INFO | Val Loss=0.3104, Val Acc=93.22%
+2025-06-05 19:29:22,742 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00020010916341561824
+2025-06-05 19:29:22,744 | INFO | New best model saved (val loss = 0.3104)
+2025-06-05 19:29:44,558 | INFO | Epoch: 94 | Time: 21.79s
+2025-06-05 19:29:44,558 | INFO | Train Loss=0.8642, Train Acc=90.73%
+2025-06-05 19:29:44,558 | INFO | Val Loss=0.3304, Val Acc=93.28%
+2025-06-05 19:29:44,558 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002138625568477437
+2025-06-05 19:30:07,565 | INFO | Epoch: 95 | Time: 22.99s
+2025-06-05 19:30:07,566 | INFO | Train Loss=0.8967, Train Acc=91.08%
+2025-06-05 19:30:07,566 | INFO | Val Loss=0.3231, Val Acc=93.26%
+2025-06-05 19:30:07,566 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.000206957251066342
+2025-06-05 19:30:29,570 | INFO | Epoch: 96 | Time: 21.98s
+2025-06-05 19:30:29,571 | INFO | Train Loss=0.8474, Train Acc=91.78%
+2025-06-05 19:30:29,571 | INFO | Val Loss=0.3416, Val Acc=93.30%
+2025-06-05 19:30:29,571 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00023329521354753524
+2025-06-05 19:30:51,601 | INFO | Epoch: 97 | Time: 22.01s
+2025-06-05 19:30:51,601 | INFO | Train Loss=0.8197, Train Acc=91.98%
+2025-06-05 19:30:51,601 | INFO | Val Loss=0.3910, Val Acc=93.16%
+2025-06-05 19:30:51,601 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00026964666903950274
+2025-06-05 19:31:13,467 | INFO | Epoch: 98 | Time: 21.84s
+2025-06-05 19:31:13,467 | INFO | Train Loss=0.8229, Train Acc=93.24%
+2025-06-05 19:31:13,467 | INFO | Val Loss=0.3487, Val Acc=92.98%
+2025-06-05 19:31:13,467 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00022161926608532667
+2025-06-05 19:31:35,378 | INFO | Epoch: 99 | Time: 21.89s
+2025-06-05 19:31:35,378 | INFO | Train Loss=0.8097, Train Acc=92.16%
+2025-06-05 19:31:35,378 | INFO | Val Loss=0.3172, Val Acc=93.26%
+2025-06-05 19:31:35,378 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.0002068058674922213
+2025-06-05 19:31:57,373 | INFO | Epoch: 100 | Time: 21.97s
+2025-06-05 19:31:57,373 | INFO | Train Loss=0.8603, Train Acc=92.04%
+2025-06-05 19:31:57,373 | INFO | Val Loss=0.3113, Val Acc=93.58%
+2025-06-05 19:31:57,373 | INFO | Train Gamma Loss=-0.0104 | Val Gamma Loss=0.00021065576584078372
+2025-06-05 19:31:57,449 | INFO | Best model with lowest val loss 0.3104230001568794 at 92 epoch is saved.
+2025-06-05 19:32:00,352 | INFO | Test Accuracy: 93.59%
+2025-06-05 19:32:00,453 | INFO | Last model with val loss 0.3112752862274647 at 99 epoch is saved.
+2025-06-05 19:32:03,286 | INFO | Test Accuracy: 93.59%
+2025-06-05 19:32:03,341 | INFO | 
+Job Completed
+2025-06-05 20:05:21,109 | INFO | No test config present. Using train config.
+2025-06-05 20:05:23,082 | INFO | Full train/val size with downsampling (0): 50000
+2025-06-05 20:05:23,083 | INFO | Batch size: 32
+2025-06-05 20:05:23,083 | INFO | Running these attacks:
+2025-06-05 20:05:23,083 | INFO | {'FGSM': [0.01, 0.05, 0.1, 0.2], 'PGD': [0.01, 0.05, 0.1, 0.2], 'gaussian noise': [0.01, 0.05, 0.1, 0.2]}
+2025-06-05 20:05:23,103 | INFO | 
+Testing model: /rds/general/user/psp20/home/Brain-Network/runs/brainit_4_3_acc_20250605-185514/brainit_4_3_acc_20250605-185514_e92_best_model.pt
+2025-06-05 20:05:23,103 | INFO | Running attack: FGSM, 0.01
+2025-06-05 20:05:37,105 | INFO | Test accuracy: 57.67
+2025-06-05 20:05:37,105 | INFO | Running attack: FGSM, 0.05
+2025-06-05 20:05:51,579 | INFO | Test accuracy: 55.92
+2025-06-05 20:05:51,580 | INFO | Running attack: FGSM, 0.1
+2025-06-05 20:06:05,726 | INFO | Test accuracy: 53.02
+2025-06-05 20:06:05,726 | INFO | Running attack: FGSM, 0.2
+2025-06-05 20:06:19,637 | INFO | Test accuracy: 47.44
+2025-06-05 20:06:19,637 | INFO | Running attack: PGD, 0.01
+2025-06-05 20:07:45,790 | INFO | Test accuracy: 41.72
+2025-06-05 20:07:45,790 | INFO | Running attack: PGD, 0.05
+2025-06-05 20:09:12,321 | INFO | Test accuracy: 18.54
+2025-06-05 20:09:12,322 | INFO | Running attack: PGD, 0.1
+2025-06-05 20:10:38,222 | INFO | Test accuracy: 14.92
+2025-06-05 20:10:38,223 | INFO | Running attack: PGD, 0.2
+2025-06-05 20:12:04,492 | INFO | Test accuracy: 11.95
+2025-06-05 20:12:04,493 | INFO | Running attack: gaussian noise, 0.01
+2025-06-05 20:12:09,469 | INFO | Test accuracy: 58.21
+2025-06-05 20:12:09,469 | INFO | Running attack: gaussian noise, 0.05
+2025-06-05 20:12:14,325 | INFO | Test accuracy: 57.82
+2025-06-05 20:12:14,325 | INFO | Running attack: gaussian noise, 0.1
+2025-06-05 20:12:18,881 | INFO | Test accuracy: 56.59
+2025-06-05 20:12:18,881 | INFO | Running attack: gaussian noise, 0.2
+2025-06-05 20:12:23,795 | INFO | Test accuracy: 51.57
