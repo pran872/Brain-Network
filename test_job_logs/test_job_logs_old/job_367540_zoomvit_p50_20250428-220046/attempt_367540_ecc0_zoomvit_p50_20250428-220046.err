@@ -1,7 +1,0 @@
-Traceback (most recent call last):
-  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 249, in <module>
-    main()
-  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 200, in main
-    all_attacks = fgsm_attacks | pgd_attacks | gaussian_noise # concat dicts
-                  ^^^^^^^^^^^^
-NameError: name 'fgsm_attacks' is not defined. Did you mean: 'pgd_attacks'?
