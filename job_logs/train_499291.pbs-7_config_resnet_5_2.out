@@ -1,0 +1,19 @@
+Starting training on cx3-20-3.cx3.hpc.ic.ac.uk at Thu  5 Jun 16:41:26 BST 2025
+Using config: configs/cifar/round_5_05_06/config_resnet_5_1.json
+/rds/general/user/psp20/home/Brain-Network/runs/resnet_5_1_v2_acc_20250605-164230
+/rds/general/user/psp20/home/Brain-Network/runs/resnet_5_1_v2_sample_eff_0_1_20250605-170023
+/rds/general/user/psp20/home/Brain-Network/runs/resnet_5_1_v2_sample_eff_0_25_20250605-170239
+/rds/general/user/psp20/home/Brain-Network/runs/resnet_5_1_v2_sample_eff_0_5_20250605-170708
+/rds/general/user/psp20/home/Brain-Network/runs/resnet_5_1_v2_acc_20250605-164230
+Finished at Thu  5 Jun 17:17:45 BST 2025
+Clean up
+mv: cannot stat 'job_logs/train.err': No such file or directory
+
+====================================
+CPU Time used: 01:23:09
+CPU Percent: 255%
+Memory usage: 1736272kb
+Approx Power usage: 0.0166
+Walltime usage: 00:36:29
+
+====================================

@@ -1,5 +1,5 @@
 {
-    "run_name": "resnet_5_1",
+    "run_name": "resnet_5_2",
     "writer": true,
 
     "seed": 42,
@@ -9,7 +9,7 @@
         "train_split": 0.9,
         "batch_size": 256,
         "num_workers": 2,
-        "downsample_fraction": 0.5,
+        "downsample_fraction": 0,
         "few_shot": false
     },  
 
