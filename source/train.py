@@ -302,38 +302,6 @@ def parse_args():
         required=False,
         help="Run on debug mode"
     )
-    parser.add_argument(
-        "--run_all_tests",
-        action="store_true",
-        required=False,
-        help="Runs accuracy tests," \
-                "sample efficiency tests: 0.1, 0.25, 0.5," \
-                "and robustness tests: FGSM, PGD, gaussian noise with epsilon [0.01, 0.05, 0.1, 0.2]"
-    )
-    parser.add_argument(
-        "--run_sample_eff",
-        nargs='+',
-        default=[],
-        help="List of sample efficiency tests to run e.g., [0.1, 0.2....]"
-    )
-    parser.add_argument(
-        "--run_FGSM",
-        nargs='+',
-        default=[],
-        help="List of FGSM tests to run with epsilons e.g., [0.1, 0.2....]"
-    )
-    parser.add_argument(
-        "--run_PGD",
-        nargs='+',
-        default=[],
-        help="List of PGD tests to run with epsilons e.g., [0.1, 0.2....]"
-    )
-    parser.add_argument(
-        "--run_gaussian",
-        nargs='+',
-        default=[],
-        help="List of gaussian tests to run with epsilons e.g., [0.1, 0.2....]"
-    )
 
     args = parser.parse_args()
     try:
@@ -342,7 +310,7 @@ def parse_args():
     except (json.JSONDecodeError, TypeError) as e:
         config = {}
     
-    return config, args.debug, args.run_all_tests, args.run_sample_eff, args.run_FGSM, args.run_PGD, args.run_gaussian
+    return config, args.debug
 
 def set_config_defaults(user_config):
     with open("configs/config_template.json", 'r') as f:
