@@ -116,7 +116,7 @@ def get_files(args, logger):
             logger.info(f"The provided directory has more than one config file. Using {os.path.basename(config_file[0])}.")
         args.config = config_file[0]
 
-        args.model = glob.glob(os.path.join(args.run_folder, "**", "*best*.pt"), recursive=True)
+        args.model = glob.glob(os.path.join(args.run_folder, "**", "test*best*.pt"), recursive=True)
         assert len(args.model) > 0, "No model path present in the provided directory."
     
     with open(args.config, 'r') as f:
