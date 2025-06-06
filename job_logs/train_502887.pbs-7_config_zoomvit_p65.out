@@ -1,0 +1,39 @@
+Starting training on cx3-20-4.cx3.hpc.ic.ac.uk at Thu  5 Jun 19:58:00 BST 2025
+Using config: configs/stanford_dogs/zoomvit_configs/config_zoomvit_p64.json
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_p64_acc_20250605-195857
+/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/autograd/graph.py:823: UserWarning: adaptive_avg_pool2d_backward_cuda does not have a deterministic implementation, but you set 'torch.use_deterministic_algorithms(True, warn_only=True)'. You can file an issue at https://github.com/pytorch/pytorch/issues to help us prioritize adding deterministic support for this operation. (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:92.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_p64_sample_eff_0_1_20250605-230037
+/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/autograd/graph.py:823: UserWarning: adaptive_avg_pool2d_backward_cuda does not have a deterministic implementation, but you set 'torch.use_deterministic_algorithms(True, warn_only=True)'. You can file an issue at https://github.com/pytorch/pytorch/issues to help us prioritize adding deterministic support for this operation. (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:92.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/rds/general/user/psp20/home/miniforge3/envs/brain-network-env/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_p64_sample_eff_0_25_20250605-233700
+/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/autograd/graph.py:823: UserWarning: adaptive_avg_pool2d_backward_cuda does not have a deterministic implementation, but you set 'torch.use_deterministic_algorithms(True, warn_only=True)'. You can file an issue at https://github.com/pytorch/pytorch/issues to help us prioritize adding deterministic support for this operation. (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:92.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_p64_sample_eff_0_5_20250606-004051
+/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/autograd/graph.py:823: UserWarning: adaptive_avg_pool2d_backward_cuda does not have a deterministic implementation, but you set 'torch.use_deterministic_algorithms(True, warn_only=True)'. You can file an issue at https://github.com/pytorch/pytorch/issues to help us prioritize adding deterministic support for this operation. (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:92.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+=>> PBS: job killed: walltime 21629 exceeded limit 21600
+Clean up
+mv: cannot stat 'job_logs/train.err': No such file or directory
+/var/spool/pbs/mom_priv/jobs/502886.pbs-7.SC: line 15: 299073 Terminated              python source/run_all_train_tests.py -c $CONFIG --run_all_tests
+
+====================================
+CPU Time used: 07:18:37
+CPU Percent: 151%
+Memory usage: 1946256kb
+Approx Power usage: 0.0876
+Walltime usage: 06:00:40
+
+====================================
