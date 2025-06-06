@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 265, in <module>
+    main()
+  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 177, in main
+    config, model_pts = get_files(args, logger)
+                        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 120, in get_files
+    assert len(args.model) > 0, "No model path present in the provided directory."
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError: No model path present in the provided directory.

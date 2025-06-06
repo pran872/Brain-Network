@@ -1,0 +1,13 @@
+Starting test on cx3-20-1.cx3.hpc.ic.ac.uk at Fri  6 Jun 10:51:58 BST 2025
+Using run folder: runs/brainit_5_4_acc_20250605-190518/
+Test failed with exit code 1
+Job cleanup done. Logs stored in test_job_logs/job_507396_20250606_105148_brainit_5_4_acc_20250605-190518
+
+====================================
+CPU Time used: 00:00:01
+CPU Percent: 5%
+Memory usage: 323684kb
+Approx Power usage: 0.0
+Walltime usage: 00:02:01
+
+====================================
