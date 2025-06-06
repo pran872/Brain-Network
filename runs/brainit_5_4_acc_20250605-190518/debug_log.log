@@ -450,3 +450,32 @@
 2025-06-05 22:32:27,882 | INFO | Test Accuracy: 71.13%
 2025-06-05 22:32:27,915 | INFO | 
 Job Completed
+2025-06-06 16:10:47,070 | INFO | Batch size: 64
+2025-06-06 16:10:47,209 | INFO | Running these attacks:
+2025-06-06 16:10:47,209 | INFO | {'FGSM': [0.01, 0.05, 0.1, 0.2], 'PGD': [0.01, 0.05, 0.1, 0.2], 'gaussian noise': [0.01, 0.05, 0.1, 0.2]}
+2025-06-06 16:10:47,209 | INFO | 
+Testing model: runs/brainit_5_4_acc_20250605-190518/brainit_5_4_acc_20250605-190518_e76_test_best_model.pt
+2025-06-06 16:10:47,209 | INFO | Running attack: FGSM, 0.01
+2025-06-06 16:13:25,176 | INFO | Test accuracy: 12.389277389277389
+2025-06-06 16:13:25,201 | INFO | Running attack: FGSM, 0.05
+2025-06-06 16:15:53,952 | INFO | Test accuracy: 4.067599067599067
+2025-06-06 16:15:53,952 | INFO | Running attack: FGSM, 0.1
+2025-06-06 16:18:22,743 | INFO | Test accuracy: 2.7855477855477857
+2025-06-06 16:18:22,743 | INFO | Running attack: FGSM, 0.2
+2025-06-06 16:20:51,926 | INFO | Test accuracy: 2.2144522144522143
+2025-06-06 16:20:51,926 | INFO | Running attack: PGD, 0.01
+2025-06-06 16:35:54,243 | INFO | Test accuracy: 0.7575757575757576
+2025-06-06 16:35:54,243 | INFO | Running attack: PGD, 0.05
+2025-06-06 16:50:57,566 | INFO | Test accuracy: 0.023310023310023312
+2025-06-06 16:50:57,566 | INFO | Running attack: PGD, 0.1
+2025-06-06 17:05:51,440 | INFO | Test accuracy: 0.011655011655011656
+2025-06-06 17:05:51,441 | INFO | Running attack: PGD, 0.2
+2025-06-06 17:20:46,187 | INFO | Test accuracy: 0.0
+2025-06-06 17:20:46,187 | INFO | Running attack: gaussian noise, 0.01
+2025-06-06 17:22:12,988 | INFO | Test accuracy: 21.18881118881119
+2025-06-06 17:22:12,989 | INFO | Running attack: gaussian noise, 0.05
+2025-06-06 17:23:35,069 | INFO | Test accuracy: 20.186480186480185
+2025-06-06 17:23:35,069 | INFO | Running attack: gaussian noise, 0.1
+2025-06-06 17:24:54,083 | INFO | Test accuracy: 17.68065268065268
+2025-06-06 17:24:54,083 | INFO | Running attack: gaussian noise, 0.2
+2025-06-06 17:26:19,155 | INFO | Test accuracy: 11.037296037296038

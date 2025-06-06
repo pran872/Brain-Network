@@ -468,3 +468,32 @@
 2025-06-05 22:38:13,903 | INFO | Test Accuracy: 62.21%
 2025-06-05 22:38:13,949 | INFO | 
 Job Completed
+2025-06-06 15:01:02,535 | INFO | Batch size: 64
+2025-06-06 15:01:02,553 | INFO | Running these attacks:
+2025-06-06 15:01:02,553 | INFO | {'FGSM': [0.01, 0.05, 0.1, 0.2], 'PGD': [0.01, 0.05, 0.1, 0.2], 'gaussian noise': [0.01, 0.05, 0.1, 0.2]}
+2025-06-06 15:01:02,553 | INFO | 
+Testing model: runs/brainit_5_3_acc_20250605-190518/brainit_5_3_acc_20250605-190518_e95_test_best_model.pt
+2025-06-06 15:01:02,553 | INFO | Running attack: FGSM, 0.01
+2025-06-06 15:03:38,038 | INFO | Test accuracy: 9.72027972027972
+2025-06-06 15:03:38,038 | INFO | Running attack: FGSM, 0.05
+2025-06-06 15:06:06,242 | INFO | Test accuracy: 3.3566433566433567
+2025-06-06 15:06:06,242 | INFO | Running attack: FGSM, 0.1
+2025-06-06 15:08:37,012 | INFO | Test accuracy: 2.0396270396270397
+2025-06-06 15:08:37,012 | INFO | Running attack: FGSM, 0.2
+2025-06-06 15:11:08,611 | INFO | Test accuracy: 1.4801864801864801
+2025-06-06 15:11:08,611 | INFO | Running attack: PGD, 0.01
+2025-06-06 15:25:54,385 | INFO | Test accuracy: 1.5384615384615385
+2025-06-06 15:25:54,385 | INFO | Running attack: PGD, 0.05
+2025-06-06 15:40:35,814 | INFO | Test accuracy: 0.011655011655011656
+2025-06-06 15:40:35,814 | INFO | Running attack: PGD, 0.1
+2025-06-06 15:55:13,449 | INFO | Test accuracy: 0.011655011655011656
+2025-06-06 15:55:13,449 | INFO | Running attack: PGD, 0.2
+2025-06-06 16:09:51,907 | INFO | Test accuracy: 0.011655011655011656
+2025-06-06 16:09:51,907 | INFO | Running attack: gaussian noise, 0.01
+2025-06-06 16:11:13,258 | INFO | Test accuracy: 14.627039627039627
+2025-06-06 16:11:13,258 | INFO | Running attack: gaussian noise, 0.05
+2025-06-06 16:12:25,071 | INFO | Test accuracy: 14.417249417249417
+2025-06-06 16:12:25,071 | INFO | Running attack: gaussian noise, 0.1
+2025-06-06 16:13:41,405 | INFO | Test accuracy: 13.58974358974359
+2025-06-06 16:13:41,405 | INFO | Running attack: gaussian noise, 0.2
+2025-06-06 16:14:55,604 | INFO | Test accuracy: 10.582750582750583
