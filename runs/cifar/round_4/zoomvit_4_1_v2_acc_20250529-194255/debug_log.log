@@ -773,3 +773,313 @@ Testing model: /rds/general/user/psp20/home/Brain-Network/runs/zoomvit_4_1_v2_ac
 2025-06-07 19:32:39,234 | INFO | Corruption type: zoom_blur
 2025-06-07 19:32:39,234 | INFO | Severity type: 5
 2025-06-07 19:34:24,897 | INFO | Test accuracy: 63.32
+2025-06-07 20:57:48,494 | INFO | 
+2025-06-07 20:57:48,518 | INFO | Running robustness tests
+2025-06-07 20:57:48,523 | INFO | Using config: runs/cifar/round_4/zoomvit_4_1_v2_acc_20250529-194255/config_zoomvit_4_1_v2_acc.json
+2025-06-07 20:57:48,523 | INFO | Using model: runs/cifar/round_4/zoomvit_4_1_v2_acc_20250529-194255/zoomvit_4_1_v2_acc_20250529-194255_e92_best_model.pt
+2025-06-07 20:57:48,595 | INFO | Running these corruptions: ['brightness', 'contrast', 'defocus_blur', 'elastic_transform', 'fog', 'frost', 'gaussian_blur', 'gaussian_noise', 'glass_blur', 'impulse_noise', 'jpeg_compression', 'motion_blur', 'pixelate', 'saturate', 'shot_noise', 'snow', 'spatter', 'speckle_noise', 'zoom_blur']
+2025-06-07 20:57:48,595 | INFO | For these severities: [1, 2, 3, 4, 5]
+2025-06-07 20:57:48,595 | INFO | Corruption type: brightness
+2025-06-07 20:57:48,595 | INFO | Severity type: 1
+2025-06-07 20:57:48,694 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:57:51,527 | INFO | Test accuracy: 94.4
+2025-06-07 20:57:51,527 | INFO | Severity type: 2
+2025-06-07 20:57:51,564 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:57:53,287 | INFO | Test accuracy: 94.07
+2025-06-07 20:57:53,287 | INFO | Severity type: 3
+2025-06-07 20:57:53,323 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:57:55,012 | INFO | Test accuracy: 93.55
+2025-06-07 20:57:55,012 | INFO | Severity type: 4
+2025-06-07 20:57:55,048 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:57:56,745 | INFO | Test accuracy: 93.16
+2025-06-07 20:57:56,745 | INFO | Severity type: 5
+2025-06-07 20:57:56,782 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:57:58,477 | INFO | Test accuracy: 91.56
+2025-06-07 20:57:58,477 | INFO | Corruption type: contrast
+2025-06-07 20:57:58,477 | INFO | Severity type: 1
+2025-06-07 20:57:58,555 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:00,262 | INFO | Test accuracy: 94.31
+2025-06-07 20:58:00,263 | INFO | Severity type: 2
+2025-06-07 20:58:00,301 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:02,041 | INFO | Test accuracy: 92.96
+2025-06-07 20:58:02,041 | INFO | Severity type: 3
+2025-06-07 20:58:02,077 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:03,779 | INFO | Test accuracy: 90.97
+2025-06-07 20:58:03,780 | INFO | Severity type: 4
+2025-06-07 20:58:03,815 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:05,519 | INFO | Test accuracy: 86.95
+2025-06-07 20:58:05,519 | INFO | Severity type: 5
+2025-06-07 20:58:05,558 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:07,301 | INFO | Test accuracy: 58.14
+2025-06-07 20:58:07,301 | INFO | Corruption type: defocus_blur
+2025-06-07 20:58:07,316 | INFO | Severity type: 1
+2025-06-07 20:58:07,622 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:09,343 | INFO | Test accuracy: 94.17
+2025-06-07 20:58:09,343 | INFO | Severity type: 2
+2025-06-07 20:58:09,381 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:11,119 | INFO | Test accuracy: 92.8
+2025-06-07 20:58:11,119 | INFO | Severity type: 3
+2025-06-07 20:58:11,155 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:12,883 | INFO | Test accuracy: 88.66
+2025-06-07 20:58:12,884 | INFO | Severity type: 4
+2025-06-07 20:58:12,921 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:14,704 | INFO | Test accuracy: 79.79
+2025-06-07 20:58:14,704 | INFO | Severity type: 5
+2025-06-07 20:58:14,740 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:16,475 | INFO | Test accuracy: 56.95
+2025-06-07 20:58:16,476 | INFO | Corruption type: elastic_transform
+2025-06-07 20:58:16,476 | INFO | Severity type: 1
+2025-06-07 20:58:16,619 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:18,353 | INFO | Test accuracy: 90.23
+2025-06-07 20:58:18,353 | INFO | Severity type: 2
+2025-06-07 20:58:18,388 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:20,165 | INFO | Test accuracy: 89.85
+2025-06-07 20:58:20,165 | INFO | Severity type: 3
+2025-06-07 20:58:20,202 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:21,941 | INFO | Test accuracy: 86.04
+2025-06-07 20:58:21,941 | INFO | Severity type: 4
+2025-06-07 20:58:21,981 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:23,707 | INFO | Test accuracy: 80.56
+2025-06-07 20:58:23,707 | INFO | Severity type: 5
+2025-06-07 20:58:23,744 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:25,484 | INFO | Test accuracy: 76.59
+2025-06-07 20:58:25,484 | INFO | Corruption type: fog
+2025-06-07 20:58:25,484 | INFO | Severity type: 1
+2025-06-07 20:58:25,567 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:27,287 | INFO | Test accuracy: 94.43
+2025-06-07 20:58:27,287 | INFO | Severity type: 2
+2025-06-07 20:58:27,322 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:29,052 | INFO | Test accuracy: 93.78
+2025-06-07 20:58:29,052 | INFO | Severity type: 3
+2025-06-07 20:58:29,091 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:30,868 | INFO | Test accuracy: 92.19
+2025-06-07 20:58:30,868 | INFO | Severity type: 4
+2025-06-07 20:58:30,904 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:32,607 | INFO | Test accuracy: 89.83
+2025-06-07 20:58:32,607 | INFO | Severity type: 5
+2025-06-07 20:58:32,643 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:34,356 | INFO | Test accuracy: 77.38
+2025-06-07 20:58:34,356 | INFO | Corruption type: frost
+2025-06-07 20:58:34,356 | INFO | Severity type: 1
+2025-06-07 20:58:34,412 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:36,189 | INFO | Test accuracy: 91.0
+2025-06-07 20:58:36,189 | INFO | Severity type: 2
+2025-06-07 20:58:36,224 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:37,961 | INFO | Test accuracy: 86.14
+2025-06-07 20:58:37,962 | INFO | Severity type: 3
+2025-06-07 20:58:37,999 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:39,800 | INFO | Test accuracy: 77.42
+2025-06-07 20:58:39,800 | INFO | Severity type: 4
+2025-06-07 20:58:39,839 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:41,631 | INFO | Test accuracy: 75.48
+2025-06-07 20:58:41,631 | INFO | Severity type: 5
+2025-06-07 20:58:41,666 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:43,421 | INFO | Test accuracy: 65.04
+2025-06-07 20:58:43,421 | INFO | Corruption type: gaussian_blur
+2025-06-07 20:58:43,421 | INFO | Severity type: 1
+2025-06-07 20:58:43,533 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:45,260 | INFO | Test accuracy: 94.19
+2025-06-07 20:58:45,260 | INFO | Severity type: 2
+2025-06-07 20:58:45,295 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:47,040 | INFO | Test accuracy: 88.59
+2025-06-07 20:58:47,041 | INFO | Severity type: 3
+2025-06-07 20:58:47,078 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:48,880 | INFO | Test accuracy: 78.96
+2025-06-07 20:58:48,880 | INFO | Severity type: 4
+2025-06-07 20:58:48,923 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:50,715 | INFO | Test accuracy: 64.16
+2025-06-07 20:58:50,716 | INFO | Severity type: 5
+2025-06-07 20:58:50,757 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:52,543 | INFO | Test accuracy: 36.35
+2025-06-07 20:58:52,544 | INFO | Corruption type: gaussian_noise
+2025-06-07 20:58:52,544 | INFO | Severity type: 1
+2025-06-07 20:58:52,635 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:54,375 | INFO | Test accuracy: 76.24
+2025-06-07 20:58:54,375 | INFO | Severity type: 2
+2025-06-07 20:58:54,413 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:56,154 | INFO | Test accuracy: 53.89
+2025-06-07 20:58:56,154 | INFO | Severity type: 3
+2025-06-07 20:58:56,190 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:57,917 | INFO | Test accuracy: 35.32
+2025-06-07 20:58:57,917 | INFO | Severity type: 4
+2025-06-07 20:58:57,953 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:58:59,672 | INFO | Test accuracy: 29.32
+2025-06-07 20:58:59,672 | INFO | Severity type: 5
+2025-06-07 20:58:59,708 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:01,523 | INFO | Test accuracy: 24.94
+2025-06-07 20:59:01,523 | INFO | Corruption type: glass_blur
+2025-06-07 20:59:01,523 | INFO | Severity type: 1
+2025-06-07 20:59:01,700 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:03,435 | INFO | Test accuracy: 51.74
+2025-06-07 20:59:03,435 | INFO | Severity type: 2
+2025-06-07 20:59:03,475 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:05,199 | INFO | Test accuracy: 54.26
+2025-06-07 20:59:05,200 | INFO | Severity type: 3
+2025-06-07 20:59:05,235 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:06,981 | INFO | Test accuracy: 60.1
+2025-06-07 20:59:06,982 | INFO | Severity type: 4
+2025-06-07 20:59:07,022 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:08,814 | INFO | Test accuracy: 41.87
+2025-06-07 20:59:08,814 | INFO | Severity type: 5
+2025-06-07 20:59:08,852 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:10,601 | INFO | Test accuracy: 47.25
+2025-06-07 20:59:10,602 | INFO | Corruption type: impulse_noise
+2025-06-07 20:59:10,602 | INFO | Severity type: 1
+2025-06-07 20:59:10,844 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:12,638 | INFO | Test accuracy: 88.71
+2025-06-07 20:59:12,638 | INFO | Severity type: 2
+2025-06-07 20:59:12,674 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:14,426 | INFO | Test accuracy: 81.0
+2025-06-07 20:59:14,426 | INFO | Severity type: 3
+2025-06-07 20:59:14,461 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:16,202 | INFO | Test accuracy: 70.75
+2025-06-07 20:59:16,202 | INFO | Severity type: 4
+2025-06-07 20:59:16,238 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:17,988 | INFO | Test accuracy: 48.26
+2025-06-07 20:59:17,988 | INFO | Severity type: 5
+2025-06-07 20:59:18,027 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:19,812 | INFO | Test accuracy: 29.18
+2025-06-07 20:59:19,812 | INFO | Corruption type: jpeg_compression
+2025-06-07 20:59:19,813 | INFO | Severity type: 1
+2025-06-07 20:59:19,882 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:21,627 | INFO | Test accuracy: 87.22
+2025-06-07 20:59:21,628 | INFO | Severity type: 2
+2025-06-07 20:59:21,664 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:23,393 | INFO | Test accuracy: 82.31
+2025-06-07 20:59:23,393 | INFO | Severity type: 3
+2025-06-07 20:59:23,429 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:25,148 | INFO | Test accuracy: 80.88
+2025-06-07 20:59:25,190 | INFO | Severity type: 4
+2025-06-07 20:59:25,226 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:26,940 | INFO | Test accuracy: 78.13
+2025-06-07 20:59:26,940 | INFO | Severity type: 5
+2025-06-07 20:59:26,977 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:28,700 | INFO | Test accuracy: 74.96
+2025-06-07 20:59:28,701 | INFO | Corruption type: motion_blur
+2025-06-07 20:59:28,701 | INFO | Severity type: 1
+2025-06-07 20:59:28,793 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:30,527 | INFO | Test accuracy: 89.86
+2025-06-07 20:59:30,527 | INFO | Severity type: 2
+2025-06-07 20:59:30,563 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:32,294 | INFO | Test accuracy: 82.39
+2025-06-07 20:59:32,294 | INFO | Severity type: 3
+2025-06-07 20:59:32,332 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:34,097 | INFO | Test accuracy: 74.08
+2025-06-07 20:59:34,097 | INFO | Severity type: 4
+2025-06-07 20:59:34,136 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:35,896 | INFO | Test accuracy: 74.44
+2025-06-07 20:59:35,897 | INFO | Severity type: 5
+2025-06-07 20:59:35,939 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:37,880 | INFO | Test accuracy: 65.93
+2025-06-07 20:59:37,880 | INFO | Corruption type: pixelate
+2025-06-07 20:59:37,880 | INFO | Severity type: 1
+2025-06-07 20:59:37,969 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:39,910 | INFO | Test accuracy: 92.57
+2025-06-07 20:59:39,910 | INFO | Severity type: 2
+2025-06-07 20:59:39,948 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:41,721 | INFO | Test accuracy: 88.04
+2025-06-07 20:59:41,721 | INFO | Severity type: 3
+2025-06-07 20:59:41,757 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:43,472 | INFO | Test accuracy: 82.57
+2025-06-07 20:59:43,472 | INFO | Severity type: 4
+2025-06-07 20:59:43,507 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:45,232 | INFO | Test accuracy: 62.72
+2025-06-07 20:59:45,232 | INFO | Severity type: 5
+2025-06-07 20:59:45,269 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:46,998 | INFO | Test accuracy: 44.02
+2025-06-07 20:59:46,999 | INFO | Corruption type: saturate
+2025-06-07 20:59:46,999 | INFO | Severity type: 1
+2025-06-07 20:59:47,298 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:49,036 | INFO | Test accuracy: 92.73
+2025-06-07 20:59:49,036 | INFO | Severity type: 2
+2025-06-07 20:59:49,071 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:50,825 | INFO | Test accuracy: 89.83
+2025-06-07 20:59:50,826 | INFO | Severity type: 3
+2025-06-07 20:59:50,865 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:52,675 | INFO | Test accuracy: 94.13
+2025-06-07 20:59:52,675 | INFO | Severity type: 4
+2025-06-07 20:59:52,712 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:54,439 | INFO | Test accuracy: 91.9
+2025-06-07 20:59:54,439 | INFO | Severity type: 5
+2025-06-07 20:59:54,475 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:56,193 | INFO | Test accuracy: 88.19
+2025-06-07 20:59:56,193 | INFO | Corruption type: shot_noise
+2025-06-07 20:59:56,193 | INFO | Severity type: 1
+2025-06-07 20:59:56,295 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:58,020 | INFO | Test accuracy: 85.01
+2025-06-07 20:59:58,020 | INFO | Severity type: 2
+2025-06-07 20:59:58,059 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 20:59:59,845 | INFO | Test accuracy: 73.99
+2025-06-07 20:59:59,845 | INFO | Severity type: 3
+2025-06-07 20:59:59,881 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:01,629 | INFO | Test accuracy: 49.57
+2025-06-07 21:00:01,629 | INFO | Severity type: 4
+2025-06-07 21:00:01,667 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:03,408 | INFO | Test accuracy: 41.13
+2025-06-07 21:00:03,408 | INFO | Severity type: 5
+2025-06-07 21:00:03,444 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:05,252 | INFO | Test accuracy: 30.23
+2025-06-07 21:00:05,252 | INFO | Corruption type: snow
+2025-06-07 21:00:05,252 | INFO | Severity type: 1
+2025-06-07 21:00:05,352 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:07,143 | INFO | Test accuracy: 91.14
+2025-06-07 21:00:07,143 | INFO | Severity type: 2
+2025-06-07 21:00:07,181 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:08,944 | INFO | Test accuracy: 80.98
+2025-06-07 21:00:08,945 | INFO | Severity type: 3
+2025-06-07 21:00:08,984 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:10,787 | INFO | Test accuracy: 84.79
+2025-06-07 21:00:10,787 | INFO | Severity type: 4
+2025-06-07 21:00:10,833 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:12,576 | INFO | Test accuracy: 82.94
+2025-06-07 21:00:12,576 | INFO | Severity type: 5
+2025-06-07 21:00:12,613 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:14,414 | INFO | Test accuracy: 77.7
+2025-06-07 21:00:14,414 | INFO | Corruption type: spatter
+2025-06-07 21:00:14,414 | INFO | Severity type: 1
+2025-06-07 21:00:14,596 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:16,366 | INFO | Test accuracy: 92.93
+2025-06-07 21:00:16,366 | INFO | Severity type: 2
+2025-06-07 21:00:16,405 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:18,165 | INFO | Test accuracy: 90.34
+2025-06-07 21:00:18,165 | INFO | Severity type: 3
+2025-06-07 21:00:18,203 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:20,005 | INFO | Test accuracy: 86.86
+2025-06-07 21:00:20,005 | INFO | Severity type: 4
+2025-06-07 21:00:20,042 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:21,787 | INFO | Test accuracy: 90.2
+2025-06-07 21:00:21,788 | INFO | Severity type: 5
+2025-06-07 21:00:21,824 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:23,537 | INFO | Test accuracy: 83.95
+2025-06-07 21:00:23,537 | INFO | Corruption type: speckle_noise
+2025-06-07 21:00:23,537 | INFO | Severity type: 1
+2025-06-07 21:00:23,620 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:25,338 | INFO | Test accuracy: 84.98
+2025-06-07 21:00:25,338 | INFO | Severity type: 2
+2025-06-07 21:00:25,373 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:27,100 | INFO | Test accuracy: 68.91
+2025-06-07 21:00:27,100 | INFO | Severity type: 3
+2025-06-07 21:00:27,135 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:28,859 | INFO | Test accuracy: 61.01
+2025-06-07 21:00:28,859 | INFO | Severity type: 4
+2025-06-07 21:00:28,894 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:30,603 | INFO | Test accuracy: 46.61
+2025-06-07 21:00:30,603 | INFO | Severity type: 5
+2025-06-07 21:00:30,638 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:32,348 | INFO | Test accuracy: 36.26
+2025-06-07 21:00:32,348 | INFO | Corruption type: zoom_blur
+2025-06-07 21:00:32,348 | INFO | Severity type: 1
+2025-06-07 21:00:32,584 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:34,302 | INFO | Test accuracy: 88.11
+2025-06-07 21:00:34,302 | INFO | Severity type: 2
+2025-06-07 21:00:34,338 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:36,085 | INFO | Test accuracy: 85.29
+2025-06-07 21:00:36,085 | INFO | Severity type: 3
+2025-06-07 21:00:36,130 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:37,924 | INFO | Test accuracy: 80.01
+2025-06-07 21:00:37,925 | INFO | Severity type: 4
+2025-06-07 21:00:37,954 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:39,714 | INFO | Test accuracy: 73.48
+2025-06-07 21:00:39,714 | INFO | Severity type: 5
+2025-06-07 21:00:39,773 | INFO | FULL mode: using 10000 robustness samples
+2025-06-07 21:00:41,534 | INFO | Test accuracy: 63.32

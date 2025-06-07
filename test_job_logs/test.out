@@ -11,3 +11,35 @@ Approx Power usage: 0.015600000000000001
 Walltime usage: 01:16:55
 
 ====================================
+Starting test on cx3-8-12.cx3.hpc.ic.ac.uk at Sat  7 Jun 20:20:00 BST 2025
+Using run folder: runs/cifar/round_4/brainit_4_3_acc_20250605-185514/
+Test completed successfully at Sat  7 Jun 20:28:16 BST 2025
+Job cleanup done. Logs stored in test_job_logs/job_1217876_20250607_201950_brainit_4_3_acc_20250605-185514
+Starting test on cx3-8-12.cx3.hpc.ic.ac.uk at Sat  7 Jun 20:42:56 BST 2025
+Using run folder: runs/cifar/round_5/resnet_5_1_v3_acc_20250605-195057/
+Test completed successfully at Sat  7 Jun 20:45:18 BST 2025
+Job cleanup done. Logs stored in test_job_logs/job_1217920_20250607_204254_resnet_5_1_v3_acc_20250605-195057
+Starting test on cx3-8-12.cx3.hpc.ic.ac.uk at Sat  7 Jun 20:45:34 BST 2025
+Using run folder: runs/cifar/round_4/zoomvit_4_2_acc_20250529-202441/
+Starting test on cx3-11-7.cx3.hpc.ic.ac.uk at Sat  7 Jun 20:47:25 BST 2025
+Using run folder: runs/cifar/round_4/zoomvit_4_4_acc_20250529-211001/
+Test completed successfully at Sat  7 Jun 20:48:36 BST 2025
+Job cleanup done. Logs stored in test_job_logs/job_1217924_20250607_204533_zoomvit_4_2_acc_20250529-202441
+Starting test on cx3-8-12.cx3.hpc.ic.ac.uk at Sat  7 Jun 20:48:58 BST 2025
+Using run folder: runs/cifar/round_4/brainit_4_6_acc_20250605-185544/
+Test completed successfully at Sat  7 Jun 20:52:28 BST 2025
+Job cleanup done. Logs stored in test_job_logs/job_1217925_20250607_204715_zoomvit_4_4_acc_20250529-211001
+Starting test on cx3-11-7.cx3.hpc.ic.ac.uk at Sat  7 Jun 20:52:53 BST 2025
+Using run folder: runs/cifar/round_5/resnet_5_2v2_acc_20250605-193559/
+Test completed successfully at Sat  7 Jun 20:56:05 BST 2025
+Job cleanup done. Logs stored in test_job_logs/job_1217927_20250607_205244_resnet_5_2v2_acc_20250605-193559
+Starting test on cx3-11-7.cx3.hpc.ic.ac.uk at Sat  7 Jun 20:56:30 BST 2025
+Using run folder: runs/cifar/round_4/zoomvit_4_5_acc_20250529-213209/
+Test completed successfully at Sat  7 Jun 20:57:22 BST 2025
+Job cleanup done. Logs stored in test_job_logs/job_1217926_20250607_204857_brainit_4_6_acc_20250605-185544
+Starting test on cx3-8-12.cx3.hpc.ic.ac.uk at Sat  7 Jun 20:57:43 BST 2025
+Using run folder: runs/cifar/round_4/zoomvit_4_1_v2_acc_20250529-194255/
+Test completed successfully at Sat  7 Jun 21:00:42 BST 2025
+Job cleanup done. Logs stored in test_job_logs/job_1217931_20250607_205741_zoomvit_4_1_v2_acc_20250529-194255
+Test completed successfully at Sat  7 Jun 21:01:26 BST 2025
+Job cleanup done. Logs stored in test_job_logs/job_1217930_20250607_205621_zoomvit_4_5_acc_20250529-213209

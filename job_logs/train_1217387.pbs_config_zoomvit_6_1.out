@@ -87,3 +87,4 @@ Finished at Sat  7 Jun 19:01:36 BST 2025
 Clean up
 mv: cannot stat 'job_logs/train.out': No such file or directory
 mv: cannot stat 'job_logs/train.err': No such file or directory
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_sd_6_3_sample_eff_0_25_20250607-192740
