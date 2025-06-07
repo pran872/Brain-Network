@@ -396,6 +396,9 @@ def main(parsed_args=None):
 
         if config["pretrained"]:
             logger.info(f"Using pretrained weights")
+        if config["freeze_all"]:
+            logger.info(f"Freezing Resnet")
+
 
         model = get_model(config, device)
         model.to(device)

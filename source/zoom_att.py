@@ -7,7 +7,8 @@ class ResNetBackbone(nn.Module):
         self, 
         out_channels=512, 
         resnet_layers=4, 
-        freeze_early=False, 
+        freeze_early=False,
+        freeze_all=False,
         upsample_features=True,
         downsample_features=False,
         pretrained=False
@@ -43,6 +44,10 @@ class ResNetBackbone(nn.Module):
         if freeze_early: # Freezes base.conv1, base.bn1, base.relu, base.layer1 for sample efficiency stuff
             for param in list(self.stem[:4].parameters()):
                 param.requires_grad = False
+        
+        if freeze_all:
+            for param in base.parameters():
+                param.requires_grad = False
 
     def forward(self, x):
         feat_map = self.stem(x) # [B, 512, 4, 4]
@@ -54,11 +59,12 @@ class ResNetBackbone(nn.Module):
         return feat_map, pooled
 
 class ResNetBackbone224(ResNetBackbone):
-    def __init__(self, out_channels=512, resnet_layers=4, freeze_early=False, pretrained=False):
+    def __init__(self, out_channels=512, resnet_layers=4, freeze_early=False, freeze_all=False, pretrained=False):
         super().__init__(
             out_channels=out_channels, 
             resnet_layers=resnet_layers, 
             freeze_early=freeze_early,
+            freeze_all=freeze_all,
             upsample_features=False,
             downsample_features=True,
             pretrained=pretrained

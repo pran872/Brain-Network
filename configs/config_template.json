@@ -65,6 +65,9 @@
     "trans_dropout_ratio": 0.0,
     "remove_zoom": false,
 
+    "freeze_resnet_early": false,
+    "freeze_all": false,
+
     "use_pos_embed": true,
     "mlp_end": false,
     "add_cls_token": true,
@@ -74,8 +77,6 @@
     "multiscale_tokenisation": false,
     "gamma_per_head": false,
     "use_token_mixer": false,
-
-    "freeze_resnet_early": false,
 
     "attacker": false,
     "epsilon": false,

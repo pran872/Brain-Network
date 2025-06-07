@@ -203,6 +203,7 @@ class ZoomVisionTransformer(nn.Module):
         resnet_layers=4,
         multiscale_tokenisation=False,
         freeze_resnet_early=False,
+        freeze_all=False,
         gamma_per_head=False,
         use_token_mixer=False,
         remove_zoom=False,
@@ -220,7 +221,12 @@ class ZoomVisionTransformer(nn.Module):
             self.use_pos_embed = True
         
         self.dist_matrix = None
-        self.backbone = ResNetBackbone(resnet_layers=resnet_layers, freeze_early=freeze_resnet_early, pretrained=pretrained)
+        self.backbone = ResNetBackbone(
+            resnet_layers=resnet_layers, 
+            freeze_early=freeze_resnet_early, 
+            freeze_all=freeze_all, 
+            pretrained=pretrained
+        )
         
         self.token_proj = nn.Linear(self.backbone.out_dim, embed_dim)
         self.zoom_controller = ZoomController(self.backbone.out_dim, out_dim=1, num_heads=num_heads, gamma_per_head=gamma_per_head)
@@ -348,6 +354,7 @@ class BrainiT(ZoomVisionTransformer):
         remove_zoom=False,
         trans_dropout_ratio=0.0,
         add_dropout=False,
+        freeze_all=False
     ):
         super().__init__(
             num_classes=num_classes,
@@ -357,6 +364,7 @@ class BrainiT(ZoomVisionTransformer):
             remove_zoom=remove_zoom,
             trans_dropout_ratio=trans_dropout_ratio,
             add_dropout=add_dropout,
+            freeze_all=freeze_all
         )
         self.use_retinal_layer = use_retinal_layer
         if self.use_retinal_layer:
@@ -398,6 +406,7 @@ class ZoomVisionTransformer224(ZoomVisionTransformer):
         remove_zoom=False,
         trans_dropout_ratio=0.0,
         add_dropout=False,
+        freeze_all=False
     ):
         super().__init__(
             num_classes=num_classes,
@@ -407,9 +416,10 @@ class ZoomVisionTransformer224(ZoomVisionTransformer):
             remove_zoom=remove_zoom,
             trans_dropout_ratio=trans_dropout_ratio,
             add_dropout=add_dropout,
+            freeze_all=freeze_all
         )
 
-        self.backbone = ResNetBackbone224(resnet_layers=4, freeze_early=False, pretrained=pretrained)
+        self.backbone = ResNetBackbone224(resnet_layers=4, freeze_early=False, freeze_all=freeze_all, pretrained=pretrained)
 
 class BrainiT224(BrainiT):
     def __init__(
@@ -421,6 +431,7 @@ class BrainiT224(BrainiT):
         remove_zoom=False,
         trans_dropout_ratio=0.0,
         add_dropout=False,
+        freeze_all=False
     ):
         super().__init__(
             num_classes=num_classes,
@@ -430,9 +441,10 @@ class BrainiT224(BrainiT):
             remove_zoom=remove_zoom,
             trans_dropout_ratio=trans_dropout_ratio,
             add_dropout=add_dropout,
+            freeze_all=freeze_all
         )
 
-        self.backbone = ResNetBackbone224(resnet_layers=4, freeze_early=False, pretrained=pretrained)
+        self.backbone = ResNetBackbone224(resnet_layers=4, freeze_early=False, freeze_all=freeze_all, pretrained=pretrained)
 
 def get_model(config, device, load_old_models=False):
 
@@ -466,6 +478,7 @@ def get_model(config, device, load_old_models=False):
                     # use_token_mixer=config["use_token_mixer"],
                     remove_zoom=config["remove_zoom"],
                     pretrained=config["pretrained"],
+                    freeze_all=config["freeze_all"]
                 )
             else:
                 model = ZoomVisionTransformer224(
@@ -475,6 +488,7 @@ def get_model(config, device, load_old_models=False):
                     remove_zoom=config["remove_zoom"],
                     trans_dropout_ratio=config["trans_dropout_ratio"],
                     add_dropout=config["add_dropout"],
+                    freeze_all=config["freeze_all"]
                 )
         elif "brainit" in config["model_type"]:
             if config["dataset"]["type"] == "cifar10":
@@ -485,6 +499,7 @@ def get_model(config, device, load_old_models=False):
                     remove_zoom=config["remove_zoom"],
                     trans_dropout_ratio=config["trans_dropout_ratio"],
                     add_dropout=config["add_dropout"],
+                    freeze_all=config["freeze_all"]
                 )
             else:
                 model = BrainiT224(
@@ -495,6 +510,7 @@ def get_model(config, device, load_old_models=False):
                     remove_zoom=config["remove_zoom"],
                     trans_dropout_ratio=config["trans_dropout_ratio"],
                     add_dropout=config["add_dropout"],
+                    freeze_all=config["freeze_all"]
                 )
     else: # Old models
         if config["dataset"]["type"] == "cifar10":
