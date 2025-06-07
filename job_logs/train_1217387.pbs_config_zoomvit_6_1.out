@@ -1,0 +1,89 @@
+Starting training on cx3-20-0.cx3.hpc.ic.ac.uk at Fri  6 Jun 14:55:16 BST 2025
+Using config: configs/cifar/round_6_06_06/config_zoomvit_p67.json
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_p67_20250606-145632
+/rds/general/user/psp20/home/.local/lib/python3.11/site-packages/torch/autograd/graph.py:823: UserWarning: adaptive_avg_pool2d_backward_cuda does not have a deterministic implementation, but you set 'torch.use_deterministic_algorithms(True, warn_only=True)'. You can file an issue at https://github.com/pytorch/pytorch/issues to help us prioritize adding deterministic support for this operation. (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:92.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+Finished at Fri  6 Jun 17:23:06 BST 2025
+Clean up
+mv: cannot stat 'job_logs/train.err': No such file or directory
+
+====================================
+CPU Time used: 02:06:39
+CPU Percent: 98%
+Memory usage: 1852068kb
+Approx Power usage: 0.025200000000000004
+Walltime usage: 02:28:03
+
+====================================
+Starting training on cx3-11-8.cx3.hpc.ic.ac.uk at Sat  7 Jun 14:38:03 BST 2025
+Using config: configs/cifar/round_6_06_06/config_zoomvit_6_1.json
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_6_1_acc_20250607-143912
+Starting training on cx3-11-7.cx3.hpc.ic.ac.uk at Sat  7 Jun 14:43:49 BST 2025
+Using config: configs/cifar/round_6_06_06/config_brainit_6_2.json
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_6_2_acc_20250607-144500
+Starting training on cx3-11-7.cx3.hpc.ic.ac.uk at Sat  7 Jun 14:46:35 BST 2025
+Using config: configs/cifar/round_6_06_06/config_sd_zoomvit_6_3.json
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_sd_6_3_acc_20250607-144731
+Starting training on cx3-8-12.cx3.hpc.ic.ac.uk at Sat  7 Jun 15:06:22 BST 2025
+Using config: configs/cifar/round_6_06_06/config_sd_brainit_6_4.json
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_sd_6_4_acc_20250607-150730
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_6_1_sample_eff_0_1_20250607-151224
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_6_1_sample_eff_0_25_20250607-151641
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_6_1_sample_eff_0_5_20250607-152546
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_6_2_sample_eff_0_1_20250607-154202
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_6_1_acc_20250607-143912
+Traceback (most recent call last):
+  File "/rds/general/user/psp20/home/Brain-Network/source/run_all_train_tests.py", line 79, in <module>
+    main()
+  File "/rds/general/user/psp20/home/Brain-Network/source/run_all_train_tests.py", line 75, in main
+    test.main(args_to_parse)
+  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 177, in main
+    config, model_pts = get_files(args, logger)
+                        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 120, in get_files
+    assert len(args.model) > 0, "No model path present in the provided directory."
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError: No model path present in the provided directory.
+Finished at Sat  7 Jun 15:43:01 BST 2025
+Clean up
+mv: cannot stat 'job_logs/train.err': No such file or directory
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_6_2_sample_eff_0_25_20250607-154856
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_6_2_sample_eff_0_5_20250607-160414
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_6_2_acc_20250607-144500
+Traceback (most recent call last):
+  File "/rds/general/user/psp20/home/Brain-Network/source/run_all_train_tests.py", line 79, in <module>
+    main()
+  File "/rds/general/user/psp20/home/Brain-Network/source/run_all_train_tests.py", line 75, in main
+    test.main(args_to_parse)
+  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 177, in main
+    config, model_pts = get_files(args, logger)
+                        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 120, in get_files
+    assert len(args.model) > 0, "No model path present in the provided directory."
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError: No model path present in the provided directory.
+Finished at Sat  7 Jun 16:33:36 BST 2025
+Clean up
+mv: cannot stat 'job_logs/train.out': No such file or directory
+mv: cannot stat 'job_logs/train.err': No such file or directory
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_sd_6_4_sample_eff_0_1_20250607-164955
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_sd_6_4_sample_eff_0_25_20250607-171656
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_sd_6_4_sample_eff_0_5_20250607-180332
+/rds/general/user/psp20/home/Brain-Network/runs/zoomvit_sd_6_3_sample_eff_0_1_20250607-184300
+/rds/general/user/psp20/home/Brain-Network/runs/brainit_sd_6_4_acc_20250607-150730
+Traceback (most recent call last):
+  File "/rds/general/user/psp20/home/Brain-Network/source/run_all_train_tests.py", line 79, in <module>
+    main()
+  File "/rds/general/user/psp20/home/Brain-Network/source/run_all_train_tests.py", line 75, in main
+    test.main(args_to_parse)
+  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 177, in main
+    config, model_pts = get_files(args, logger)
+                        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/psp20/home/Brain-Network/source/test.py", line 120, in get_files
+    assert len(args.model) > 0, "No model path present in the provided directory."
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError: No model path present in the provided directory.
+Finished at Sat  7 Jun 19:01:36 BST 2025
+Clean up
+mv: cannot stat 'job_logs/train.out': No such file or directory
+mv: cannot stat 'job_logs/train.err': No such file or directory
